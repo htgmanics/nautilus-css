@@ -1,0 +1,1023 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Spiral Grid — Prototype</title>
+    <link rel="stylesheet" href="spiral-grid.css" />
+    <style>
+      body {
+        margin: 0;
+        padding: 2rem;
+        font-family:
+          -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+        background: #fafafa;
+        color: #222;
+      }
+      h1 {
+        margin: 0 0 0.5rem;
+        font-size: 1.5rem;
+      }
+      h2 {
+        margin: 2rem 0 0.5rem;
+        font-size: 1rem;
+        color: #666;
+        font-weight: 500;
+      }
+      .stage {
+        background: #e5e5e5;
+        border: 1px solid #5f5d5d;
+        border-radius: 4px;
+        padding: 1rem;
+        margin-bottom: 2rem;
+      }
+
+      .demo.fib-spiral {
+        background-color: #fff;
+      }
+
+      /* Demo styling for cells — not part of the library */
+      .demo .fib-spiral__cell {
+        outline: 1px solid rgba(0, 0, 0, 0.15);
+        box-shadow: inset 0 0 0 0 transparent;
+      }
+      .demo .fib-spiral__cell:nth-child(1) .fib-spiral__content {
+        background: #ffadad;
+      }
+      .demo .fib-spiral__cell:nth-child(2) .fib-spiral__content {
+        background: #ffd6a5;
+      }
+      .demo .fib-spiral__cell:nth-child(3) .fib-spiral__content {
+        background: #fdffb6;
+      }
+      .demo .fib-spiral__cell:nth-child(4) .fib-spiral__content {
+        background: #caffbf;
+      }
+      .demo .fib-spiral__cell:nth-child(5) .fib-spiral__content {
+        background: #9bf6ff;
+      }
+      .demo .fib-spiral__cell:nth-child(6) .fib-spiral__content {
+        background: #a0c4ff;
+      }
+      .demo .fib-spiral__cell:nth-child(7) .fib-spiral__content {
+        background: #bdb2ff;
+      }
+      .demo .fib-spiral__cell:nth-child(8) .fib-spiral__content {
+        background: #ffc6ff;
+      }
+      .demo .fib-spiral__cell:nth-child(9) .fib-spiral__content {
+        background: #fffffc;
+      }
+      /* Fill cells read --fib-spiral-cell-bg from the cell (library handles when
+         it applies). Setting it on every cell is harmless for non-fill cells. */
+      .demo .fib-spiral__cell:nth-child(1) {
+        --fib-spiral-cell-bg: #ffadad;
+      }
+      .demo .fib-spiral__cell:nth-child(2) {
+        --fib-spiral-cell-bg: #ffd6a5;
+      }
+      .demo .fib-spiral__cell:nth-child(3) {
+        --fib-spiral-cell-bg: #fdffb6;
+      }
+      .demo .fib-spiral__cell:nth-child(4) {
+        --fib-spiral-cell-bg: #caffbf;
+      }
+      .demo .fib-spiral__cell:nth-child(5) {
+        --fib-spiral-cell-bg: #9bf6ff;
+      }
+      .demo .fib-spiral__cell:nth-child(6) {
+        --fib-spiral-cell-bg: #a0c4ff;
+      }
+      .demo .fib-spiral__cell:nth-child(7) {
+        --fib-spiral-cell-bg: #bdb2ff;
+      }
+      .demo .fib-spiral__cell:nth-child(8) {
+        --fib-spiral-cell-bg: #ffc6ff;
+      }
+      .demo .fib-spiral__cell:nth-child(9) {
+        --fib-spiral-cell-bg: #fffffc;
+      }
+      .demo .fib-spiral__content {
+        font-weight: 600;
+        color: #222;
+      }
+
+      .stage--sm {
+        max-width: 800px;
+      }
+      .demo-sweep-label {
+        margin: 0.75rem 0 0.35rem;
+        font-size: 0.85rem;
+        color: #888;
+      }
+      h2 + .demo-sweep-label {
+        margin-top: 0.35rem;
+      }
+
+      /* Red dot to visually confirm the convergence point.
+       Positioned in container-local coordinates: (72.36%, 72.36%) */
+      .convergence-dot {
+        position: absolute;
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: red;
+        left: calc((1 - 0.276393202250021) * 100%);
+        top: calc((1 - 0.276393202250021) * 100%);
+        transform: translate(-50%, -50%);
+        z-index: 100;
+        pointer-events: none;
+      }
+      .fib-spiral--reverse .convergence-dot {
+        left: calc(0.276393202250021 * 100%);
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Spiral Grid — Prototype</h1>
+    <p>
+      Verifying the pure-CSS spiral layout. The red dot marks the mathematical
+      convergence point (spiral's eye).
+    </p>
+
+    <h2>1. Default behavior — last cell auto-fills (no white space)</h2>
+    <div class="stage stage--sm">
+      <div class="fib-spiral demo">
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">A</div>
+        </div>
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">B</div>
+        </div>
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">C</div>
+        </div>
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">D</div>
+        </div>
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">E</div>
+        </div>
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">F</div>
+        </div>
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">G</div>
+        </div>
+        <span class="convergence-dot"></span>
+      </div>
+    </div>
+
+    <h2>1a. With <code>fib-spiral--no-fill</code> (opt-out, wedge at eye)</h2>
+    <div class="stage stage--sm">
+      <div class="fib-spiral fib-spiral--no-fill demo">
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">A</div>
+        </div>
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">B</div>
+        </div>
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">C</div>
+        </div>
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">D</div>
+        </div>
+        <span class="convergence-dot"></span>
+      </div>
+    </div>
+
+    <h2>1b. Sweep 1–6 cells (forward)</h2>
+    <p class="demo-sweep-label">1 cell (entire spiral is fill)</p>
+    <div class="stage stage--sm">
+      <div class="fib-spiral demo">
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">A</div>
+        </div>
+        <span class="convergence-dot"></span>
+      </div>
+    </div>
+
+    <p class="demo-sweep-label">2 cells</p>
+    <div class="stage stage--sm">
+      <div class="fib-spiral demo">
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">A</div>
+        </div>
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">B</div>
+        </div>
+        <span class="convergence-dot"></span>
+      </div>
+    </div>
+
+    <p class="demo-sweep-label">3 cells</p>
+    <div class="stage stage--sm">
+      <div class="fib-spiral demo">
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">A</div>
+        </div>
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">B</div>
+        </div>
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">C</div>
+        </div>
+        <span class="convergence-dot"></span>
+      </div>
+    </div>
+
+    <p class="demo-sweep-label">4 cells</p>
+    <div class="stage stage--sm">
+      <div class="fib-spiral demo">
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">A</div>
+        </div>
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">B</div>
+        </div>
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">C</div>
+        </div>
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">D</div>
+        </div>
+        <span class="convergence-dot"></span>
+      </div>
+    </div>
+
+    <p class="demo-sweep-label">5 cells</p>
+    <div class="stage stage--sm">
+      <div class="fib-spiral demo">
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">A</div>
+        </div>
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">B</div>
+        </div>
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">C</div>
+        </div>
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">D</div>
+        </div>
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">E</div>
+        </div>
+        <span class="convergence-dot"></span>
+      </div>
+    </div>
+
+    <p class="demo-sweep-label">6 cells</p>
+    <div class="stage stage--sm">
+      <div class="fib-spiral demo">
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">A</div>
+        </div>
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">B</div>
+        </div>
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">C</div>
+        </div>
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">D</div>
+        </div>
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">E</div>
+        </div>
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">F</div>
+        </div>
+        <span class="convergence-dot"></span>
+      </div>
+    </div>
+
+    <h2>1c. Sweep 1–6 cells (portrait)</h2>
+    <p class="demo-sweep-label">1 cell (entire spiral is fill)</p>
+    <div class="stage" style="max-width: 400px">
+      <div class="fib-spiral fib-spiral--portrait demo">
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">A</div>
+        </div>
+        <span
+          class="convergence-dot"
+          style="left: calc(0.276393202250021 * 100%)"
+        ></span>
+      </div>
+    </div>
+
+    <p class="demo-sweep-label">2 cells</p>
+    <div class="stage" style="max-width: 400px">
+      <div class="fib-spiral fib-spiral--portrait demo">
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">A</div>
+        </div>
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">B</div>
+        </div>
+        <span
+          class="convergence-dot"
+          style="left: calc(0.276393202250021 * 100%)"
+        ></span>
+      </div>
+    </div>
+
+    <p class="demo-sweep-label">3 cells</p>
+    <div class="stage" style="max-width: 400px">
+      <div class="fib-spiral fib-spiral--portrait demo">
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">A</div>
+        </div>
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">B</div>
+        </div>
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">C</div>
+        </div>
+        <span
+          class="convergence-dot"
+          style="left: calc(0.276393202250021 * 100%)"
+        ></span>
+      </div>
+    </div>
+
+    <p class="demo-sweep-label">4 cells</p>
+    <div class="stage" style="max-width: 400px">
+      <div class="fib-spiral fib-spiral--portrait demo">
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">A</div>
+        </div>
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">B</div>
+        </div>
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">C</div>
+        </div>
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">D</div>
+        </div>
+        <span
+          class="convergence-dot"
+          style="left: calc(0.276393202250021 * 100%)"
+        ></span>
+      </div>
+    </div>
+
+    <p class="demo-sweep-label">5 cells</p>
+    <div class="stage" style="max-width: 400px">
+      <div class="fib-spiral fib-spiral--portrait demo">
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">A</div>
+        </div>
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">B</div>
+        </div>
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">C</div>
+        </div>
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">D</div>
+        </div>
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">E</div>
+        </div>
+        <span
+          class="convergence-dot"
+          style="left: calc(0.276393202250021 * 100%)"
+        ></span>
+      </div>
+    </div>
+
+    <p class="demo-sweep-label">6 cells</p>
+    <div class="stage" style="max-width: 400px">
+      <div class="fib-spiral fib-spiral--portrait demo">
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">A</div>
+        </div>
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">B</div>
+        </div>
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">C</div>
+        </div>
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">D</div>
+        </div>
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">E</div>
+        </div>
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">F</div>
+        </div>
+        <span
+          class="convergence-dot"
+          style="left: calc(0.276393202250021 * 100%)"
+        ></span>
+      </div>
+    </div>
+
+    <h2>2a. Reverse 4-cell</h2>
+    <div class="stage stage--sm">
+      <div class="fib-spiral fib-spiral--reverse demo">
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">A</div>
+        </div>
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">B</div>
+        </div>
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">C</div>
+        </div>
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">D</div>
+        </div>
+        <span class="convergence-dot"></span>
+      </div>
+    </div>
+
+    <h2>2b. Reverse 7-cell</h2>
+    <div class="stage stage--sm">
+      <div class="fib-spiral fib-spiral--reverse demo">
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">A</div>
+        </div>
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">B</div>
+        </div>
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">C</div>
+        </div>
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">D</div>
+        </div>
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">E</div>
+        </div>
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">F</div>
+        </div>
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">G</div>
+        </div>
+        <span class="convergence-dot"></span>
+      </div>
+    </div>
+
+    <h2>3. 9 cells with <code>fib-spiral--no-fill</code></h2>
+    <div class="stage stage--sm">
+      <div class="fib-spiral fib-spiral--no-fill demo">
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">1</div>
+        </div>
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">2</div>
+        </div>
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">3</div>
+        </div>
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">4</div>
+        </div>
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">5</div>
+        </div>
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">6</div>
+        </div>
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">7</div>
+        </div>
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">8</div>
+        </div>
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">9</div>
+        </div>
+        <span class="convergence-dot"></span>
+      </div>
+    </div>
+
+    <h2>4. With real content (portfolio-style)</h2>
+    <div class="stage stage--sm">
+      <div class="fib-spiral demo">
+        <div class="fib-spiral__cell">
+          <div
+            class="fib-spiral__content"
+            style="
+              background: #2d3142;
+              color: #fff;
+              flex-direction: column;
+              padding: 1rem;
+              text-align: center;
+            "
+          >
+            <div style="font-size: 0.6em; opacity: 0.7">01</div>
+            <div>Featured Project</div>
+          </div>
+        </div>
+        <div class="fib-spiral__cell">
+          <div
+            class="fib-spiral__content"
+            style="background: #ef8354; color: #fff"
+          >
+            02
+          </div>
+        </div>
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content" style="background: #bfc0c0">03</div>
+        </div>
+        <div class="fib-spiral__cell">
+          <div
+            class="fib-spiral__content"
+            style="background: #4f5d75; color: #fff"
+          >
+            04
+          </div>
+        </div>
+        <div class="fib-spiral__cell">
+          <div
+            class="fib-spiral__content"
+            style="background: #2d3142; color: #fff"
+          >
+            05
+          </div>
+        </div>
+        <div class="fib-spiral__cell">
+          <div
+            class="fib-spiral__content"
+            style="background: #ef8354; color: #fff"
+          >
+            06
+          </div>
+        </div>
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content" style="background: #bfc0c0">07</div>
+        </div>
+        <span class="convergence-dot"></span>
+      </div>
+    </div>
+
+    <h2>4b. 15 cells — overflow hidden (cells 11+ are hidden)</h2>
+    <div class="stage stage--sm">
+      <div class="fib-spiral demo">
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">1</div>
+        </div>
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">2</div>
+        </div>
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">3</div>
+        </div>
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">4</div>
+        </div>
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">5</div>
+        </div>
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">6</div>
+        </div>
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">7</div>
+        </div>
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">8</div>
+        </div>
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">9</div>
+        </div>
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">10</div>
+        </div>
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">11</div>
+        </div>
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">12</div>
+        </div>
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">13</div>
+        </div>
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">14</div>
+        </div>
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">15</div>
+        </div>
+        <span class="convergence-dot"></span>
+      </div>
+    </div>
+
+    <h2>4c. 15 cells — split into two spirals (8 + 7)</h2>
+    <div class="stage stage--sm">
+      <div class="fib-spiral demo">
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">1</div>
+        </div>
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">2</div>
+        </div>
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">3</div>
+        </div>
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">4</div>
+        </div>
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">5</div>
+        </div>
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">6</div>
+        </div>
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">7</div>
+        </div>
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">8</div>
+        </div>
+        <span class="convergence-dot"></span>
+      </div>
+    </div>
+    <div class="stage stage--sm" style="margin-top: 1rem">
+      <div class="fib-spiral fib-spiral--reverse demo">
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">9</div>
+        </div>
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">10</div>
+        </div>
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">11</div>
+        </div>
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">12</div>
+        </div>
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">13</div>
+        </div>
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">14</div>
+        </div>
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">15</div>
+        </div>
+        <span class="convergence-dot"></span>
+      </div>
+    </div>
+
+    <h2>4d. Seamless multi-spiral (8 + 7, no gap)</h2>
+    <div class="stage stage--sm" style="padding: 0; border: none">
+      <div class="fib-spiral demo" style="--fib-spiral-width: 100%">
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">1</div>
+        </div>
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">2</div>
+        </div>
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">3</div>
+        </div>
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">4</div>
+        </div>
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">5</div>
+        </div>
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">6</div>
+        </div>
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">7</div>
+        </div>
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">8</div>
+        </div>
+      </div>
+      <div
+        class="fib-spiral fib-spiral--reverse demo"
+        style="--fib-spiral-width: 100%"
+      >
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">9</div>
+        </div>
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">10</div>
+        </div>
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">11</div>
+        </div>
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">12</div>
+        </div>
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">13</div>
+        </div>
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">14</div>
+        </div>
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">15</div>
+        </div>
+      </div>
+    </div>
+
+    <h2>4e. No counter-rotate (content rotates with cell)</h2>
+    <div class="stage stage--sm">
+      <div class="fib-spiral fib-spiral--no-counter-rotate demo">
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">A</div>
+        </div>
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">B</div>
+        </div>
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">C</div>
+        </div>
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">D</div>
+        </div>
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">E</div>
+        </div>
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">F</div>
+        </div>
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">G</div>
+        </div>
+        <span class="convergence-dot"></span>
+      </div>
+    </div>
+
+    <h2>5. Portrait modifier with <code>fib-spiral--no-fill</code></h2>
+    <div class="stage" style="max-width: 400px">
+      <div class="fib-spiral fib-spiral--portrait fib-spiral--no-fill demo">
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">A</div>
+        </div>
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">B</div>
+        </div>
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">C</div>
+        </div>
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">D</div>
+        </div>
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">E</div>
+        </div>
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">F</div>
+        </div>
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">G</div>
+        </div>
+        <span
+          class="convergence-dot"
+          style="left: calc(0.276393202250021 * 100%)"
+        ></span>
+      </div>
+    </div>
+
+    <h2>5b. Portrait modifier (default fill)</h2>
+    <div class="stage" style="max-width: 400px">
+      <div class="fib-spiral fib-spiral--portrait demo">
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">A</div>
+        </div>
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">B</div>
+        </div>
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">C</div>
+        </div>
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">D</div>
+        </div>
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">E</div>
+        </div>
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">F</div>
+        </div>
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">G</div>
+        </div>
+        <span
+          class="convergence-dot"
+          style="left: calc(0.276393202250021 * 100%)"
+        ></span>
+      </div>
+    </div>
+
+    <h2>6. Auto-responsive (resize the container)</h2>
+    <div
+      class="stage"
+      style="max-width: 300px; resize: both; overflow: auto; min-height: 200px"
+    >
+      <div class="fib-spiral fib-spiral--auto demo">
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">A</div>
+        </div>
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">B</div>
+        </div>
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">C</div>
+        </div>
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">D</div>
+        </div>
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">E</div>
+        </div>
+      </div>
+    </div>
+    <h2>6b. Cell count sweep: 8, 9, 10 cells</h2>
+    <p class="demo-sweep-label">8 cells</p>
+    <div class="stage stage--sm">
+      <div class="fib-spiral demo">
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">1</div>
+        </div>
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">2</div>
+        </div>
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">3</div>
+        </div>
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">4</div>
+        </div>
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">5</div>
+        </div>
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">6</div>
+        </div>
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">7</div>
+        </div>
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">8</div>
+        </div>
+        <span class="convergence-dot"></span>
+      </div>
+    </div>
+
+    <p class="demo-sweep-label">9 cells</p>
+    <div class="stage stage--sm">
+      <div class="fib-spiral demo">
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">1</div>
+        </div>
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">2</div>
+        </div>
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">3</div>
+        </div>
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">4</div>
+        </div>
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">5</div>
+        </div>
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">6</div>
+        </div>
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">7</div>
+        </div>
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">8</div>
+        </div>
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">9</div>
+        </div>
+        <span class="convergence-dot"></span>
+      </div>
+    </div>
+
+    <p class="demo-sweep-label">10 cells</p>
+    <div class="stage stage--sm">
+      <div class="fib-spiral demo">
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">1</div>
+        </div>
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">2</div>
+        </div>
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">3</div>
+        </div>
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">4</div>
+        </div>
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">5</div>
+        </div>
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">6</div>
+        </div>
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">7</div>
+        </div>
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">8</div>
+        </div>
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">9</div>
+        </div>
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">10</div>
+        </div>
+        <span class="convergence-dot"></span>
+      </div>
+    </div>
+
+    <h2>7a. Portrait + reverse (no-fill)</h2>
+    <div class="stage" style="max-width: 400px">
+      <div
+        class="fib-spiral fib-spiral--portrait fib-spiral--reverse fib-spiral--no-fill demo"
+      >
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">A</div>
+        </div>
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">B</div>
+        </div>
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">C</div>
+        </div>
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">D</div>
+        </div>
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">E</div>
+        </div>
+        <span
+          class="convergence-dot"
+          style="left: calc((1 - 0.276393202250021) * 100%)"
+        ></span>
+      </div>
+    </div>
+
+    <h2>7b. Portrait + reverse (default fill)</h2>
+    <div class="stage" style="max-width: 400px">
+      <div class="fib-spiral fib-spiral--portrait fib-spiral--reverse demo">
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">A</div>
+        </div>
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">B</div>
+        </div>
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">C</div>
+        </div>
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">D</div>
+        </div>
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">E</div>
+        </div>
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">F</div>
+        </div>
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">G</div>
+        </div>
+        <span
+          class="convergence-dot"
+          style="left: calc((1 - 0.276393202250021) * 100%)"
+        ></span>
+      </div>
+    </div>
+
+    <h2>8. Auto-responsive + reverse (resize the container)</h2>
+    <div
+      class="stage"
+      style="max-width: 300px; resize: both; overflow: auto; min-height: 200px"
+    >
+      <div class="fib-spiral fib-spiral--auto fib-spiral--reverse demo">
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">A</div>
+        </div>
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">B</div>
+        </div>
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">C</div>
+        </div>
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">D</div>
+        </div>
+        <div class="fib-spiral__cell">
+          <div class="fib-spiral__content">E</div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
