@@ -335,6 +335,49 @@
 }
 
 /* ============================================================
+   Feature: --fib-spiral-gap
+
+   Visual spacing between cells, similar to CSS `gap` in grid/flex.
+   Implemented via clip-path: inset() on each cell — pure paint, no
+   layout impact, no interaction with backgrounds or borders.
+
+   Math: each cell clips inward by (gap / 2) / pow(phi, i) pre-scale,
+   which becomes gap / 2 visible post-scale. Two adjacent cells
+   contribute gap / 2 + gap / 2 = gap of visible gutter.
+
+   Trade-off: because cells shrink exponentially, deep cells vanish
+   when gap exceeds their visible size. See `doc/gap-postmortem.md`
+   for the depth threshold table and recommended cqi / @media
+   patterns to live with it.
+   ============================================================ */
+.fib-spiral {
+    --fib-spiral-gap: 0px;
+}
+
+@supports (width: calc(pow(2, 3) * 1px)) {
+    .fib-spiral__cell {
+        clip-path: inset(
+            calc(var(--fib-spiral-gap) / 2 / pow(var(--fib-spiral-phi), var(--i)))
+        );
+    }
+}
+
+/* Fallback: precomputed coefficients are 1 / pow(phi, i) for i = 0..9,
+   mirroring the scale fallback table above (which uses pow(phi, i)). */
+@supports not (width: calc(pow(2, 3) * 1px)) {
+    .fib-spiral__cell:nth-child(1)  { clip-path: inset(calc(var(--fib-spiral-gap) / 2 * 1));          }
+    .fib-spiral__cell:nth-child(2)  { clip-path: inset(calc(var(--fib-spiral-gap) / 2 * 1.618034));   }
+    .fib-spiral__cell:nth-child(3)  { clip-path: inset(calc(var(--fib-spiral-gap) / 2 * 2.618034));   }
+    .fib-spiral__cell:nth-child(4)  { clip-path: inset(calc(var(--fib-spiral-gap) / 2 * 4.236068));   }
+    .fib-spiral__cell:nth-child(5)  { clip-path: inset(calc(var(--fib-spiral-gap) / 2 * 6.854102));   }
+    .fib-spiral__cell:nth-child(6)  { clip-path: inset(calc(var(--fib-spiral-gap) / 2 * 11.090170));  }
+    .fib-spiral__cell:nth-child(7)  { clip-path: inset(calc(var(--fib-spiral-gap) / 2 * 17.944272));  }
+    .fib-spiral__cell:nth-child(8)  { clip-path: inset(calc(var(--fib-spiral-gap) / 2 * 29.034442));  }
+    .fib-spiral__cell:nth-child(9)  { clip-path: inset(calc(var(--fib-spiral-gap) / 2 * 46.978714));  }
+    .fib-spiral__cell:nth-child(10) { clip-path: inset(calc(var(--fib-spiral-gap) / 2 * 76.013155));  }
+}
+
+/* ============================================================
    Accessibility: reduced-motion fallback
    Degrades to a simple stacked layout.
    Uses @layer to sit below author styles but the doubled
@@ -355,6 +398,7 @@
         width: 100%;
         aspect-ratio: auto;
         z-index: auto;
+        clip-path: none;
     }
     .fib-spiral.fib-spiral .fib-spiral__content {
         transform: none;
