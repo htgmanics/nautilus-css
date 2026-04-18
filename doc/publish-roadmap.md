@@ -40,7 +40,7 @@ Showcase examples that demonstrate the system's visual potential:
 ## 3c. Feature Branches
 
 - [ ] Scrollable content — `fib-spiral__content--scroll`, `--scroll-x`, `--scroll-y` modifiers
-- [ ] Gap (`--fib-spiral-gap`) — see `doc/gap-postmortem.md` for prior research
+- [x] Gap (`--fib-spiral-gap`) — see `doc/gap-postmortem.md` for prior research (resolved via `clip-path: inset()`; see "Resolved" section)
 - [ ] Infinite zoom (v2) — zoom into the convergence point to reveal nested spirals; companion package (`fib-spiral-navigator`)
 
 ## 4. Quality & Testing
