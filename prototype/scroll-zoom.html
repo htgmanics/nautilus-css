@@ -1,0 +1,368 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Spiral Grid — Scroll-Driven Zoom Prototype</title>
+    <link rel="stylesheet" href="spiral-grid.css" />
+    <style>
+      :root {
+        color-scheme: light dark;
+      }
+      body {
+        margin: 0;
+        font-family:
+          -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial,
+          sans-serif;
+        color: #222;
+        background: #fafafa;
+        line-height: 1.55;
+      }
+      h1 {
+        font-size: 2rem;
+        margin: 0 0 1rem;
+        letter-spacing: -0.01em;
+      }
+      h2 {
+        font-size: 1.25rem;
+        color: #444;
+        margin: 2rem 0 0.75rem;
+      }
+      p {
+        margin: 0 0 1rem;
+        max-width: 64ch;
+      }
+      code {
+        font-family:
+          ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+        background: #ececec;
+        padding: 0.05em 0.3em;
+        border-radius: 3px;
+        font-size: 0.92em;
+      }
+      a { color: #2a5ad0; }
+
+      .intro, .outro, .notice {
+        padding: 5rem 2rem;
+        max-width: 74ch;
+        margin: 0 auto;
+      }
+      .intro .cta {
+        display: inline-block;
+        margin-top: 1rem;
+        padding: 0.5rem 1rem;
+        background: #1e1e1e;
+        color: #fff;
+        border-radius: 3px;
+        font-family:
+          ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+        font-size: 0.85rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+      .outro {
+        background: #1e1e1e;
+        color: #ddd;
+        max-width: none;
+      }
+      .outro h2 { color: #fff; }
+      .outro p { margin-inline: auto; max-width: 64ch; }
+
+      /* ============================================================
+         The scroll scene.
+
+         Layout:
+           .scene          — tall spacer that owns the view-timeline
+           .scene__pin     — sticky box that stays in view while .scene
+                             passes the viewport
+           .scene__spiral  — animated wrapper around .fib-spiral
+
+         The animation runs over the full `cover` range of .scene, i.e.
+         from when .scene enters the viewport to when it leaves.
+         ============================================================ */
+      .scene {
+        position: relative;
+        height: 420vh;             /* scroll distance for the zoom */
+        background: #1e1e1e;
+        view-timeline-name: --spiral-scene;
+        view-timeline-axis: block;
+      }
+      .scene__pin {
+        position: sticky;
+        top: 0;
+        height: 100vh;
+        overflow: hidden;
+        display: grid;
+        place-items: center;
+      }
+      .scene__hud {
+        position: absolute;
+        top: 1.5rem;
+        left: 50%;
+        transform: translateX(-50%);
+        color: #888;
+        font-family:
+          ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+        font-size: 0.8rem;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        z-index: 1;
+        text-align: center;
+        white-space: nowrap;
+      }
+      .scene__hud strong { color: #ddd; font-weight: 500; }
+
+      /* The spiral wrapper.
+         - sized smaller than viewport so there's room to zoom
+         - transform-origin at the convergence point (1 - shrinkage,
+           1 - shrinkage) in container coords
+         - base translate of (-22.36%, -22.36%) shifts the wrapper so
+           its convergence point (normally at 72.36% / 72.36% of the
+           wrapper) sits exactly at viewport center. This offset is
+           preserved by the keyframes below, so the eye stays locked
+           on center through the entire zoom.
+         - animation-timeline binds progress to the .scene view range
+      */
+      .scene__spiral {
+        --fib-spiral-shrinkage: 0.276393202250021;
+        --convergence-offset: -22.3606797749979%;
+        width: min(76vmin, 620px);
+        transform-origin:
+          calc((1 - var(--fib-spiral-shrinkage)) * 100%)
+          calc((1 - var(--fib-spiral-shrinkage)) * 100%);
+        transform:
+          translate(var(--convergence-offset), var(--convergence-offset))
+          scale(1)
+          rotate(0deg);
+        animation: spiral-zoom linear both;
+        animation-timeline: --spiral-scene;
+        animation-range: cover 0% cover 100%;
+        will-change: transform;
+      }
+
+      /* 4 quarter-turns × 90° = 360° total, and scale(1/phi^4) ≈ 6.854.
+         Each 90° step is one cell deeper in the spiral. The full 360°
+         lands text back upright at the end of the animation.
+
+         1 / 0.618033989^4 = 6.854101966...
+      */
+      @keyframes spiral-zoom {
+        from {
+          transform:
+            translate(var(--convergence-offset), var(--convergence-offset))
+            scale(1)
+            rotate(0deg);
+        }
+        to {
+          transform:
+            translate(var(--convergence-offset), var(--convergence-offset))
+            scale(6.854101966)
+            rotate(-360deg);
+        }
+      }
+
+      /* ============================================================
+         Fallbacks
+         ============================================================ */
+
+      /* Browsers without CSS scroll-driven animations: drop the
+         sticky pin and render the spiral statically in a normal
+         flow block. Content still makes sense. */
+      @supports not (animation-timeline: scroll()) {
+        .scene {
+          height: auto;
+          padding: 4rem 2rem;
+        }
+        .scene__pin {
+          position: static;
+          height: auto;
+          display: block;
+        }
+        .scene__hud {
+          position: static;
+          transform: none;
+          margin: 0 auto 2rem;
+        }
+        .scene__spiral {
+          margin: 0 auto;
+          animation: none;
+          transform: none;
+        }
+      }
+
+      /* Reduced motion: same story, no animation. */
+      @media (prefers-reduced-motion: reduce) {
+        .scene {
+          height: auto;
+          padding: 4rem 2rem;
+        }
+        .scene__pin {
+          position: static;
+          height: auto;
+          display: block;
+        }
+        .scene__hud {
+          position: static;
+          transform: none;
+          margin: 0 auto 2rem;
+        }
+        .scene__spiral {
+          margin: 0 auto;
+          animation: none;
+          transform: none;
+        }
+      }
+
+      /* ============================================================
+         Demo cell styling — distinct colors so each cell is visually
+         trackable as it rotates and scales into the hero position.
+         ============================================================ */
+      .demo .fib-spiral__cell:nth-child(1) .fib-spiral__content { background: #ffadad; }
+      .demo .fib-spiral__cell:nth-child(2) .fib-spiral__content { background: #ffd6a5; }
+      .demo .fib-spiral__cell:nth-child(3) .fib-spiral__content { background: #fdffb6; }
+      .demo .fib-spiral__cell:nth-child(4) .fib-spiral__content { background: #caffbf; }
+      .demo .fib-spiral__cell:nth-child(5) .fib-spiral__content { background: #9bf6ff; }
+      .demo .fib-spiral__cell:nth-child(6) .fib-spiral__content { background: #a0c4ff; }
+      .demo .fib-spiral__cell:nth-child(7) .fib-spiral__content { background: #bdb2ff; }
+      .demo .fib-spiral__cell:nth-child(8) .fib-spiral__content { background: #ffc6ff; }
+
+      .demo .fib-spiral__cell:nth-child(1) { --fib-spiral-cell-bg: #ffadad; }
+      .demo .fib-spiral__cell:nth-child(2) { --fib-spiral-cell-bg: #ffd6a5; }
+      .demo .fib-spiral__cell:nth-child(3) { --fib-spiral-cell-bg: #fdffb6; }
+      .demo .fib-spiral__cell:nth-child(4) { --fib-spiral-cell-bg: #caffbf; }
+      .demo .fib-spiral__cell:nth-child(5) { --fib-spiral-cell-bg: #9bf6ff; }
+      .demo .fib-spiral__cell:nth-child(6) { --fib-spiral-cell-bg: #a0c4ff; }
+      .demo .fib-spiral__cell:nth-child(7) { --fib-spiral-cell-bg: #bdb2ff; }
+      .demo .fib-spiral__cell:nth-child(8) { --fib-spiral-cell-bg: #ffc6ff; }
+
+      .demo .fib-spiral__content {
+        font-weight: 700;
+        color: #222;
+      }
+    </style>
+  </head>
+  <body>
+    <section class="intro">
+      <h1>Spiral Grid — Scroll-Driven Zoom</h1>
+      <p>
+        Scroll down to fall into the spiral's eye. The whole layout is
+        rotated and scaled on a single
+        <code>animation-timeline: view()</code> keyframe, with
+        <code>transform-origin</code> anchored at the convergence point.
+      </p>
+      <p>
+        Because every cell shares that convergence point as its own
+        transform origin, each full
+        <code>scale(1/φ) rotate(-90°)</code> step composes perfectly
+        with the cells' own transforms — cell <em>n</em> slides into
+        the exact position and orientation that cell <em>n&nbsp;−&nbsp;1</em>
+        used to occupy. The spiral looks infinite even though there
+        are only eight cells in the markup.
+      </p>
+      <p>
+        One full turn is four 90° steps. The animation runs over the
+        scroll distance of the dark section below. Text rotates with
+        the spiral during motion and lands upright at both ends
+        (0° and −360°).
+      </p>
+      <p>
+        Design notes:
+        <code>doc/scroll-zoom.md</code>. This prototype uses 8 cells,
+        <code>--fib-spiral-gap: 3px</code> (kept small because the
+        gap scales visually with the zoom — see the design doc), and
+        a 4-step zoom (scale ≈ 6.854).
+      </p>
+      <p><span class="cta">Scroll ↓</span></p>
+    </section>
+
+    <section class="scene">
+      <div class="scene__pin">
+        <p class="scene__hud">
+          scroll · <strong>zoom into the eye</strong> · 4 × 90°
+        </p>
+        <div
+          class="fib-spiral demo scene__spiral"
+          style="--fib-spiral-gap: 3px"
+        >
+          <div class="fib-spiral__cell">
+            <div class="fib-spiral__content">1</div>
+          </div>
+          <div class="fib-spiral__cell">
+            <div class="fib-spiral__content">2</div>
+          </div>
+          <div class="fib-spiral__cell">
+            <div class="fib-spiral__content">3</div>
+          </div>
+          <div class="fib-spiral__cell">
+            <div class="fib-spiral__content">4</div>
+          </div>
+          <div class="fib-spiral__cell">
+            <div class="fib-spiral__content">5</div>
+          </div>
+          <div class="fib-spiral__cell">
+            <div class="fib-spiral__content">6</div>
+          </div>
+          <div class="fib-spiral__cell">
+            <div class="fib-spiral__content">7</div>
+          </div>
+          <div class="fib-spiral__cell">
+            <div class="fib-spiral__content">8</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="outro">
+      <h2>End of scene</h2>
+      <p>
+        At the end of the animation, cell 5 sits exactly where cell 1
+        started; cell 6 where cell 2 was; cell 7 where cell 3 was;
+        cell 8 where cell 4 was. The layout is
+        <em>mathematically indistinguishable</em> from the one you
+        saw at the top — just shifted four levels in.
+      </p>
+      <p>
+        This is the move that powers the v2 infinite-zoom navigator.
+        Same transform math, different input: scroll here, clicks or
+        arrow keys there.
+      </p>
+      <p>
+        If scroll-driven animations aren't supported (or
+        <code>prefers-reduced-motion: reduce</code> is set), the
+        spiral falls back to a static render and this page reads as
+        a normal article — the motion is the affordance, not the
+        content.
+      </p>
+    </section>
+
+    <section class="notice">
+      <h2>Things to look for</h2>
+      <ul>
+        <li>
+          The <strong>eye of the spiral stays locked to the viewport
+          center</strong> for the entire zoom. That's the
+          <code>translate(−22.36%, −22.36%)</code> + transform-origin
+          trick: the convergence point is invariant under the
+          scale/rotate, and the translate re-centers it in screen
+          space.
+        </li>
+        <li>
+          Each quarter of the scroll range advances the spiral by
+          one 90° step. Watch cell 2 slide into cell 1's slot during
+          the first quarter, cell 3 into cell 2's slot during the
+          second, and so on.
+        </li>
+        <li>
+          The <code>--fib-spiral-gap</code> clip-path survives the
+          zoom and scales proportionally with it. Pre-zoom gaps of
+          3px end at ~20px at full zoom — expected behavior for a
+          vector-scale-style zoom.
+        </li>
+        <li>
+          The fill cell (cell 8, golden rectangle) stays correct
+          through every intermediate state because its own
+          transform-origin is the same convergence point.
+        </li>
+      </ul>
+    </section>
+  </body>
+</html>
