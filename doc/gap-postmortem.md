@@ -184,3 +184,28 @@ spiral element itself:
   predictability for a slightly nicer-looking failure mode and adds
   CSS that doesn't earn its keep.
 
+## Follow-up: automatic content safe-zone
+
+Shipping `clip-path: inset()` exposed a second-order problem: inner
+content (text right against the edge, cards with a border, background
+images drawn edge-to-edge) gets visually clipped by the gap. Every user
+would otherwise have to re-derive the same scale-compensated padding
+on `.fib-spiral__content` to avoid it.
+
+The library now applies that padding automatically via
+`--fib-spiral-content-padding` (defaults to `var(--fib-spiral-gap) / 2`),
+also scale-compensated with `pow(phi, i)`. Users get a safe zone for
+content for free when they set a gap, and can opt out by overriding the
+custom property:
+
+```css
+.my-spiral {
+    --fib-spiral-gap: 8px;
+    --fib-spiral-content-padding: 0; /* go flush to the clip edge */
+}
+```
+
+Same `pow()` + precomputed fallback story as the gap itself. Reduced-motion
+mode resets the padding to `0` along with the clip-path. See section 9
+of `prototype/gap.html` for side-by-side "safe" vs "opt-out" demos.
+
