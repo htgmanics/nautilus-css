@@ -2,17 +2,20 @@
 
 A proposal for turning the Fibonacci Spiral Grid into a shareable, framework-agnostic CSS library.
 
-**Scope of v1:** Static spiral layout only. No infinite zoom (that's v2).
+**Scope of v1:** Static spiral layout, with the visual gap / content safe-zone feature. No infinite zoom (that's v2). Scroll-driven zoom ships as an opt-in modifier; its design notes live in `doc/scroll-zoom.md`.
+
+This doc tracks the **target API**. It is kept in sync with the prototype in `prototype/spiral-grid.css`.
 
 ---
 
 ## Package Identity
 
-- **Name:** `spiral-grid-css` (or `golden-spiral` if the npm name is available)
+- **Name:** `spiral-grid-css` (or `fibonacci-grid-css` if the npm name is available)
+- **CSS prefix:** `.fib-spiral` (deliberately long-ish to avoid collisions with user `.spiral` utility classes)
 - **Tagline:** "A golden-ratio spiral layout in pure CSS"
 - **Size target:** < 2KB gzipped for the core CSS
 - **Dependencies:** None
-- **Browser support:** Evergreen (Chrome/Firefox/Safari/Edge — last 2 versions)
+- **Browser support:** Evergreen (Chrome/Firefox/Safari/Edge — last 2 versions), plus a precomputed fallback path for browsers without CSS `pow()`
 
 ---
 
@@ -31,11 +34,14 @@ spiral-grid-css/
 │   ├── spiral-grid.scss             # main entry
 │   ├── _variables.scss              # phi, shrinkage-point, defaults
 │   ├── _core.scss                   # container + cell transforms
-│   ├── _modifiers.scss              # reverse, portrait, etc.
+│   ├── _modifiers.scss              # reverse, portrait, no-fill, etc.
+│   ├── _gap.scss                    # gap + content safe-zone
 │   ├── _responsive.scss             # container query breakpoints
 │   └── _a11y.scss                   # reduced-motion fallback
 ├── examples/
 │   ├── basic.html                   # plain HTML, no build
+│   ├── gap.html                     # gap + safe-zone feature
+│   ├── scroll-zoom.html             # scroll-driven spiral zoom
 │   ├── react.jsx
 │   ├── vue.vue
 │   └── svelte.svelte
@@ -53,72 +59,80 @@ spiral-grid-css/
 ### HTML structure
 
 ```html
-<div class="spiral" data-cells="7">
-    <div class="spiral__cell"><div class="spiral__content">A</div></div>
-    <div class="spiral__cell"><div class="spiral__content">B</div></div>
-    <div class="spiral__cell"><div class="spiral__content">C</div></div>
-    <div class="spiral__cell"><div class="spiral__content">D</div></div>
-    <div class="spiral__cell"><div class="spiral__content">E</div></div>
-    <div class="spiral__cell"><div class="spiral__content">F</div></div>
-    <div class="spiral__cell"><div class="spiral__content">G</div></div>
+<div class="fib-spiral">
+    <div class="fib-spiral__cell"><div class="fib-spiral__content">A</div></div>
+    <div class="fib-spiral__cell"><div class="fib-spiral__content">B</div></div>
+    <div class="fib-spiral__cell"><div class="fib-spiral__content">C</div></div>
+    <div class="fib-spiral__cell"><div class="fib-spiral__content">D</div></div>
+    <div class="fib-spiral__cell"><div class="fib-spiral__content">E</div></div>
+    <div class="fib-spiral__cell"><div class="fib-spiral__content">F</div></div>
+    <div class="fib-spiral__cell"><div class="fib-spiral__content">G</div></div>
 </div>
 ```
 
 **Why two wrappers (`__cell` and `__content`)?**
 - `__cell` handles the rotation + scale
-- `__content` handles counter-rotation and font-size compensation
+- `__content` handles counter-rotation, font-size compensation, and the scale-compensated content safe-zone when a gap is set
 - Users style `__content` without fighting the transform
+
+The last cell is **automatically reshaped** into the remaining golden rectangle so the spiral has no empty wedge at its eye. Opt out with `.fib-spiral--no-fill` to leave the wedge visible.
 
 ### Classes
 
 | Class | Purpose |
 |-------|---------|
-| `.spiral` | Container (golden rectangle) |
-| `.spiral__cell` | A cell in the spiral — auto-positioned via `:nth-child` |
-| `.spiral__content` | Content wrapper (counter-rotated, font-compensated) |
+| `.fib-spiral` | Container (golden rectangle) |
+| `.fib-spiral__cell` | A cell in the spiral — auto-positioned via `:nth-child` |
+| `.fib-spiral__content` | Content wrapper (counter-rotated, font-compensated, auto-padded when a gap is set) |
 
 ### Modifiers
 
 | Modifier | Effect |
 |----------|--------|
-| `.spiral--reverse` | Mirrors the spiral horizontally |
-| `.spiral--portrait` | Flips to tall aspect ratio (height > width) |
-| `.spiral--fill` | Container fills its parent (default: width-based) |
-| `.spiral--auto` | Auto-switches to portrait when container is taller than wide (via `@container`) |
-| `.spiral--no-counter-rotate` | Disables counter-rotation (cells + content both rotated) |
+| `.fib-spiral--reverse` | Mirrors the spiral horizontally (cells coil inward from the left) |
+| `.fib-spiral--portrait` | Flips to tall aspect ratio (height > width) |
+| `.fib-spiral--auto` | Auto-switches to portrait when the container is taller than wide (via `@container`) |
+| `.fib-spiral--no-fill` | Keeps the last cell as a plain square, leaving the golden-rectangle wedge visible at the eye (opt out of the default fill) |
+| `.fib-spiral--no-counter-rotate` | Content rotates with the cell (no counter-rotation). Useful when a wrapper transform (e.g. the scroll-driven zoom) provides the rotation instead, or for "sequential hero" effects. |
 
-### Data attributes
-
-| Attribute | Purpose |
-|-----------|---------|
-| `data-cells="N"` | Optional — hint for screen readers / can hide cells beyond N |
-
-### CSS Custom Properties (for customization)
+### CSS Custom Properties
 
 ```css
-.spiral {
+.fib-spiral {
     /* Math constants (rarely override) */
-    --spiral-phi: 0.618033989;
-    --spiral-shrinkage: 0.276393202250021;
+    --fib-spiral-phi: 0.618033989;
+    --fib-spiral-shrinkage: 0.276393202250021;
 
     /* Sizing */
-    --spiral-width: 100%;           /* container width */
-    --spiral-max-cells: 9;          /* how many cells to render */
+    --fib-spiral-width: 100%;       /* container width */
 
     /* Animation (for user-driven transitions) */
-    --spiral-transition: transform 0.4s ease;
+    --fib-spiral-transition: transform 0.4s ease;
 
     /* Overflow control */
-    --spiral-overflow: hidden;      /* set to 'visible' if needed */
+    --fib-spiral-overflow: hidden;  /* set to 'visible' if needed */
 
-    /* Font-size cap (prevents layout thrashing in deep cells) */
-    --spiral-font-size-max: 8rem;
+    /* Font-size cap (prevents deep cells from getting enormous text) */
+    --fib-spiral-font-size-max: 8rem;
 
-    /* Starting orientation */
-    --spiral-rotation-step: 90deg;  /* advanced: change rotation per step */
-    --spiral-direction: 1;          /* 1 = clockwise, -1 = counter */
+    /* Visual gap between cells (scale-compensated via clip-path) */
+    --fib-spiral-gap: 0px;
+
+    /* Automatic content safe-zone (also scale-compensated).
+       Defaults to gap/2 so inner content stays inside the clipped area.
+       Override to 0 to let content go flush to the clip edge. */
+    --fib-spiral-content-padding: calc(var(--fib-spiral-gap) / 2);
+}
+
+.fib-spiral__cell {
+    /* Per-cell background used by the fill cell.
+       Set this (not `background` on __content) to get a cell-sized bg
+       that survives the fill cell's reshape to a golden rectangle. */
+    --fib-spiral-cell-bg: transparent;
 }
 ```
+
+**Cell count.** v1 ships precomputed rules for up to 10 cells. Beyond the 10th, cells are hidden via `display: none` rather than miscomputed. If you need more: compose multiple spirals side by side (e.g. 8 + 7 = 15 cells), or render into a deeper spiral and accept that the deepest cells become sub-pixel.
 
 ---
 
@@ -129,106 +143,112 @@ spiral-grid-css/
    Spiral Grid v1 — Core
    ============================================ */
 
-.spiral {
-    --spiral-phi: 0.618033989;
-    --spiral-shrinkage: 0.276393202250021;
+.fib-spiral {
+    --fib-spiral-phi: 0.618033989;
+    --fib-spiral-shrinkage: 0.276393202250021;
 
     /* User-tunable */
-    --spiral-width: 100%;
-    --spiral-overflow: hidden;
-    --spiral-transition: transform 0.4s ease;
-    --spiral-font-size-max: 8rem;
+    --fib-spiral-width: 100%;
+    --fib-spiral-overflow: hidden;
+    --fib-spiral-transition: transform 0.4s ease;
+    --fib-spiral-font-size-max: 8rem;
+    --fib-spiral-gap: 0px;
+    --fib-spiral-content-padding: calc(var(--fib-spiral-gap) / 2);
 
     position: relative;
-    width: var(--spiral-width);
-    aspect-ratio: calc(1 + var(--spiral-phi)) / 1;  /* golden rectangle */
-    overflow: var(--spiral-overflow);
+    width: var(--fib-spiral-width);
+    aspect-ratio: calc(1 + var(--fib-spiral-phi)) / 1;  /* golden rectangle */
+    overflow: var(--fib-spiral-overflow);
     container-type: inline-size;
 }
 
-.spiral__cell {
+.fib-spiral__cell {
     position: absolute;
     top: 0;
     left: 0;
-    width: calc(var(--spiral-phi) * 100%);
+    width: calc(var(--fib-spiral-phi) * 100%);
     aspect-ratio: 1;
     /* Transform-origin at the spiral's convergence point,
        in cell-local coordinates (x divided by phi because
        cell width = phi × container width). */
     transform-origin:
-        calc((1 - var(--spiral-shrinkage)) / var(--spiral-phi) * 100%)
-        calc((1 - var(--spiral-shrinkage)) * 100%);
-    transition: var(--spiral-transition, none);
+        calc((1 - var(--fib-spiral-shrinkage)) / var(--fib-spiral-phi) * 100%)
+        calc((1 - var(--fib-spiral-shrinkage)) * 100%);
+    transition: var(--fib-spiral-transition, none);
     z-index: var(--i, 0);
+    --i: 0;
 }
 
-/* Each cell scales by phi^i and rotates by 90deg * i */
-.spiral__cell:nth-child(1) { --i: 0; }
-.spiral__cell:nth-child(2) { --i: 1; }
-.spiral__cell:nth-child(3) { --i: 2; }
-.spiral__cell:nth-child(4) { --i: 3; }
-.spiral__cell:nth-child(5) { --i: 4; }
-.spiral__cell:nth-child(6) { --i: 5; }
-.spiral__cell:nth-child(7) { --i: 6; }
-.spiral__cell:nth-child(8) { --i: 7; }
-.spiral__cell:nth-child(9) { --i: 8; }
+/* Index each cell via :nth-child — just sets --i for the transform below. */
+.fib-spiral__cell:nth-child(1)  { --i: 0; }
+.fib-spiral__cell:nth-child(2)  { --i: 1; }
+.fib-spiral__cell:nth-child(3)  { --i: 2; }
+.fib-spiral__cell:nth-child(4)  { --i: 3; }
+.fib-spiral__cell:nth-child(5)  { --i: 4; }
+.fib-spiral__cell:nth-child(6)  { --i: 5; }
+.fib-spiral__cell:nth-child(7)  { --i: 6; }
+.fib-spiral__cell:nth-child(8)  { --i: 7; }
+.fib-spiral__cell:nth-child(9)  { --i: 8; }
+.fib-spiral__cell:nth-child(10) { --i: 9; }
 
-/* Modern browsers: use pow() directly */
+/* Hide beyond the supported cell count rather than render wrong math. */
+.fib-spiral__cell:nth-child(n+11) { display: none; }
+
+/* Modern browsers: use pow() for a single rule that covers all indices. */
 @supports (width: calc(pow(2, 3) * 1px)) {
-    .spiral__cell {
+    .fib-spiral__cell {
         transform:
-            scale(pow(var(--spiral-phi), var(--i)))
+            scale(pow(var(--fib-spiral-phi), var(--i)))
             rotate(calc(90deg * var(--i)));
+        /* Scale-compensated visual gap via clip-path (layout untouched). */
+        clip-path: inset(
+            calc(var(--fib-spiral-gap) / 2 / pow(var(--fib-spiral-phi), var(--i)))
+        );
     }
-}
-
-/* Fallback for browsers without pow(): precomputed values */
-@supports not (width: calc(pow(2, 3) * 1px)) {
-    .spiral__cell:nth-child(1) { transform: scale(1)     rotate(0deg); }
-    .spiral__cell:nth-child(2) { transform: scale(0.618) rotate(90deg); }
-    .spiral__cell:nth-child(3) { transform: scale(0.382) rotate(180deg); }
-    .spiral__cell:nth-child(4) { transform: scale(0.236) rotate(270deg); }
-    .spiral__cell:nth-child(5) { transform: scale(0.146) rotate(360deg); }
-    .spiral__cell:nth-child(6) { transform: scale(0.090) rotate(450deg); }
-    .spiral__cell:nth-child(7) { transform: scale(0.056) rotate(540deg); }
-    .spiral__cell:nth-child(8) { transform: scale(0.034) rotate(630deg); }
-    .spiral__cell:nth-child(9) { transform: scale(0.021) rotate(720deg); }
-}
-
-/* Counter-rotate and font-compensate content */
-.spiral__content {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-sizing: border-box;
-}
-
-@supports (width: calc(pow(2, 3) * 1px)) {
-    .spiral__content {
+    .fib-spiral__content {
         transform: rotate(calc(-90deg * var(--i)));
-        font-size: clamp(1rem, calc(1rem / pow(var(--spiral-phi), var(--i))), var(--spiral-font-size-max));
+        font-size: clamp(
+            1rem,
+            calc(1rem / pow(var(--fib-spiral-phi), var(--i))),
+            var(--fib-spiral-font-size-max)
+        );
+        /* Scale-compensated safe-zone so inner content (borders, text,
+           card edges) stays inside the clip. */
+        padding: calc(
+            var(--fib-spiral-content-padding) / pow(var(--fib-spiral-phi), var(--i))
+        );
+        box-sizing: border-box;
     }
+}
+
+/* Fallback path: precomputed per-index rules for browsers without pow().
+   (One block per i, each with its own scale, rotate, clip-path coefficient,
+   and padding coefficient. Omitted here for brevity.) */
+
+/* ============================================
+   Modifier: no-counter-rotate
+   ============================================ */
+.fib-spiral--no-counter-rotate .fib-spiral__content.fib-spiral__content {
+    transform: none;
 }
 
 /* ============================================
    Modifier: reverse
    ============================================ */
-.spiral--reverse .spiral__cell {
+.fib-spiral--reverse .fib-spiral__cell {
     left: auto;
     right: 0;
     transform-origin:
-        calc(100% - (1 - var(--spiral-shrinkage)) / var(--spiral-phi) * 100%)
-        calc((1 - var(--spiral-shrinkage)) * 100%);
+        calc(100% - (1 - var(--fib-spiral-shrinkage)) / var(--fib-spiral-phi) * 100%)
+        calc((1 - var(--fib-spiral-shrinkage)) * 100%);
 }
 @supports (width: calc(pow(2, 3) * 1px)) {
-    .spiral--reverse .spiral__cell {
+    .fib-spiral--reverse .fib-spiral__cell {
         transform:
-            scale(pow(var(--spiral-phi), var(--i)))
+            scale(pow(var(--fib-spiral-phi), var(--i)))
             rotate(calc(-90deg * var(--i)));
     }
-    .spiral--reverse .spiral__content {
+    .fib-spiral--reverse .fib-spiral__content {
         transform: rotate(calc(90deg * var(--i)));
     }
 }
@@ -236,50 +256,58 @@ spiral-grid-css/
 /* ============================================
    Modifier: portrait
    ============================================ */
-.spiral--portrait {
-    aspect-ratio: 1 / calc(1 + var(--spiral-phi));
+.fib-spiral--portrait {
+    aspect-ratio: 1 / calc(1 + var(--fib-spiral-phi));
 }
-.spiral--portrait .spiral__cell {
+.fib-spiral--portrait .fib-spiral__cell {
     width: 100%;
     transform-origin:
-        calc(var(--spiral-shrinkage) * 100%)
-        calc((1 - var(--spiral-shrinkage)) * (1 + var(--spiral-phi)) * 100%);
+        calc(var(--fib-spiral-shrinkage) * 100%)
+        calc((1 - var(--fib-spiral-shrinkage)) * (1 + var(--fib-spiral-phi)) * 100%);
 }
 
 /* Auto-switch to portrait via container query */
 @container (aspect-ratio < 1) {
-    .spiral--auto {
-        aspect-ratio: 1 / calc(1 + var(--spiral-phi));
+    .fib-spiral--auto {
+        aspect-ratio: 1 / calc(1 + var(--fib-spiral-phi));
     }
-    .spiral--auto .spiral__cell {
+    .fib-spiral--auto .fib-spiral__cell {
         width: 100%;
         transform-origin:
-            calc(var(--spiral-shrinkage) * 100%)
-            calc((1 - var(--spiral-shrinkage)) * (1 + var(--spiral-phi)) * 100%);
+            calc(var(--fib-spiral-shrinkage) * 100%)
+            calc((1 - var(--fib-spiral-shrinkage)) * (1 + var(--fib-spiral-phi)) * 100%);
     }
 }
+
+/* ============================================
+   Default fill: last cell reshapes to the golden-rectangle wedge
+   so the eye has no empty space. Opt out with .fib-spiral--no-fill.
+   (Reshape geometry + content centering rules omitted here.)
+   ============================================ */
 
 /* ============================================
    Accessibility: reduced motion fallback
    ============================================ */
 @media (prefers-reduced-motion: reduce) {
-    .spiral.spiral {
+    .fib-spiral.fib-spiral {
         display: grid;
         grid-template-columns: 1fr;
         gap: 0.5rem;
         aspect-ratio: auto;
         overflow: visible;
     }
-    .spiral.spiral .spiral__cell {
+    .fib-spiral.fib-spiral .fib-spiral__cell {
         position: static;
         transform: none;
         width: 100%;
         aspect-ratio: auto;
         z-index: auto;
+        clip-path: none;
     }
-    .spiral.spiral .spiral__content {
+    .fib-spiral.fib-spiral .fib-spiral__content {
         transform: none;
         font-size: 1rem;
+        padding: 0;
     }
 }
 ```
@@ -315,10 +343,18 @@ spiral-grid-css/
 ```html
 <link rel="stylesheet" href="https://unpkg.com/spiral-grid-css/dist/spiral-grid.min.css">
 
-<div class="spiral">
-    <div class="spiral__cell"><div class="spiral__content"><h1>Hello</h1></div></div>
-    <div class="spiral__cell"><div class="spiral__content">World</div></div>
-    <div class="spiral__cell"><div class="spiral__content">...</div></div>
+<div class="fib-spiral">
+    <div class="fib-spiral__cell"><div class="fib-spiral__content"><h1>Hello</h1></div></div>
+    <div class="fib-spiral__cell"><div class="fib-spiral__content">World</div></div>
+    <div class="fib-spiral__cell"><div class="fib-spiral__content">...</div></div>
+</div>
+```
+
+With a visible gap and automatic content safe-zone:
+
+```html
+<div class="fib-spiral" style="--fib-spiral-gap: 8px">
+    <!-- cells — inner content stays inside the safe zone automatically -->
 </div>
 ```
 
@@ -329,10 +365,10 @@ import 'spiral-grid-css/dist/spiral-grid.css';
 
 function Portfolio({ projects }) {
     return (
-        <div className="spiral">
+        <div className="fib-spiral" style={{ '--fib-spiral-gap': '6px' }}>
             {projects.map(p => (
-                <div key={p.id} className="spiral__cell">
-                    <div className="spiral__content">
+                <div key={p.id} className="fib-spiral__cell">
+                    <div className="fib-spiral__content">
                         <h3>{p.title}</h3>
                     </div>
                 </div>
@@ -351,8 +387,9 @@ function Portfolio({ projects }) {
 );
 
 .my-portfolio {
-    @extend .spiral;
-    --spiral-width: 80vw;
+    @extend .fib-spiral;
+    --fib-spiral-width: 80vw;
+    --fib-spiral-gap: 4px;
 }
 ```
 
@@ -372,7 +409,8 @@ function Portfolio({ projects }) {
 
 - Install (npm, CDN, copy-paste)
 - First spiral (5 minutes)
-- Customization basics
+- Customization basics (size, gap, colors)
+- Safe-zone opt-out recipe
 
 ### `docs/math.md` — The Geometry
 
@@ -380,6 +418,7 @@ function Portfolio({ projects }) {
 - Why 90° rotation
 - Derivation of `shrinkage_point = phi² × (1 − phi)`
 - Why the transform-origin is at that point
+- Why the gap must be divided by `pow(phi, i)` to stay visually constant
 - Diagrams (SVG) showing the construction
 
 ### `docs/accessibility.md`
@@ -397,6 +436,8 @@ function Portfolio({ projects }) {
 - Navigation menu
 - Hover effects
 - Transitions between states
+- Per-cell scrolling (once shipped — see `doc/cell-scrolling.md`)
+- Scroll-driven spiral zoom (once shipped — see `doc/scroll-zoom.md`)
 
 ---
 
@@ -411,10 +452,10 @@ function Portfolio({ projects }) {
 
 ## Risks & Open Questions
 
-1. **`pow()` browser support** — currently Chrome 111+, Safari 16.4+, Firefox 118+. Good enough for 2026, but need fallback. The precomputed nth-child version handles this.
-2. **Counter-rotation and text wrapping** — text inside rotated cells wraps at the rotated width, which can surprise users. Need clear docs + maybe a `spiral__content--text` variant with controlled width.
+1. **`pow()` browser support** — currently Chrome 111+, Safari 16.4+, Firefox 118+. Good enough for 2026, but the precomputed nth-child fallback handles older browsers.
+2. **Counter-rotation and text wrapping** — text inside rotated cells wraps at the rotated width, which can surprise users. Need clear docs + maybe a `fib-spiral__content--text` variant with controlled width.
 3. **Container query support** — widely supported now (2023+), but if we want older browser support, we'd need viewport-based breakpoints as fallback.
-4. **Naming collisions** — `.spiral` is common; consider `.sg-spiral` prefix if feedback suggests conflicts.
+4. **Gap depth limit** — the scale-compensated gap eventually exceeds a deep cell's pre-scale size and makes the cell invisible. This is geometry, not a bug; the postmortem documents the `container_width > gap × 1.618^N` threshold and the `cqi` / `@media` patterns for living with it. We deliberately do **not** clamp.
 5. **Content overflow** — smaller cells can't fit much content. Need guidance on what kind of content works where.
 
 ---
@@ -425,7 +466,7 @@ function Portfolio({ projects }) {
 - [ ] `prefers-reduced-motion` fallback tested with screen reader
 - [ ] README with GIF demo
 - [ ] CodePen/StackBlitz demo link
-- [ ] Documented math derivation
+- [ ] Documented math derivation (including gap / safe-zone math)
 - [ ] Published to npm
 - [ ] Example sites (portfolio, gallery, hero)
 - [ ] Accessibility audit passed
