@@ -125,7 +125,9 @@
       .scene__spiral {
         --fib-spiral-shrinkage: 0.276393202250021;
         --convergence-offset: -22.3606797749979%;
-        width: min(76vmin, 620px);
+        /* Full-width spiral. Capped so height stays within the viewport
+           (aspect ratio is 1.618:1, so width / 1.618 must be <= 100vh). */
+        width: min(100vw, calc(100vh * 1.6180339887));
         transform-origin:
           calc((1 - var(--fib-spiral-shrinkage)) * 100%)
           calc((1 - var(--fib-spiral-shrinkage)) * 100%);
@@ -280,7 +282,7 @@
           scroll · <strong>zoom into the eye</strong> · 4 × 90°
         </p>
         <div
-          class="fib-spiral demo scene__spiral"
+          class="fib-spiral fib-spiral--no-counter-rotate demo scene__spiral"
           style="--fib-spiral-gap: 3px"
         >
           <div class="fib-spiral__cell">
