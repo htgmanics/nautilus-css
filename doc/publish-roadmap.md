@@ -39,9 +39,10 @@ Showcase examples that demonstrate the system's visual potential:
 
 ## 3c. Feature Branches
 
-- [ ] Scrollable content — `fib-spiral__content--scroll`, `--scroll-x`, `--scroll-y` modifiers
-- [ ] Gap (`--fib-spiral-gap`) — see `doc/gap-postmortem.md` for prior research
-- [ ] Infinite zoom (v2) — zoom into the convergence point to reveal nested spirals; companion package (`fib-spiral-navigator`)
+- [ ] Scrollable content — `fib-spiral__content--scroll`, `--scroll-x`, `--scroll-y` modifiers. Design notes in `doc/cell-scrolling.md` (builds on the auto safe-zone introduced with `--fib-spiral-gap` to keep scrollbars clear of the clip).
+- [x] Gap (`--fib-spiral-gap`) — see `doc/gap-postmortem.md` for prior research (resolved via `clip-path: inset()`; see "Resolved" section)
+- [ ] Scroll-driven spiral zoom — `.fib-spiral--scroll-zoom` modifier using CSS Scroll-Driven Animations (`animation-timeline: view()`) to zoom into the convergence point as the reader scrolls. Design notes in `doc/scroll-zoom.md`; working prototype in `prototype/scroll-zoom.html`. Shares transform math with the infinite-zoom navigator (below).
+- [ ] Infinite zoom (v2) — zoom into the convergence point to reveal nested spirals; companion package (`fib-spiral-navigator`). Same self-similarity math as scroll-driven zoom, different input (clicks/arrows instead of scroll).
 
 ## 4. Quality & Testing
 

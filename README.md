@@ -5,13 +5,37 @@ A pure-CSS Fibonacci / golden-ratio spiral grid layout.
 Cells are squares sized by powers of φ (≈ 0.618), rotated and shrunk around the
 spiral's convergence point to produce a classic Fibonacci tiling with zero
 JavaScript. The last cell fills the remaining golden rectangle by default — opt
-out with `spiral--no-fill` to leave the wedge visible.
+out with `fib-spiral--no-fill` to leave the wedge visible.
+
+## Features
+
+- Pure CSS: no JavaScript, no build step. Just `prototype/spiral-grid.css`.
+- Auto-fill last cell into the golden rectangle (opt out per spiral).
+- Scale-compensated visual gap via `--fib-spiral-gap` (clip-path based, layout
+  untouched) with an automatic content safe-zone that scales with each cell.
+- Orientation modifiers: `fib-spiral--reverse`, `fib-spiral--portrait`,
+  `fib-spiral--auto` (responsive sizing), `fib-spiral--no-counter-rotate`
+  (let content rotate with the cell — useful for scroll-driven effects).
+- Graceful fallbacks for browsers without CSS `pow()` and for
+  `prefers-reduced-motion: reduce`.
 
 ## Prototype
 
-Open `prototype/index.html` in a browser to see the demos.
+Open any of these in a browser:
+
+- `prototype/index.html` — the main demo gallery (sweeps, fill, reverse,
+  portrait, multi-spiral, responsive resize).
+- `prototype/gap.html` — the gap / clip-path feature in isolation, including
+  edge-bleed and content-clipping showcases.
+- `prototype/scroll-zoom.html` — scroll-driven spiral zoom: scroll the page
+  to zoom into the eye while each cell takes its turn as the upright hero.
 
 ## Docs
 
 - `doc/golden-ratio-spiral-grid.md` — math and convergence-point derivations.
 - `doc/spiral-grid-library-sketch.md` — library API sketch.
+- `doc/gap-postmortem.md` — how the gap feature was designed (tried
+  approaches, why clip-path won).
+- `doc/cell-scrolling.md` — design notes for per-cell scrolling.
+- `doc/scroll-zoom.md` — design notes for the scroll-driven spiral zoom.
+- `doc/publish-roadmap.md` — roadmap toward publishing as a library.
