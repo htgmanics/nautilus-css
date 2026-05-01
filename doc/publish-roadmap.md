@@ -23,9 +23,15 @@ Before anything packaging-related, the core CSS and API must be stable.
       Script: `test/verify-fallback.mjs` — zero-dep, runnable now, will move
       into the §5 test suite verbatim. All 10 indices pass for both forward
       and reverse variants.
-- [ ] Cell scrolling — `spiral-grid__content--scroll`, `--scroll-x`, `--scroll-y`
-      modifiers. Design notes in `doc/cell-scrolling.md` (builds on the auto
-      safe-zone from `--spiral-grid-gap`). Decide in or out for v1.
+- [x] Cell scrolling — shipped as cell-level modifiers
+      (`spiral-grid__content--scroll`, `--scroll-x`, `--scroll-y`) in
+      `prototype/spiral-grid.css`. Stress-test prototype at
+      `prototype/scroll.html`; design notes updated in
+      `doc/cell-scrolling.md` with the "shipped" decisions. Reduced-motion
+      block resets `overflow: visible` so stacked fallback scrolls with
+      the page, not per-cell. Spiral-level `--scrollable` with a depth cap
+      was rejected (no runtime knob possible; hardcoded depth would be a
+      lie about what's usable at arbitrary container widths).
 - [x] Gap (`--spiral-grid-gap`) — resolved via `clip-path: inset()`; see
       `doc/gap-postmortem.md` "Resolved" section.
 

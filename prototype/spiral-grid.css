@@ -416,6 +416,46 @@
 }
 
 /* ============================================================
+   Feature: per-cell scrolling
+
+   Opt-in modifier on .spiral-grid__content. Useful for card-style
+   content that overflows its cell (text, lists, image strips).
+
+   The scroll viewport sits inside the gap's auto safe-zone, so
+   scrollbars never collide with the cell's clip-path.
+
+   The default `display: flex` centering is replaced with
+   `display: block` and `text-align: start` so overflowing content
+   flows from the top and reads naturally — flex-centering with
+   overflow centers the overflowing portion off-screen.
+
+   Depth caveat: cells shrink by pow(phi, i), so even a `thin`
+   scrollbar dominates cells beyond ~5 at typical container widths.
+   Apply this modifier thoughtfully \u2014 usually to cells 1\u20135 only.
+   See doc/cell-scrolling.md for the depth/footprint table.
+   ============================================================ */
+.spiral-grid__content--scroll,
+.spiral-grid__content--scroll-y {
+    display: block;
+    overflow-y: auto;
+    overflow-x: hidden;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+    scrollbar-gutter: stable;
+    text-align: start;
+}
+
+.spiral-grid__content--scroll-x {
+    display: block;
+    overflow-x: auto;
+    overflow-y: hidden;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+    scrollbar-gutter: stable;
+    text-align: start;
+}
+
+/* ============================================================
    Accessibility: reduced-motion fallback
    Degrades to a simple stacked layout.
    Uses @layer to sit below author styles but the doubled
@@ -442,5 +482,9 @@
         transform: none;
         font-size: 1rem;
         padding: 0;
+        /* Reset the scroll modifier so each cell flows with the page,
+           not as an independent scroll container. */
+        overflow: visible;
+        max-height: none;
     }
 }

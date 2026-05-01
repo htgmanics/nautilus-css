@@ -94,6 +94,8 @@ The last cell is **automatically reshaped** into the remaining golden rectangle 
 | `.spiral-grid--auto` | Auto-switches to portrait when the container is taller than wide (via `@container`) |
 | `.spiral-grid--no-fill` | Keeps the last cell as a plain square, leaving the golden-rectangle wedge visible at the eye (opt out of the default fill) |
 | `.spiral-grid--no-counter-rotate` | Content rotates with the cell (no counter-rotation). Useful when a wrapper transform (e.g. the scroll-driven zoom) provides the rotation instead, or for "sequential hero" effects. |
+| `.spiral-grid__content--scroll` (also `--scroll-y`) | Makes that cell a vertical scroll container. Scrollbar sits inside the gap's safe-zone. Apply per-cell; design notes in `doc/cell-scrolling.md`. Recommended for cells 1–5 only (deeper cells can't fit usable scrollbars). |
+| `.spiral-grid__content--scroll-x` | Horizontal-only variant. Useful for image strips or timelines inside a cell. |
 
 ### CSS Custom Properties
 

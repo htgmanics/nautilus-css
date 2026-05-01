@@ -1,9 +1,31 @@
 # Per-Cell Scrolling — Design Notes
 
-Forward-looking research for a `--spiral-grid-content-scroll` (or
-`spiral-grid__content--scroll`) feature that allows long content inside
-a cell to scroll independently, without breaking the spiral's visual
-integrity.
+Design notes for the `spiral-grid__content--scroll` modifier family,
+which allows long content inside a cell to scroll independently without
+breaking the spiral's visual integrity.
+
+## Status
+
+**Shipped in v1** as cell-level modifiers — `spiral-grid__content--scroll`
+(y-axis, default), `--scroll-x`, `--scroll-y`. Implementation lives in the
+"Feature: per-cell scrolling" block of `prototype/spiral-grid.css`;
+working demo in `prototype/scroll.html`.
+
+Resolved against the original open questions:
+
+- **API shape (Q1):** cell-level only. A spiral-level `--scrollable`
+  wrapper was considered but rejected — no runtime depth knob is cleanly
+  possible (CSS `:nth-child()` can't accept custom properties), and
+  hardcoding a depth would be a lie about what's actually usable.
+- **Custom scrollbar (Q2):** deferred. v1 ships `scrollbar-width: thin`
+  with native defaults; custom `::-webkit-scrollbar` is a follow-up if
+  cross-OS consistency becomes a priority.
+- **Focus (Q3):** left to users. The library doesn't add `tabindex`
+  automatically — docs recommend `tabindex="0"` on outer cells where
+  scroll is useful and skipping it on decorative deep cells.
+- **Zoom interaction (Q4):** noted as an incompatibility. Spirals using
+  the (post-v1) scroll-driven zoom should not also enable cell scroll
+  on the same cells.
 
 ## Goal
 
