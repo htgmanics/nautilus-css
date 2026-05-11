@@ -3,127 +3,128 @@
    Pure-CSS Fibonacci spiral layout
    ============================================================ */
 
-.fib-spiral {
-    /* Math constants */
-    --fib-spiral-phi: 0.618033989;
-    --fib-spiral-shrinkage: 0.276393202250021;
+.spiral-grid {
+    /* Internal math constants — do NOT override.
+       Changing --spiral-grid-phi invalidates the precomputed fallback
+       table (see @supports not (pow()) blocks below) and the
+       geometry test in test/verify-fallback.mjs. */
+    --spiral-grid-phi: 0.618033989;
+    --spiral-grid-shrinkage: 0.276393202250021;
 
     /* Derived origin, in cell-local coordinates:
        - x: (1 - shrinkage) / phi * 100%  ≈ 117.08%  (outside cell, to the right)
        - y: (1 - shrinkage) * 100%        ≈ 72.36%
-       These are pre-applied to .fib-spiral__cell below. */
+       These are pre-applied to .spiral-grid__cell below. */
 
-    /* User-tunable */
-    --fib-spiral-width: 100%;
-    --fib-spiral-overflow: hidden;
-    --fib-spiral-transition: transform 0.4s ease;
-    --fib-spiral-font-size-max: 8rem;
+    /* Public knobs */
+    --spiral-grid-transition: none;
+    --spiral-grid-font-size-max: 8rem;
 
     position: relative;
-    width: var(--fib-spiral-width);
+    width: 100%;
     /* Golden rectangle: width : height = 1.618 : 1 */
-    aspect-ratio: calc(1 + var(--fib-spiral-phi)) / 1;
-    overflow: var(--fib-spiral-overflow);
+    aspect-ratio: calc(1 + var(--spiral-grid-phi)) / 1;
+    overflow: hidden;
     container-type: inline-size;
 }
 
-.fib-spiral__cell {
+.spiral-grid__cell {
     position: absolute;
     top: 0;
     left: 0;
     /* Square of side = container height = phi × container width */
-    width: calc(var(--fib-spiral-phi) * 100%);
+    width: calc(var(--spiral-grid-phi) * 100%);
     aspect-ratio: 1;
     /* Transform-origin at the spiral's convergence point,
        expressed in cell-local percentages. */
     transform-origin:
-        calc((1 - var(--fib-spiral-shrinkage)) / var(--fib-spiral-phi) * 100%)
-        calc((1 - var(--fib-spiral-shrinkage)) * 100%);
-    transition: var(--fib-spiral-transition);
-    z-index: var(--i, 0);
-    --i: 0;
+        calc((1 - var(--spiral-grid-shrinkage)) / var(--spiral-grid-phi) * 100%)
+        calc((1 - var(--spiral-grid-shrinkage)) * 100%);
+    transition: var(--spiral-grid-transition);
+    z-index: var(--spiral-grid-index, 0);
+    --spiral-grid-index: 0;
 }
 
-/* Index each cell. nth-child assignments are just setting --i;
+/* Index each cell. nth-child assignments are just setting --spiral-grid-index;
    the transform below consumes it. */
-.fib-spiral__cell:nth-child(1)  { --i: 0; }
-.fib-spiral__cell:nth-child(2)  { --i: 1; }
-.fib-spiral__cell:nth-child(3)  { --i: 2; }
-.fib-spiral__cell:nth-child(4)  { --i: 3; }
-.fib-spiral__cell:nth-child(5)  { --i: 4; }
-.fib-spiral__cell:nth-child(6)  { --i: 5; }
-.fib-spiral__cell:nth-child(7)  { --i: 6; }
-.fib-spiral__cell:nth-child(8)  { --i: 7; }
-.fib-spiral__cell:nth-child(9)  { --i: 8; }
-.fib-spiral__cell:nth-child(10) { --i: 9; }
+.spiral-grid__cell:nth-child(1)  { --spiral-grid-index: 0; }
+.spiral-grid__cell:nth-child(2)  { --spiral-grid-index: 1; }
+.spiral-grid__cell:nth-child(3)  { --spiral-grid-index: 2; }
+.spiral-grid__cell:nth-child(4)  { --spiral-grid-index: 3; }
+.spiral-grid__cell:nth-child(5)  { --spiral-grid-index: 4; }
+.spiral-grid__cell:nth-child(6)  { --spiral-grid-index: 5; }
+.spiral-grid__cell:nth-child(7)  { --spiral-grid-index: 6; }
+.spiral-grid__cell:nth-child(8)  { --spiral-grid-index: 7; }
+.spiral-grid__cell:nth-child(9)  { --spiral-grid-index: 8; }
+.spiral-grid__cell:nth-child(10) { --spiral-grid-index: 9; }
 
 /* Hide cells beyond the supported limit.
    Extra content? Split into multiple spirals (e.g. 8 + 7 cells). */
-.fib-spiral__cell:nth-child(n+11) { display: none; }
+.spiral-grid__cell:nth-child(n+11) { display: none; }
 
 /* Modern path: use pow() for a single rule that covers all indices. */
 @supports (width: calc(pow(2, 3) * 1px)) {
-    .fib-spiral__cell {
+    .spiral-grid__cell {
         transform:
-            scale(pow(var(--fib-spiral-phi), var(--i)))
-            rotate(calc(90deg * var(--i)));
+            scale(pow(var(--spiral-grid-phi), var(--spiral-grid-index)))
+            rotate(calc(90deg * var(--spiral-grid-index)));
     }
-    .fib-spiral__content {
-        transform: rotate(calc(-90deg * var(--i)));
-        font-size: clamp(1rem, calc(1rem / pow(var(--fib-spiral-phi), var(--i))), var(--fib-spiral-font-size-max));
+    .spiral-grid__content {
+        transform: rotate(calc(-90deg * var(--spiral-grid-index)));
+        font-size: clamp(1rem, calc(1rem / pow(var(--spiral-grid-phi), var(--spiral-grid-index))), var(--spiral-grid-font-size-max));
     }
 }
 
 /* Fallback path: precomputed per-index rules for browsers without pow(). */
 @supports not (width: calc(pow(2, 3) * 1px)) {
-    .fib-spiral__cell:nth-child(1)  { transform: scale(1)        rotate(0deg);   }
-    .fib-spiral__cell:nth-child(2)  { transform: scale(0.618034) rotate(90deg);  }
-    .fib-spiral__cell:nth-child(3)  { transform: scale(0.381966) rotate(180deg); }
-    .fib-spiral__cell:nth-child(4)  { transform: scale(0.236068) rotate(270deg); }
-    .fib-spiral__cell:nth-child(5)  { transform: scale(0.145898) rotate(360deg); }
-    .fib-spiral__cell:nth-child(6)  { transform: scale(0.090170) rotate(450deg); }
-    .fib-spiral__cell:nth-child(7)  { transform: scale(0.055728) rotate(540deg); }
-    .fib-spiral__cell:nth-child(8)  { transform: scale(0.034442) rotate(630deg); }
-    .fib-spiral__cell:nth-child(9)  { transform: scale(0.021286) rotate(720deg); }
-    .fib-spiral__cell:nth-child(10) { transform: scale(0.013156) rotate(810deg); }
+    .spiral-grid__cell:nth-child(1)  { transform: scale(1)        rotate(0deg);   }
+    .spiral-grid__cell:nth-child(2)  { transform: scale(0.618034) rotate(90deg);  }
+    .spiral-grid__cell:nth-child(3)  { transform: scale(0.381966) rotate(180deg); }
+    .spiral-grid__cell:nth-child(4)  { transform: scale(0.236068) rotate(270deg); }
+    .spiral-grid__cell:nth-child(5)  { transform: scale(0.145898) rotate(360deg); }
+    .spiral-grid__cell:nth-child(6)  { transform: scale(0.090170) rotate(450deg); }
+    .spiral-grid__cell:nth-child(7)  { transform: scale(0.055728) rotate(540deg); }
+    .spiral-grid__cell:nth-child(8)  { transform: scale(0.034442) rotate(630deg); }
+    .spiral-grid__cell:nth-child(9)  { transform: scale(0.021286) rotate(720deg); }
+    .spiral-grid__cell:nth-child(10) { transform: scale(0.013156) rotate(810deg); }
 
-    .fib-spiral__cell:nth-child(1) .fib-spiral__content  { transform: rotate(0deg);    font-size: 1rem; }
-    .fib-spiral__cell:nth-child(2) .fib-spiral__content  { transform: rotate(-90deg);  font-size: 1.618rem; }
-    .fib-spiral__cell:nth-child(3) .fib-spiral__content  { transform: rotate(-180deg); font-size: 2.618rem; }
-    .fib-spiral__cell:nth-child(4) .fib-spiral__content  { transform: rotate(-270deg); font-size: 4.236rem; }
-    .fib-spiral__cell:nth-child(5) .fib-spiral__content  { transform: rotate(-360deg); font-size: 6.854rem; }
-    /* Cells 6+ are decorative — font-size capped at --fib-spiral-font-size-max */
-    .fib-spiral__cell:nth-child(6) .fib-spiral__content  { transform: rotate(-450deg); font-size: 8rem; }
-    .fib-spiral__cell:nth-child(7) .fib-spiral__content  { transform: rotate(-540deg); font-size: 8rem; }
-    .fib-spiral__cell:nth-child(8) .fib-spiral__content  { transform: rotate(-630deg); font-size: 8rem; }
-    .fib-spiral__cell:nth-child(9) .fib-spiral__content  { transform: rotate(-720deg); font-size: 8rem; }
-    .fib-spiral__cell:nth-child(10) .fib-spiral__content { transform: rotate(-810deg); font-size: 8rem; }
+    .spiral-grid__cell:nth-child(1) .spiral-grid__content  { transform: rotate(0deg);    font-size: 1rem; }
+    .spiral-grid__cell:nth-child(2) .spiral-grid__content  { transform: rotate(-90deg);  font-size: 1.618rem; }
+    .spiral-grid__cell:nth-child(3) .spiral-grid__content  { transform: rotate(-180deg); font-size: 2.618rem; }
+    .spiral-grid__cell:nth-child(4) .spiral-grid__content  { transform: rotate(-270deg); font-size: 4.236rem; }
+    .spiral-grid__cell:nth-child(5) .spiral-grid__content  { transform: rotate(-360deg); font-size: 6.854rem; }
+    /* Cells 6+ are decorative — font-size capped at --spiral-grid-font-size-max */
+    .spiral-grid__cell:nth-child(6) .spiral-grid__content  { transform: rotate(-450deg); font-size: 8rem; }
+    .spiral-grid__cell:nth-child(7) .spiral-grid__content  { transform: rotate(-540deg); font-size: 8rem; }
+    .spiral-grid__cell:nth-child(8) .spiral-grid__content  { transform: rotate(-630deg); font-size: 8rem; }
+    .spiral-grid__cell:nth-child(9) .spiral-grid__content  { transform: rotate(-720deg); font-size: 8rem; }
+    .spiral-grid__cell:nth-child(10) .spiral-grid__content { transform: rotate(-810deg); font-size: 8rem; }
 
     /* Reverse fallback */
-    .fib-spiral--reverse .fib-spiral__cell:nth-child(1)  { transform: scale(1)        rotate(0deg);    }
-    .fib-spiral--reverse .fib-spiral__cell:nth-child(2)  { transform: scale(0.618034) rotate(-90deg);  }
-    .fib-spiral--reverse .fib-spiral__cell:nth-child(3)  { transform: scale(0.381966) rotate(-180deg); }
-    .fib-spiral--reverse .fib-spiral__cell:nth-child(4)  { transform: scale(0.236068) rotate(-270deg); }
-    .fib-spiral--reverse .fib-spiral__cell:nth-child(5)  { transform: scale(0.145898) rotate(-360deg); }
-    .fib-spiral--reverse .fib-spiral__cell:nth-child(6)  { transform: scale(0.090170) rotate(-450deg); }
-    .fib-spiral--reverse .fib-spiral__cell:nth-child(7)  { transform: scale(0.055728) rotate(-540deg); }
-    .fib-spiral--reverse .fib-spiral__cell:nth-child(8)  { transform: scale(0.034442) rotate(-630deg); }
-    .fib-spiral--reverse .fib-spiral__cell:nth-child(9)  { transform: scale(0.021286) rotate(-720deg); }
-    .fib-spiral--reverse .fib-spiral__cell:nth-child(10) { transform: scale(0.013156) rotate(-810deg); }
+    .spiral-grid--reverse .spiral-grid__cell:nth-child(1)  { transform: scale(1)        rotate(0deg);    }
+    .spiral-grid--reverse .spiral-grid__cell:nth-child(2)  { transform: scale(0.618034) rotate(-90deg);  }
+    .spiral-grid--reverse .spiral-grid__cell:nth-child(3)  { transform: scale(0.381966) rotate(-180deg); }
+    .spiral-grid--reverse .spiral-grid__cell:nth-child(4)  { transform: scale(0.236068) rotate(-270deg); }
+    .spiral-grid--reverse .spiral-grid__cell:nth-child(5)  { transform: scale(0.145898) rotate(-360deg); }
+    .spiral-grid--reverse .spiral-grid__cell:nth-child(6)  { transform: scale(0.090170) rotate(-450deg); }
+    .spiral-grid--reverse .spiral-grid__cell:nth-child(7)  { transform: scale(0.055728) rotate(-540deg); }
+    .spiral-grid--reverse .spiral-grid__cell:nth-child(8)  { transform: scale(0.034442) rotate(-630deg); }
+    .spiral-grid--reverse .spiral-grid__cell:nth-child(9)  { transform: scale(0.021286) rotate(-720deg); }
+    .spiral-grid--reverse .spiral-grid__cell:nth-child(10) { transform: scale(0.013156) rotate(-810deg); }
 
-    .fib-spiral--reverse .fib-spiral__cell:nth-child(1) .fib-spiral__content  { transform: rotate(0deg);   }
-    .fib-spiral--reverse .fib-spiral__cell:nth-child(2) .fib-spiral__content  { transform: rotate(90deg);  }
-    .fib-spiral--reverse .fib-spiral__cell:nth-child(3) .fib-spiral__content  { transform: rotate(180deg); }
-    .fib-spiral--reverse .fib-spiral__cell:nth-child(4) .fib-spiral__content  { transform: rotate(270deg); }
-    .fib-spiral--reverse .fib-spiral__cell:nth-child(5) .fib-spiral__content  { transform: rotate(360deg); }
-    .fib-spiral--reverse .fib-spiral__cell:nth-child(6) .fib-spiral__content  { transform: rotate(450deg); }
-    .fib-spiral--reverse .fib-spiral__cell:nth-child(7) .fib-spiral__content  { transform: rotate(540deg); }
-    .fib-spiral--reverse .fib-spiral__cell:nth-child(8) .fib-spiral__content  { transform: rotate(630deg); }
-    .fib-spiral--reverse .fib-spiral__cell:nth-child(9) .fib-spiral__content  { transform: rotate(720deg); }
-    .fib-spiral--reverse .fib-spiral__cell:nth-child(10) .fib-spiral__content { transform: rotate(810deg); }
+    .spiral-grid--reverse .spiral-grid__cell:nth-child(1) .spiral-grid__content  { transform: rotate(0deg);   }
+    .spiral-grid--reverse .spiral-grid__cell:nth-child(2) .spiral-grid__content  { transform: rotate(90deg);  }
+    .spiral-grid--reverse .spiral-grid__cell:nth-child(3) .spiral-grid__content  { transform: rotate(180deg); }
+    .spiral-grid--reverse .spiral-grid__cell:nth-child(4) .spiral-grid__content  { transform: rotate(270deg); }
+    .spiral-grid--reverse .spiral-grid__cell:nth-child(5) .spiral-grid__content  { transform: rotate(360deg); }
+    .spiral-grid--reverse .spiral-grid__cell:nth-child(6) .spiral-grid__content  { transform: rotate(450deg); }
+    .spiral-grid--reverse .spiral-grid__cell:nth-child(7) .spiral-grid__content  { transform: rotate(540deg); }
+    .spiral-grid--reverse .spiral-grid__cell:nth-child(8) .spiral-grid__content  { transform: rotate(630deg); }
+    .spiral-grid--reverse .spiral-grid__cell:nth-child(9) .spiral-grid__content  { transform: rotate(720deg); }
+    .spiral-grid--reverse .spiral-grid__cell:nth-child(10) .spiral-grid__content { transform: rotate(810deg); }
 }
 
-.fib-spiral__content {
+.spiral-grid__content {
     width: 100%;
     height: 100%;
     display: flex;
@@ -135,39 +136,39 @@
 /* ============================================================
    Modifier: reverse (horizontally mirrored spiral)
    ============================================================ */
-.fib-spiral--reverse .fib-spiral__cell {
+.spiral-grid--reverse .spiral-grid__cell {
     left: auto;
     right: 0;
     transform-origin:
-        calc(100% - (1 - var(--fib-spiral-shrinkage)) / var(--fib-spiral-phi) * 100%)
-        calc((1 - var(--fib-spiral-shrinkage)) * 100%);
+        calc(100% - (1 - var(--spiral-grid-shrinkage)) / var(--spiral-grid-phi) * 100%)
+        calc((1 - var(--spiral-grid-shrinkage)) * 100%);
 }
 @supports (width: calc(pow(2, 3) * 1px)) {
-    .fib-spiral--reverse .fib-spiral__cell {
+    .spiral-grid--reverse .spiral-grid__cell {
         transform:
-            scale(pow(var(--fib-spiral-phi), var(--i)))
-            rotate(calc(-90deg * var(--i)));
+            scale(pow(var(--spiral-grid-phi), var(--spiral-grid-index)))
+            rotate(calc(-90deg * var(--spiral-grid-index)));
     }
-    .fib-spiral--reverse .fib-spiral__content {
-        transform: rotate(calc(90deg * var(--i)));
+    .spiral-grid--reverse .spiral-grid__content {
+        transform: rotate(calc(90deg * var(--spiral-grid-index)));
     }
 }
 
 /* ============================================================
    Modifier: portrait (tall golden rectangle)
    ============================================================ */
-.fib-spiral--portrait {
-    aspect-ratio: 1 / calc(1 + var(--fib-spiral-phi));
+.spiral-grid--portrait {
+    aspect-ratio: 1 / calc(1 + var(--spiral-grid-phi));
 }
-.fib-spiral--portrait .fib-spiral__cell {
+.spiral-grid--portrait .spiral-grid__cell {
     width: 100%;
     /* Keep aspect-ratio: 1 from base rule.
        Convergence point shifts for portrait geometry:
        cell-local x = shrinkage * 100%                          ≈ 27.64%
        cell-local y = (1 - shrinkage) * (1 + phi) * 100%       ≈ 117.08% */
     transform-origin:
-        calc(var(--fib-spiral-shrinkage) * 100%)
-        calc((1 - var(--fib-spiral-shrinkage)) * (1 + var(--fib-spiral-phi)) * 100%);
+        calc(var(--spiral-grid-shrinkage) * 100%)
+        calc((1 - var(--spiral-grid-shrinkage)) * (1 + var(--spiral-grid-phi)) * 100%);
 }
 
 /* ============================================================
@@ -175,42 +176,41 @@
    Cell is full-width (portrait) but mirrored horizontally.
    x-origin mirrors from shrinkage to (1 - shrinkage).
    ============================================================ */
-.fib-spiral--portrait.fib-spiral--reverse .fib-spiral__cell {
+.spiral-grid--portrait.spiral-grid--reverse .spiral-grid__cell {
     transform-origin:
-        calc((1 - var(--fib-spiral-shrinkage)) * 100%)
-        calc((1 - var(--fib-spiral-shrinkage)) * (1 + var(--fib-spiral-phi)) * 100%);
+        calc((1 - var(--spiral-grid-shrinkage)) * 100%)
+        calc((1 - var(--spiral-grid-shrinkage)) * (1 + var(--spiral-grid-phi)) * 100%);
 }
 
 /* Auto-switch to portrait via container query when width < height */
 @container (aspect-ratio < 1) {
-    .fib-spiral--auto {
-        aspect-ratio: 1 / calc(1 + var(--fib-spiral-phi));
+    .spiral-grid--auto {
+        aspect-ratio: 1 / calc(1 + var(--spiral-grid-phi));
     }
-    .fib-spiral--auto .fib-spiral__cell {
+    .spiral-grid--auto .spiral-grid__cell {
         width: 100%;
         transform-origin:
-            calc(var(--fib-spiral-shrinkage) * 100%)
-            calc((1 - var(--fib-spiral-shrinkage)) * (1 + var(--fib-spiral-phi)) * 100%);
+            calc(var(--spiral-grid-shrinkage) * 100%)
+            calc((1 - var(--spiral-grid-shrinkage)) * (1 + var(--spiral-grid-phi)) * 100%);
     }
     /* Auto + reverse: mirrored portrait origin */
-    .fib-spiral--auto.fib-spiral--reverse .fib-spiral__cell {
+    .spiral-grid--auto.spiral-grid--reverse .spiral-grid__cell {
         transform-origin:
-            calc((1 - var(--fib-spiral-shrinkage)) * 100%)
-            calc((1 - var(--fib-spiral-shrinkage)) * (1 + var(--fib-spiral-phi)) * 100%);
+            calc((1 - var(--spiral-grid-shrinkage)) * 100%)
+            calc((1 - var(--spiral-grid-shrinkage)) * (1 + var(--spiral-grid-phi)) * 100%);
     }
-    .fib-spiral--auto:not(.fib-spiral--no-fill) > .fib-spiral__cell:last-of-type {
-        aspect-ratio: 1 / calc(1 + var(--fib-spiral-phi));
+    .spiral-grid--auto:not(.spiral-grid--no-fill) > .spiral-grid__cell:last-of-type {
+        aspect-ratio: 1 / calc(1 + var(--spiral-grid-phi));
         transform-origin:
-            calc(var(--fib-spiral-shrinkage) * 100%)
-            calc((1 - var(--fib-spiral-shrinkage)) * 100%);
-        background: var(--fib-spiral-cell-bg, transparent);
+            calc(var(--spiral-grid-shrinkage) * 100%)
+            calc((1 - var(--spiral-grid-shrinkage)) * 100%);
         overflow: hidden;
     }
     /* Auto + reverse fill: mirrored origin */
-    .fib-spiral--auto.fib-spiral--reverse:not(.fib-spiral--no-fill) > .fib-spiral__cell:last-of-type {
+    .spiral-grid--auto.spiral-grid--reverse:not(.spiral-grid--no-fill) > .spiral-grid__cell:last-of-type {
         transform-origin:
-            calc((1 - var(--fib-spiral-shrinkage)) * 100%)
-            calc((1 - var(--fib-spiral-shrinkage)) * 100%);
+            calc((1 - var(--spiral-grid-shrinkage)) * 100%)
+            calc((1 - var(--spiral-grid-shrinkage)) * 100%);
     }
 }
 
@@ -226,102 +226,105 @@
      cell-local x = (1 - shrinkage) * W / W = (1 - shrinkage)
      cell-local y = (1 - shrinkage) * H / H = (1 - shrinkage)
 
-   Opt out: add .fib-spiral--no-fill on the .fib-spiral container to keep the
-   last cell as a square and leave the wedge at the eye.
+   Opt out: add .spiral-grid--no-fill on the .spiral-grid container to keep
+   the last cell as a square and leave the wedge at the eye.
 
    IMPORTANT: this section must come AFTER reverse/portrait so same-
    specificity selectors resolve in fill's favor.
 
-   Markup rule: only .fib-spiral__cell elements should be <div> children of
-   .fib-spiral. Non-cell overlays (convergence markers, etc.) must use a
-   different tag (e.g. <span>) so :last-of-type still hits the last cell.
+   Markup rule: only .spiral-grid__cell elements should be <div> children
+   of .spiral-grid. Non-cell overlays (convergence markers, etc.) must use
+   a different tag (e.g. <span>) so :last-of-type still hits the last cell.
+
+   Styling the fill cell's background: set `background` directly on
+   .spiral-grid__cell (applies to all cells) or on
+   .spiral-grid__cell:last-of-type (applies only to the fill cell).
    ============================================================ */
-.fib-spiral:not(.fib-spiral--no-fill) > .fib-spiral__cell:last-of-type {
+.spiral-grid:not(.spiral-grid--no-fill) > .spiral-grid__cell:last-of-type {
     width: 100%;
-    aspect-ratio: calc(1 + var(--fib-spiral-phi)) / 1;
+    aspect-ratio: calc(1 + var(--spiral-grid-phi)) / 1;
     transform-origin:
-        calc((1 - var(--fib-spiral-shrinkage)) * 100%)
-        calc((1 - var(--fib-spiral-shrinkage)) * 100%);
-    background: var(--fib-spiral-cell-bg, transparent);
+        calc((1 - var(--spiral-grid-shrinkage)) * 100%)
+        calc((1 - var(--spiral-grid-shrinkage)) * 100%);
     overflow: hidden;
 }
 
 /* Even-position fill cells (i odd) rotate the parent by 90deg/270deg.
    The cell visual becomes a PORTRAIT golden rect in landscape spirals and
-   a LANDSCAPE golden rect in portrait spirals. Reshape .fib-spiral__content
+   a LANDSCAPE golden rect in portrait spirals. Reshape .spiral-grid__content
    to the dual aspect of the cell (no distortion), center it, and keep
    the existing counter-rotation so text stays upright. */
 
 /* Landscape spirals (forward + reverse): content is portrait in cell-local. */
-.fib-spiral:not(.fib-spiral--portrait):not(.fib-spiral--no-fill)
-    > .fib-spiral__cell:last-of-type:nth-child(even) .fib-spiral__content {
+.spiral-grid:not(.spiral-grid--portrait):not(.spiral-grid--no-fill)
+    > .spiral-grid__cell:last-of-type:nth-child(even) .spiral-grid__content {
     position: absolute;
     top: 50%;
     left: 50%;
-    width: calc(var(--fib-spiral-phi) * 100%);
-    height: calc((1 + var(--fib-spiral-phi)) * 100%);
+    width: calc(var(--spiral-grid-phi) * 100%);
+    height: calc((1 + var(--spiral-grid-phi)) * 100%);
 }
-.fib-spiral:not(.fib-spiral--reverse):not(.fib-spiral--portrait):not(.fib-spiral--no-fill)
-    > .fib-spiral__cell:last-of-type:nth-child(even) .fib-spiral__content {
+.spiral-grid:not(.spiral-grid--reverse):not(.spiral-grid--portrait):not(.spiral-grid--no-fill)
+    > .spiral-grid__cell:last-of-type:nth-child(even) .spiral-grid__content {
     transform:
         translate(-50%, -50%)
-        rotate(calc(-90deg * var(--i)));
+        rotate(calc(-90deg * var(--spiral-grid-index)));
 }
-.fib-spiral.fib-spiral--reverse:not(.fib-spiral--portrait):not(.fib-spiral--no-fill)
-    > .fib-spiral__cell:last-of-type:nth-child(even) .fib-spiral__content {
+.spiral-grid.spiral-grid--reverse:not(.spiral-grid--portrait):not(.spiral-grid--no-fill)
+    > .spiral-grid__cell:last-of-type:nth-child(even) .spiral-grid__content {
     transform:
         translate(-50%, -50%)
-        rotate(calc(90deg * var(--i)));
+        rotate(calc(90deg * var(--spiral-grid-index)));
 }
 
 /* Portrait spirals: cell visual is landscape → content is landscape. */
-.fib-spiral.fib-spiral--portrait:not(.fib-spiral--no-fill)
-    > .fib-spiral__cell:last-of-type:nth-child(even) .fib-spiral__content {
+.spiral-grid.spiral-grid--portrait:not(.spiral-grid--no-fill)
+    > .spiral-grid__cell:last-of-type:nth-child(even) .spiral-grid__content {
     position: absolute;
     top: 50%;
     left: 50%;
-    width: calc((1 + var(--fib-spiral-phi)) * 100%);
-    height: calc(var(--fib-spiral-phi) * 100%);
+    width: calc((1 + var(--spiral-grid-phi)) * 100%);
+    height: calc(var(--spiral-grid-phi) * 100%);
     transform:
         translate(-50%, -50%)
-        rotate(calc(-90deg * var(--i)));
+        rotate(calc(-90deg * var(--spiral-grid-index)));
 }
 
 /* Reverse fill: convergence point mirrors to shrinkage% from left */
-.fib-spiral--reverse:not(.fib-spiral--no-fill) > .fib-spiral__cell:last-of-type {
+.spiral-grid--reverse:not(.spiral-grid--no-fill) > .spiral-grid__cell:last-of-type {
     transform-origin:
-        calc(var(--fib-spiral-shrinkage) * 100%)
-        calc((1 - var(--fib-spiral-shrinkage)) * 100%);
+        calc(var(--spiral-grid-shrinkage) * 100%)
+        calc((1 - var(--spiral-grid-shrinkage)) * 100%);
 }
 
 /* Portrait fill: tall golden rectangle; eye is (s, 1-s) in container space
    (see doc mobile convergence), NOT (1-s, 1-s) like landscape fill. */
-.fib-spiral--portrait:not(.fib-spiral--no-fill) > .fib-spiral__cell:last-of-type {
+.spiral-grid--portrait:not(.spiral-grid--no-fill) > .spiral-grid__cell:last-of-type {
     width: 100%;
-    aspect-ratio: 1 / calc(1 + var(--fib-spiral-phi));
+    aspect-ratio: 1 / calc(1 + var(--spiral-grid-phi));
     transform-origin:
-        calc(var(--fib-spiral-shrinkage) * 100%)
-        calc((1 - var(--fib-spiral-shrinkage)) * 100%);
+        calc(var(--spiral-grid-shrinkage) * 100%)
+        calc((1 - var(--spiral-grid-shrinkage)) * 100%);
 }
 
 /* Portrait + reverse fill: x-origin mirrors to (1 - shrinkage) */
-.fib-spiral--portrait.fib-spiral--reverse:not(.fib-spiral--no-fill) > .fib-spiral__cell:last-of-type {
+.spiral-grid--portrait.spiral-grid--reverse:not(.spiral-grid--no-fill) > .spiral-grid__cell:last-of-type {
     transform-origin:
-        calc((1 - var(--fib-spiral-shrinkage)) * 100%)
-        calc((1 - var(--fib-spiral-shrinkage)) * 100%);
+        calc((1 - var(--spiral-grid-shrinkage)) * 100%)
+        calc((1 - var(--spiral-grid-shrinkage)) * 100%);
 }
 
 /* Portrait + reverse fill even-cell content: counter-rotate positively (like reverse) */
-.fib-spiral.fib-spiral--portrait.fib-spiral--reverse:not(.fib-spiral--no-fill)
-    > .fib-spiral__cell:last-of-type:nth-child(even) .fib-spiral__content {
+.spiral-grid.spiral-grid--portrait.spiral-grid--reverse:not(.spiral-grid--no-fill)
+    > .spiral-grid__cell:last-of-type:nth-child(even) .spiral-grid__content {
     position: absolute;
     top: 50%;
     left: 50%;
-    width: calc((1 + var(--fib-spiral-phi)) * 100%);
-    height: calc(var(--fib-spiral-phi) * 100%);
+    width: calc((1 + var(--spiral-grid-phi)) * 100%);
+    height: calc(var(--spiral-grid-phi) * 100%);
     transform:
         translate(-50%, -50%)
-        rotate(calc(90deg * var(--i)));
+        rotate(calc(90deg * var(--spiral-grid-index)));
 }
 
 /* ============================================================
@@ -330,12 +333,12 @@
    or abstract layouts where upright text isn't needed.
    Doubled selector beats both the modern and fallback paths.
    ============================================================ */
-.fib-spiral--no-counter-rotate .fib-spiral__content.fib-spiral__content {
+.spiral-grid--no-counter-rotate .spiral-grid__content.spiral-grid__content {
     transform: none;
 }
 
 /* ============================================================
-   Feature: --fib-spiral-gap  (+ auto content safe-zone)
+   Feature: --spiral-grid-gap  (+ auto content safe-zone)
 
    Visual spacing between cells, similar to CSS `gap` in grid/flex.
    Implemented via clip-path: inset() on each cell — pure paint, no
@@ -346,19 +349,19 @@
    contribute gap / 2 + gap / 2 = gap of visible gutter.
 
    Auto safe-zone:
-     .fib-spiral__content receives a scale-compensated padding equal
-     to --fib-spiral-content-padding (defaults to gap / 2). This
-     keeps edge-bleeding content — borders, bleeding backgrounds,
+     .spiral-grid__content receives a scale-compensated padding equal
+     to --spiral-grid-safe-zone (defaults to gap / 2). This keeps
+     edge-bleeding content — borders, bleeding backgrounds,
      absolutely-positioned badges — clear of the clip at every cell
      depth. Centered flex content is unaffected.
 
-     Since `--fib-spiral-content-padding` defaults to `gap / 2`, the
+     Since `--spiral-grid-safe-zone` defaults to `gap / 2`, the
      post-scale visible safe zone on each side exactly matches the
      clip inset, so the content's padding box coincides with the
      visible cell interior.
 
      Opt out for full-bleed content (images that should reach all
-     the way to the clip edge) with `--fib-spiral-content-padding: 0`.
+     the way to the clip edge) with `--spiral-grid-safe-zone: 0`.
      Users who want extra breathing room can set it to `gap` or
      larger.
 
@@ -367,20 +370,20 @@
    for the depth threshold table and recommended cqi / @media
    patterns to live with it.
    ============================================================ */
-.fib-spiral {
-    --fib-spiral-gap: 0px;
-    --fib-spiral-content-padding: calc(var(--fib-spiral-gap) / 2);
+.spiral-grid {
+    --spiral-grid-gap: 0px;
+    --spiral-grid-safe-zone: calc(var(--spiral-grid-gap) / 2);
 }
 
 @supports (width: calc(pow(2, 3) * 1px)) {
-    .fib-spiral__cell {
+    .spiral-grid__cell {
         clip-path: inset(
-            calc(var(--fib-spiral-gap) / 2 / pow(var(--fib-spiral-phi), var(--i)))
+            calc(var(--spiral-grid-gap) / 2 / pow(var(--spiral-grid-phi), var(--spiral-grid-index)))
         );
     }
-    .fib-spiral__content {
+    .spiral-grid__content {
         padding: calc(
-            var(--fib-spiral-content-padding) / pow(var(--fib-spiral-phi), var(--i))
+            var(--spiral-grid-safe-zone) / pow(var(--spiral-grid-phi), var(--spiral-grid-index))
         );
     }
 }
@@ -389,45 +392,85 @@
    mirroring the scale fallback table above (which uses pow(phi, i)).
    Same coefficients serve both clip-path inset and content padding. */
 @supports not (width: calc(pow(2, 3) * 1px)) {
-    .fib-spiral__cell:nth-child(1)  { clip-path: inset(calc(var(--fib-spiral-gap) / 2 * 1));          }
-    .fib-spiral__cell:nth-child(2)  { clip-path: inset(calc(var(--fib-spiral-gap) / 2 * 1.618034));   }
-    .fib-spiral__cell:nth-child(3)  { clip-path: inset(calc(var(--fib-spiral-gap) / 2 * 2.618034));   }
-    .fib-spiral__cell:nth-child(4)  { clip-path: inset(calc(var(--fib-spiral-gap) / 2 * 4.236068));   }
-    .fib-spiral__cell:nth-child(5)  { clip-path: inset(calc(var(--fib-spiral-gap) / 2 * 6.854102));   }
-    .fib-spiral__cell:nth-child(6)  { clip-path: inset(calc(var(--fib-spiral-gap) / 2 * 11.090170));  }
-    .fib-spiral__cell:nth-child(7)  { clip-path: inset(calc(var(--fib-spiral-gap) / 2 * 17.944272));  }
-    .fib-spiral__cell:nth-child(8)  { clip-path: inset(calc(var(--fib-spiral-gap) / 2 * 29.034442));  }
-    .fib-spiral__cell:nth-child(9)  { clip-path: inset(calc(var(--fib-spiral-gap) / 2 * 46.978714));  }
-    .fib-spiral__cell:nth-child(10) { clip-path: inset(calc(var(--fib-spiral-gap) / 2 * 76.013155));  }
+    .spiral-grid__cell:nth-child(1)  { clip-path: inset(calc(var(--spiral-grid-gap) / 2 * 1));          }
+    .spiral-grid__cell:nth-child(2)  { clip-path: inset(calc(var(--spiral-grid-gap) / 2 * 1.618034));   }
+    .spiral-grid__cell:nth-child(3)  { clip-path: inset(calc(var(--spiral-grid-gap) / 2 * 2.618034));   }
+    .spiral-grid__cell:nth-child(4)  { clip-path: inset(calc(var(--spiral-grid-gap) / 2 * 4.236068));   }
+    .spiral-grid__cell:nth-child(5)  { clip-path: inset(calc(var(--spiral-grid-gap) / 2 * 6.854102));   }
+    .spiral-grid__cell:nth-child(6)  { clip-path: inset(calc(var(--spiral-grid-gap) / 2 * 11.090170));  }
+    .spiral-grid__cell:nth-child(7)  { clip-path: inset(calc(var(--spiral-grid-gap) / 2 * 17.944272));  }
+    .spiral-grid__cell:nth-child(8)  { clip-path: inset(calc(var(--spiral-grid-gap) / 2 * 29.034442));  }
+    .spiral-grid__cell:nth-child(9)  { clip-path: inset(calc(var(--spiral-grid-gap) / 2 * 46.978714));  }
+    .spiral-grid__cell:nth-child(10) { clip-path: inset(calc(var(--spiral-grid-gap) / 2 * 76.013155));  }
 
-    .fib-spiral__cell:nth-child(1)  .fib-spiral__content { padding: calc(var(--fib-spiral-content-padding) * 1);          }
-    .fib-spiral__cell:nth-child(2)  .fib-spiral__content { padding: calc(var(--fib-spiral-content-padding) * 1.618034);   }
-    .fib-spiral__cell:nth-child(3)  .fib-spiral__content { padding: calc(var(--fib-spiral-content-padding) * 2.618034);   }
-    .fib-spiral__cell:nth-child(4)  .fib-spiral__content { padding: calc(var(--fib-spiral-content-padding) * 4.236068);   }
-    .fib-spiral__cell:nth-child(5)  .fib-spiral__content { padding: calc(var(--fib-spiral-content-padding) * 6.854102);   }
-    .fib-spiral__cell:nth-child(6)  .fib-spiral__content { padding: calc(var(--fib-spiral-content-padding) * 11.090170);  }
-    .fib-spiral__cell:nth-child(7)  .fib-spiral__content { padding: calc(var(--fib-spiral-content-padding) * 17.944272);  }
-    .fib-spiral__cell:nth-child(8)  .fib-spiral__content { padding: calc(var(--fib-spiral-content-padding) * 29.034442);  }
-    .fib-spiral__cell:nth-child(9)  .fib-spiral__content { padding: calc(var(--fib-spiral-content-padding) * 46.978714);  }
-    .fib-spiral__cell:nth-child(10) .fib-spiral__content { padding: calc(var(--fib-spiral-content-padding) * 76.013155);  }
+    .spiral-grid__cell:nth-child(1)  .spiral-grid__content { padding: calc(var(--spiral-grid-safe-zone) * 1);          }
+    .spiral-grid__cell:nth-child(2)  .spiral-grid__content { padding: calc(var(--spiral-grid-safe-zone) * 1.618034);   }
+    .spiral-grid__cell:nth-child(3)  .spiral-grid__content { padding: calc(var(--spiral-grid-safe-zone) * 2.618034);   }
+    .spiral-grid__cell:nth-child(4)  .spiral-grid__content { padding: calc(var(--spiral-grid-safe-zone) * 4.236068);   }
+    .spiral-grid__cell:nth-child(5)  .spiral-grid__content { padding: calc(var(--spiral-grid-safe-zone) * 6.854102);   }
+    .spiral-grid__cell:nth-child(6)  .spiral-grid__content { padding: calc(var(--spiral-grid-safe-zone) * 11.090170);  }
+    .spiral-grid__cell:nth-child(7)  .spiral-grid__content { padding: calc(var(--spiral-grid-safe-zone) * 17.944272);  }
+    .spiral-grid__cell:nth-child(8)  .spiral-grid__content { padding: calc(var(--spiral-grid-safe-zone) * 29.034442);  }
+    .spiral-grid__cell:nth-child(9)  .spiral-grid__content { padding: calc(var(--spiral-grid-safe-zone) * 46.978714);  }
+    .spiral-grid__cell:nth-child(10) .spiral-grid__content { padding: calc(var(--spiral-grid-safe-zone) * 76.013155);  }
+}
+
+/* ============================================================
+   Feature: per-cell scrolling
+
+   Opt-in modifier on .spiral-grid__content. Useful for card-style
+   content that overflows its cell (text, lists, image strips).
+
+   The scroll viewport sits inside the gap's auto safe-zone, so
+   scrollbars never collide with the cell's clip-path.
+
+   The default `display: flex` centering is replaced with
+   `display: block` and `text-align: start` so overflowing content
+   flows from the top and reads naturally — flex-centering with
+   overflow centers the overflowing portion off-screen.
+
+   Depth caveat: cells shrink by pow(phi, i), so even a `thin`
+   scrollbar dominates cells beyond ~5 at typical container widths.
+   Apply this modifier thoughtfully \u2014 usually to cells 1\u20135 only.
+   See doc/cell-scrolling.md for the depth/footprint table.
+   ============================================================ */
+.spiral-grid__content--scroll,
+.spiral-grid__content--scroll-y {
+    display: block;
+    overflow-y: auto;
+    overflow-x: hidden;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+    scrollbar-gutter: stable;
+    text-align: start;
+}
+
+.spiral-grid__content--scroll-x {
+    display: block;
+    overflow-x: auto;
+    overflow-y: hidden;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+    scrollbar-gutter: stable;
+    text-align: start;
 }
 
 /* ============================================================
    Accessibility: reduced-motion fallback
    Degrades to a simple stacked layout.
    Uses @layer to sit below author styles but the doubled
-   selector (.fib-spiral.fib-spiral) beats the single-class transforms,
+   selector (.spiral-grid.spiral-grid) beats the single-class transforms,
    while still letting JS animation libraries override if needed.
    ============================================================ */
 @media (prefers-reduced-motion: reduce) {
-    .fib-spiral.fib-spiral {
+    .spiral-grid.spiral-grid {
         display: grid;
         grid-template-columns: 1fr;
         gap: 0.5rem;
         aspect-ratio: auto;
         overflow: visible;
     }
-    .fib-spiral.fib-spiral .fib-spiral__cell {
+    .spiral-grid.spiral-grid .spiral-grid__cell {
         position: static;
         transform: none;
         width: 100%;
@@ -435,9 +478,13 @@
         z-index: auto;
         clip-path: none;
     }
-    .fib-spiral.fib-spiral .fib-spiral__content {
+    .spiral-grid.spiral-grid .spiral-grid__content {
         transform: none;
         font-size: 1rem;
         padding: 0;
+        /* Reset the scroll modifier so each cell flows with the page,
+           not as an independent scroll container. */
+        overflow: visible;
+        max-height: none;
     }
 }

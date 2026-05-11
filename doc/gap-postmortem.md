@@ -1,10 +1,10 @@
 # Gap Feature — Post-Mortem
 
-Research notes from the first attempt at implementing `--fib-spiral-gap`.
+Research notes from the first attempt at implementing `--spiral-grid-gap`.
 
 ## Goal
 
-A CSS custom property (`--fib-spiral-gap`) that adds consistent visual spacing between cells, similar to CSS `gap` in grid/flex layouts.
+A CSS custom property (`--spiral-grid-gap`) that adds consistent visual spacing between cells, similar to CSS `gap` in grid/flex layouts.
 
 ## Why It's Hard
 
@@ -24,20 +24,20 @@ The last cell (fill) is reshaped from a square to a golden rectangle (`width: 10
 
 ### 3. Background-clip conflict
 
-Moving the gap to `border: Npx solid transparent` on `.fib-spiral__content` avoids cell-level layout issues. But CSS `background` shorthand resets `background-clip` to `border-box`, making the transparent border invisible (background bleeds through). Fixing this requires `background-clip: padding-box !important`, which is heavy-handed for a library and fragile when users apply backgrounds.
+Moving the gap to `border: Npx solid transparent` on `.spiral-grid__content` avoids cell-level layout issues. But CSS `background` shorthand resets `background-clip` to `border-box`, making the transparent border invisible (background bleeds through). Fixing this requires `background-clip: padding-box !important`, which is heavy-handed for a library and fragile when users apply backgrounds.
 
 ## Approaches Tried
 
 | Approach | Result |
 |----------|--------|
-| `padding` on `.fib-spiral__cell` | Sub-pixel rendering on small cells; fill cell aspect-ratio distortion |
+| `padding` on `.spiral-grid__cell` | Sub-pixel rendering on small cells; fill cell aspect-ratio distortion |
 | Scale-compensated `padding` on cell | Fill cell breaks (large padding + border-box + non-square = distorted content) |
-| `border: transparent` on `.fib-spiral__content` | Works visually, but `background` shorthand resets `background-clip`, hiding the gap |
+| `border: transparent` on `.spiral-grid__content` | Works visually, but `background` shorthand resets `background-clip`, hiding the gap |
 | `background-clip: padding-box !important` | Works but requires `!important` — not acceptable for a library |
 
 ## Possible Future Approaches
 
-1. **CSS `@property` for background-clip** — register `--fib-spiral-gap` with `@property` and use it to conditionally apply `background-clip`. Doesn't solve the core issue but might enable cleaner APIs.
+1. **CSS `@property` for background-clip** — register `--spiral-grid-gap` with `@property` and use it to conditionally apply `background-clip`. Doesn't solve the core issue but might enable cleaner APIs.
 
 2. **Wrapper element** — add a third wrapper (`__cell` > `__gap` > `__content`) where `__gap` handles the spacing. Adds markup complexity but isolates the gap from content styling. The gap element would have a fixed background matching the container.
 
@@ -57,7 +57,7 @@ Defer to a dedicated feature branch. The gap needs a fundamentally different app
 
 # Resolved: `clip-path: inset()`
 
-Implemented in `prototype/spiral-grid.css` behind the `--fib-spiral-gap`
+Implemented in `prototype/spiral-grid.css` behind the `--spiral-grid-gap`
 custom property. See `prototype/gap.html` for the full test matrix.
 
 ## Why it works
@@ -91,11 +91,11 @@ Bonuses:
 
 ```css
 .my-spiral {
-    --fib-spiral-gap: 8px;
+    --spiral-grid-gap: 8px;
 }
 ```
 
-`--fib-spiral-gap` is the *total* visual gap between adjacent cells.
+`--spiral-grid-gap` is the *total* visual gap between adjacent cells.
 Each cell contributes half from its side. Defaults to `0px`.
 
 ## The depth limit (and how to live with it)
@@ -129,7 +129,7 @@ shrinks with the container automatically:
 ```css
 .my-spiral {
     /* 1.2% of container inline size — ~9.6px on 800px, ~3.6px on 300px */
-    --fib-spiral-gap: 1.2cqi;
+    --spiral-grid-gap: 1.2cqi;
 }
 ```
 
@@ -143,31 +143,31 @@ When you need the gap to drop on small viewports, the simplest path is
 an `@media` query:
 
 ```css
-.my-spiral { --fib-spiral-gap: 16px; }
+.my-spiral { --spiral-grid-gap: 16px; }
 
 @media (max-width: 500px) {
-    .my-spiral { --fib-spiral-gap: 6px; }
+    .my-spiral { --spiral-grid-gap: 6px; }
 }
 ```
 
 For a container-aware step-down (independent of the viewport), wrap
 the spiral in an element with `container-type: inline-size` and query
-that wrapper. `.fib-spiral` itself cannot be queried this way because
+that wrapper. `.spiral-grid` itself cannot be queried this way because
 its own `container-type` applies to its *descendants*, not to the
 spiral element itself:
 
 ```html
 <div class="spiral-wrapper">
-    <div class="fib-spiral my-spiral">...</div>
+    <div class="spiral-grid my-spiral">...</div>
 </div>
 ```
 
 ```css
 .spiral-wrapper { container-type: inline-size; }
-.my-spiral { --fib-spiral-gap: 16px; }
+.my-spiral { --spiral-grid-gap: 16px; }
 
 @container (max-width: 500px) {
-    .my-spiral { --fib-spiral-gap: 6px; }
+    .my-spiral { --spiral-grid-gap: 6px; }
 }
 ```
 
@@ -190,18 +190,18 @@ Shipping `clip-path: inset()` exposed a second-order problem: inner
 content (text right against the edge, cards with a border, background
 images drawn edge-to-edge) gets visually clipped by the gap. Every user
 would otherwise have to re-derive the same scale-compensated padding
-on `.fib-spiral__content` to avoid it.
+on `.spiral-grid__content` to avoid it.
 
 The library now applies that padding automatically via
-`--fib-spiral-content-padding` (defaults to `var(--fib-spiral-gap) / 2`),
+`--spiral-grid-safe-zone` (defaults to `var(--spiral-grid-gap) / 2`),
 also scale-compensated with `pow(phi, i)`. Users get a safe zone for
 content for free when they set a gap, and can opt out by overriding the
 custom property:
 
 ```css
 .my-spiral {
-    --fib-spiral-gap: 8px;
-    --fib-spiral-content-padding: 0; /* go flush to the clip edge */
+    --spiral-grid-gap: 8px;
+    --spiral-grid-safe-zone: 0; /* go flush to the clip edge */
 }
 ```
 

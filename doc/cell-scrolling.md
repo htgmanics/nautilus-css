@@ -1,9 +1,31 @@
 # Per-Cell Scrolling — Design Notes
 
-Forward-looking research for a `--fib-spiral-content-scroll` (or
-`fib-spiral__content--scroll`) feature that allows long content inside
-a cell to scroll independently, without breaking the spiral's visual
-integrity.
+Design notes for the `spiral-grid__content--scroll` modifier family,
+which allows long content inside a cell to scroll independently without
+breaking the spiral's visual integrity.
+
+## Status
+
+**Shipped in v1** as cell-level modifiers — `spiral-grid__content--scroll`
+(y-axis, default), `--scroll-x`, `--scroll-y`. Implementation lives in the
+"Feature: per-cell scrolling" block of `prototype/spiral-grid.css`;
+working demo in `prototype/scroll.html`.
+
+Resolved against the original open questions:
+
+- **API shape (Q1):** cell-level only. A spiral-level `--scrollable`
+  wrapper was considered but rejected — no runtime depth knob is cleanly
+  possible (CSS `:nth-child()` can't accept custom properties), and
+  hardcoding a depth would be a lie about what's actually usable.
+- **Custom scrollbar (Q2):** deferred. v1 ships `scrollbar-width: thin`
+  with native defaults; custom `::-webkit-scrollbar` is a follow-up if
+  cross-OS consistency becomes a priority.
+- **Focus (Q3):** left to users. The library doesn't add `tabindex`
+  automatically — docs recommend `tabindex="0"` on outer cells where
+  scroll is useful and skipping it on decorative deep cells.
+- **Zoom interaction (Q4):** noted as an incompatibility. Spirals using
+  the (post-v1) scroll-driven zoom should not also enable cell scroll
+  on the same cells.
 
 ## Goal
 
@@ -15,18 +37,18 @@ around or bleeding past the gap's clip-path.
 ## Why It's Tractable Now
 
 The gap feature's auto safe-zone
-(`--fib-spiral-content-padding`, defaulting to `gap / 2` and
+(`--spiral-grid-safe-zone`, defaulting to `gap / 2` and
 scale-compensated by `/ pow(phi, i)`) already solves the hardest part
 of per-cell scroll: **keeping scrollbars, scroll edges, and content
 boundaries clear of the cell's `clip-path`**.
 
-- The scroll container is `.fib-spiral__content`, which already has
+- The scroll container is `.spiral-grid__content`, which already has
   `box-sizing: border-box` and a scale-compensated inner padding.
 - The cell's `clip-path: inset()` trims the outer `gap / 2` of every
   cell at paint time. The safe zone makes the scroll viewport sit
   entirely inside the visible region.
 - A native scrollbar rendered at the right edge of
-  `.fib-spiral__content` lives one safe-zone width in from the clip,
+  `.spiral-grid__content` lives one safe-zone width in from the clip,
   so it is never itself clipped and never overlaps the gap gutter.
 
 ## Proposed API
@@ -36,7 +58,7 @@ preserves the current "static card" behavior as the default.
 
 ```css
 /* spiral-level: every cell scrolls */
-.fib-spiral--scrollable .fib-spiral__content {
+.spiral-grid--scrollable .spiral-grid__content {
     overflow-y: auto;
     overflow-x: hidden;
     overscroll-behavior: contain;
@@ -45,7 +67,7 @@ preserves the current "static card" behavior as the default.
 }
 
 /* cell-level: individual cell scrolls */
-.fib-spiral__content--scroll {
+.spiral-grid__content--scroll {
     overflow-y: auto;
     overflow-x: hidden;
     overscroll-behavior: contain;
@@ -54,7 +76,7 @@ preserves the current "static card" behavior as the default.
 }
 
 /* axis variants */
-.fib-spiral__content--scroll-x {
+.spiral-grid__content--scroll-x {
     overflow-x: auto;
     overflow-y: hidden;
 }
@@ -83,7 +105,7 @@ feature ships.
 
 Cells at odd indices (`--i: 1, 3, 5, 7…`) have their parent rotated
 by 90° or 270°. The content counter-rotates back to upright, but the
-scroll container (`.fib-spiral__content`) is itself inside that
+scroll container (`.spiral-grid__content`) is itself inside that
 rotation chain. Two questions:
 
 - **Hit-testing** — when the user positions their pointer over the
@@ -106,7 +128,7 @@ nth-children only, or only unrotated cells via
 ### 2. Scaled cells and scrollbar usefulness
 
 Cells 6+ are visually small enough that even a `thin` scrollbar
-takes up meaningful width. At `--fib-spiral-width: 800px`:
+takes up meaningful width. At a container width of 800px:
 
 | Cell | Visual width | Scrollbar footprint |
 |------|--------------|----------------------|
@@ -120,7 +142,7 @@ takes up meaningful width. At `--fib-spiral-width: 800px`:
 
 Recommendation: only apply scroll to the first N cells via
 `:nth-child(-n+N)` or require users to opt in per-cell via
-`.fib-spiral__content--scroll`. Default N could be 4 or 5.
+`.spiral-grid__content--scroll`. Default N could be 4 or 5.
 
 ### 3. Keyboard focus and Tab order
 
@@ -159,7 +181,7 @@ is active.
 
 ```css
 @media (prefers-reduced-motion: reduce) {
-    .fib-spiral.fib-spiral .fib-spiral__content {
+    .spiral-grid.spiral-grid .spiral-grid__content {
         overflow: visible;
         max-height: none;
     }
@@ -180,8 +202,8 @@ Proposed default: scroll applies only to cells where it is likely to
 be useful.
 
 ```css
-.fib-spiral--scrollable .fib-spiral__cell:nth-child(-n+5)
-  .fib-spiral__content {
+.spiral-grid--scrollable .spiral-grid__cell:nth-child(-n+5)
+  .spiral-grid__content {
     /* scroll rules */
 }
 ```
@@ -190,25 +212,25 @@ Users can override:
 
 ```css
 /* expand to all cells */
-.my-spiral.fib-spiral--scrollable .fib-spiral__cell
-  .fib-spiral__content {
+.my-spiral.spiral-grid--scrollable .spiral-grid__cell
+  .spiral-grid__content {
     overflow: auto;
 }
 ```
 
-Alternative: expose `--fib-spiral-scroll-max-depth: 5` as a tunable
+Alternative: expose `--spiral-grid-scroll-max-depth: 5` as a tunable
 custom property.
 
 ## Open Questions
 
 1. Should the feature be a spiral-level modifier
-   (`fib-spiral--scrollable`), a cell-level modifier
-   (`fib-spiral__content--scroll`), or both?
+   (`spiral-grid--scrollable`), a cell-level modifier
+   (`spiral-grid__content--scroll`), or both?
 2. Do we ship a custom scrollbar style, or rely on `scrollbar-width:
    thin` + browser defaults? Custom adds ~0.3 KB but looks
    consistent across OSes.
 3. Should focus visibility be handled by the library (via a
-   `:focus-visible` ring on `.fib-spiral__content`), or left to users?
+   `:focus-visible` ring on `.spiral-grid__content`), or left to users?
 4. How does scroll interact with a future hover-to-expand or
    click-to-zoom feature? Likely conflicts — scrolling inside a cell
    while also "zooming" the spiral on hover would be confusing. Pick
@@ -227,6 +249,6 @@ Prototype in `prototype/scroll.html` first, mirroring
   scroll usefulness?
 
 Once the prototype confirms the rotation/touch behavior is solid,
-formalize into the library as `.fib-spiral--scrollable` (+ per-cell
+formalize into the library as `.spiral-grid--scrollable` (+ per-cell
 `--scroll` modifier for granular control) with a documented
-`--fib-spiral-scroll-max-depth` for the depth cap.
+`--spiral-grid-scroll-max-depth` for the depth cap.

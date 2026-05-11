@@ -1,0 +1,463 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Spiral Grid — Scroll Prototype</title>
+    <link rel="stylesheet" href="spiral-grid.css" />
+    <style>
+      body {
+        margin: 0;
+        padding: 2rem;
+        font-family:
+          -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+        background: #fafafa;
+        color: #222;
+      }
+      h1 {
+        margin: 0 0 0.5rem;
+        font-size: 1.5rem;
+      }
+      h2 {
+        margin: 2rem 0 0.5rem;
+        font-size: 1rem;
+        color: #666;
+        font-weight: 500;
+      }
+      p.note {
+        margin: 0 0 1rem;
+        color: #555;
+        max-width: 72ch;
+        line-height: 1.5;
+      }
+      ul.checklist {
+        margin: 0 0 1rem;
+        max-width: 72ch;
+        line-height: 1.5;
+        color: #555;
+      }
+      ul.checklist li {
+        margin-bottom: 0.25rem;
+      }
+      code {
+        background: #eee;
+        padding: 0.1em 0.3em;
+        border-radius: 2px;
+        font-size: 0.9em;
+      }
+      .stage {
+        background: #1e1e1e;
+        border-radius: 4px;
+        padding: 1rem;
+        margin-bottom: 1.5rem;
+      }
+      .stage--sm { max-width: 800px; }
+      .stage--md { max-width: 500px; }
+
+      .side-by-side {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap: 1rem;
+        margin-bottom: 2rem;
+        max-width: 1400px;
+      }
+      .side-by-side .stage {
+        margin: 0;
+      }
+      .side-by-side .label {
+        color: #bbb;
+        font-size: 0.8rem;
+        font-family: monospace;
+        margin: 0 0 0.5rem;
+      }
+
+      /* Demo cell backgrounds (on __cell — library preserves through fill
+         reshape). Colors chosen so rotated cells are visually distinguishable
+         from their content wrappers. */
+      .demo .spiral-grid__cell:nth-child(1)  { background: #ffadad; }
+      .demo .spiral-grid__cell:nth-child(2)  { background: #ffd6a5; }
+      .demo .spiral-grid__cell:nth-child(3)  { background: #fdffb6; }
+      .demo .spiral-grid__cell:nth-child(4)  { background: #caffbf; }
+      .demo .spiral-grid__cell:nth-child(5)  { background: #9bf6ff; }
+      .demo .spiral-grid__cell:nth-child(6)  { background: #a0c4ff; }
+      .demo .spiral-grid__cell:nth-child(7)  { background: #bdb2ff; }
+      .demo .spiral-grid__cell:nth-child(8)  { background: #ffc6ff; }
+      .demo .spiral-grid__cell:nth-child(9)  { background: #fffffc; }
+
+      /* Card content — long enough to overflow the cell and force scroll. */
+      .card {
+        font-size: 0.7em;
+        line-height: 1.5;
+        color: #222;
+      }
+      .card h3 {
+        margin: 0 0 0.4em;
+        font-size: 1.2em;
+        font-weight: 700;
+      }
+      .card p {
+        margin: 0 0 0.6em;
+      }
+      .card ul {
+        padding-left: 1.2em;
+        margin: 0 0 0.6em;
+      }
+
+      /* Horizontal strip content for --scroll-x demos. */
+      .strip {
+        display: flex;
+        gap: 0.5em;
+        height: 100%;
+        align-items: center;
+      }
+      .strip .tile {
+        flex: 0 0 auto;
+        width: 60px;
+        height: 60px;
+        border-radius: 3px;
+        font-size: 0.7em;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: 600;
+      }
+
+      .rotation-badge {
+        display: inline-block;
+        font-size: 0.6em;
+        background: rgba(0, 0, 0, 0.2);
+        padding: 0.1em 0.4em;
+        border-radius: 2px;
+        color: #fff;
+        margin-bottom: 0.4em;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Spiral Grid — Per-Cell Scrolling Prototype</h1>
+    <p class="note">
+      Stress-tests the <code>spiral-grid__content--scroll</code>,
+      <code>--scroll-x</code>, and <code>--scroll-y</code> modifiers. Each
+      demo annotates the rotation applied to each cell so you can verify
+      wheel/touch behavior is intuitive in screen space (not cell-local
+      space). See <code>doc/cell-scrolling.md</code> for design notes.
+    </p>
+    <ul class="checklist">
+      <li>Wheel test: hover any scrollable cell and spin the mouse wheel
+        vertically. Content should scroll up/down in <em>screen</em>
+        coordinates, regardless of the cell's rotation.</li>
+      <li>Touch test (mobile/trackpad): two-finger scroll on rotated cells
+        (90°, 180°, 270°) should feel natural.</li>
+      <li>Scrollbar hygiene: the scrollbar should sit inside the clip
+        (never truncated) thanks to the auto safe-zone.</li>
+      <li>Scroll chain: scrolling past the end of a cell should NOT scroll
+        the page (<code>overscroll-behavior: contain</code>).</li>
+    </ul>
+
+    <h2>1. All cells scrollable — rotation stress test</h2>
+    <p class="note">
+      Every cell gets <code>spiral-grid__content--scroll</code>. Cell 2 is
+      rotated 90°, cell 3 is 180°, cell 4 is 270°, etc. Wheel-scroll each
+      cell and confirm content moves in screen-Y, not cell-local-Y.
+    </p>
+    <div class="stage stage--sm">
+      <div class="spiral-grid demo">
+        <div class="spiral-grid__cell">
+          <div class="spiral-grid__content spiral-grid__content--scroll">
+            <div class="card">
+              <span class="rotation-badge">0° rotate</span>
+              <h3>Cell 1 — Hero</h3>
+              <p>This cell is unrotated. Wheel-scroll here should feel
+                identical to scrolling a normal div. Baseline check.</p>
+              <p>Nulla facilisi. Sed vel nisi quis orci facilisis dapibus.
+                Aenean gravida, lacus ut aliquam vestibulum, lorem tellus
+                dictum lectus, at iaculis mauris odio vel tortor.</p>
+              <p>Duis aute irure dolor in reprehenderit in voluptate velit
+                esse cillum dolore eu fugiat nulla pariatur.</p>
+              <p>Morbi tristique senectus et netus et malesuada fames.
+                Praesent tristique magna sit amet purus gravida quis blandit
+                turpis cursus.</p>
+              <p>Donec porta diam eu massa. Quisque diam lorem, interdum
+                vitae, dapibus ac, scelerisque vitae, pede.</p>
+              <p>End of cell 1 content — scroll should stop here without
+                chaining to the page.</p>
+            </div>
+          </div>
+        </div>
+        <div class="spiral-grid__cell">
+          <div class="spiral-grid__content spiral-grid__content--scroll">
+            <div class="card">
+              <span class="rotation-badge">90° rotate</span>
+              <h3>Cell 2</h3>
+              <p>Cell is rotated 90°. Content counter-rotates back to
+                upright. Wheel-down should scroll this text down in screen
+                space.</p>
+              <p>If content moves sideways instead, the wheel delta is
+                being applied in cell-local coordinates. That's a browser
+                bug we'd need to work around.</p>
+              <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+              <p>More overflow to force scroll. More overflow to force
+                scroll. More overflow to force scroll.</p>
+              <p>End of cell 2.</p>
+            </div>
+          </div>
+        </div>
+        <div class="spiral-grid__cell">
+          <div class="spiral-grid__content spiral-grid__content--scroll">
+            <div class="card">
+              <span class="rotation-badge">180° rotate</span>
+              <h3>Cell 3</h3>
+              <p>Cell rotated 180°. Upside-down in cell-local; upright
+                after counter-rotation.</p>
+              <p>Wheel-down should still scroll this text downward in
+                screen space. Content appears to move up as you scroll.</p>
+              <p>Sed ut perspiciatis unde omnis iste natus error sit
+                voluptatem accusantium doloremque laudantium.</p>
+              <p>End of cell 3.</p>
+            </div>
+          </div>
+        </div>
+        <div class="spiral-grid__cell">
+          <div class="spiral-grid__content spiral-grid__content--scroll">
+            <div class="card">
+              <span class="rotation-badge">270° rotate</span>
+              <h3>Cell 4</h3>
+              <p>Rotated 270°. Font scales up to compensate.</p>
+              <p>Scroll check. Scroll check. Scroll check. Scroll check.
+                Scroll check. Scroll check.</p>
+            </div>
+          </div>
+        </div>
+        <div class="spiral-grid__cell">
+          <div class="spiral-grid__content spiral-grid__content--scroll">
+            <div class="card">
+              <span class="rotation-badge">360° rotate</span>
+              <h3>Cell 5</h3>
+              <p>Full turn. Visually identical to 0° but the transform is
+                still applied — useful to confirm counter-rotation logic
+                survives the full cycle.</p>
+              <p>Scroll check here.</p>
+            </div>
+          </div>
+        </div>
+        <div class="spiral-grid__cell">
+          <div class="spiral-grid__content spiral-grid__content--scroll">
+            <div class="card">
+              <h3>Cell 6 (fill)</h3>
+              <p>Last cell is the reshaped golden rectangle. Scrolling
+                here exercises the <code>nth-child(even)</code> fill path.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <h2>2. Recommended depth — scroll on cells 1–5 only</h2>
+    <p class="note">
+      The common case. Deep cells (6+) are too small for usable scrollbars,
+      so leave them static. This is what most production uses should look
+      like — opt-in per cell rather than blanket.
+    </p>
+    <div class="stage stage--sm">
+      <div class="spiral-grid demo">
+        <div class="spiral-grid__cell">
+          <div class="spiral-grid__content spiral-grid__content--scroll">
+            <div class="card">
+              <h3>Cell 1 — scrollable</h3>
+              <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                Sed do eiusmod tempor incididunt ut labore et dolore magna
+                aliqua. Ut enim ad minim veniam, quis nostrud exercitation
+                ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+              <p>Duis aute irure dolor in reprehenderit.</p>
+            </div>
+          </div>
+        </div>
+        <div class="spiral-grid__cell">
+          <div class="spiral-grid__content spiral-grid__content--scroll">
+            <div class="card">
+              <h3>Cell 2 — scrollable</h3>
+              <p>Excepteur sint occaecat cupidatat non proident, sunt in
+                culpa qui officia deserunt mollit anim id est laborum.</p>
+              <p>More content. More content. More content.</p>
+            </div>
+          </div>
+        </div>
+        <div class="spiral-grid__cell">
+          <div class="spiral-grid__content spiral-grid__content--scroll">
+            <div class="card">
+              <h3>Cell 3 — scrollable</h3>
+              <p>Overflows to scroll. Overflows to scroll.</p>
+            </div>
+          </div>
+        </div>
+        <div class="spiral-grid__cell">
+          <div class="spiral-grid__content spiral-grid__content--scroll">
+            <div class="card">
+              <h3>4 — scroll</h3>
+              <p>Tiny but still OK.</p>
+            </div>
+          </div>
+        </div>
+        <div class="spiral-grid__cell">
+          <div class="spiral-grid__content spiral-grid__content--scroll">
+            <div class="card">
+              <h3>5 sc</h3>
+            </div>
+          </div>
+        </div>
+        <div class="spiral-grid__cell">
+          <div class="spiral-grid__content">6</div>
+        </div>
+        <div class="spiral-grid__cell">
+          <div class="spiral-grid__content">7 (fill)</div>
+        </div>
+      </div>
+    </div>
+
+    <h2>3. Horizontal scroll — <code>--scroll-x</code></h2>
+    <p class="note">
+      Image strip or timeline use case. Works the same inside rotated
+      cells: the strip should still scroll along the cell's counter-rotated
+      local-X, which is screen-X for unrotated cells and screen-Y for 90°
+      cells. This is worth understanding: <code>--scroll-x</code> is
+      <em>cell-local</em> horizontal, not screen-horizontal.
+    </p>
+    <div class="stage stage--sm">
+      <div class="spiral-grid demo">
+        <div class="spiral-grid__cell">
+          <div class="spiral-grid__content spiral-grid__content--scroll-x">
+            <div class="strip">
+              <div class="tile" style="background:#e74c3c">1</div>
+              <div class="tile" style="background:#e67e22">2</div>
+              <div class="tile" style="background:#f1c40f;color:#222">3</div>
+              <div class="tile" style="background:#2ecc71">4</div>
+              <div class="tile" style="background:#3498db">5</div>
+              <div class="tile" style="background:#9b59b6">6</div>
+              <div class="tile" style="background:#34495e">7</div>
+              <div class="tile" style="background:#16a085">8</div>
+              <div class="tile" style="background:#c0392b">9</div>
+              <div class="tile" style="background:#d35400">10</div>
+              <div class="tile" style="background:#27ae60">11</div>
+              <div class="tile" style="background:#2980b9">12</div>
+            </div>
+          </div>
+        </div>
+        <div class="spiral-grid__cell">
+          <div class="spiral-grid__content spiral-grid__content--scroll-x">
+            <div class="strip">
+              <div class="tile" style="background:#e74c3c">A</div>
+              <div class="tile" style="background:#3498db">B</div>
+              <div class="tile" style="background:#2ecc71">C</div>
+              <div class="tile" style="background:#f39c12;color:#222">D</div>
+              <div class="tile" style="background:#9b59b6">E</div>
+              <div class="tile" style="background:#34495e">F</div>
+            </div>
+          </div>
+        </div>
+        <div class="spiral-grid__cell"><div class="spiral-grid__content">3</div></div>
+        <div class="spiral-grid__cell"><div class="spiral-grid__content">4</div></div>
+        <div class="spiral-grid__cell"><div class="spiral-grid__content">5</div></div>
+        <div class="spiral-grid__cell"><div class="spiral-grid__content">6</div></div>
+      </div>
+    </div>
+
+    <h2>4. Scroll + gap — safe-zone interaction</h2>
+    <p class="note">
+      Combines <code>--spiral-grid-gap: 12px</code> with scrollable
+      content. The scrollbar should sit on the inside of the safe zone
+      (never clipped by the gap's clip-path) and the content's top/bottom
+      padding should scale with the cell.
+    </p>
+    <div class="stage stage--sm">
+      <div class="spiral-grid demo" style="--spiral-grid-gap: 12px">
+        <div class="spiral-grid__cell">
+          <div class="spiral-grid__content spiral-grid__content--scroll">
+            <div class="card">
+              <h3>With gap</h3>
+              <p>The safe-zone padding keeps scrollbars + text clear of
+                the clip-path gap. Scroll me.</p>
+              <p>Ac diam pretium tincidunt. Etiam ac libero ut mauris
+                interdum tincidunt.</p>
+              <p>Cras sit amet libero. Phasellus vel lorem ac sapien
+                volutpat facilisis.</p>
+              <p>Suspendisse potenti.</p>
+            </div>
+          </div>
+        </div>
+        <div class="spiral-grid__cell">
+          <div class="spiral-grid__content spiral-grid__content--scroll">
+            <div class="card">
+              <h3>90° + gap</h3>
+              <p>Rotated cell with gap. Wheel-scroll should still map to
+                screen-Y, and the scrollbar should stay inside the clip.</p>
+              <p>More content. More content. More content.</p>
+            </div>
+          </div>
+        </div>
+        <div class="spiral-grid__cell">
+          <div class="spiral-grid__content spiral-grid__content--scroll">
+            <div class="card">
+              <h3>180°</h3>
+              <p>Short.</p>
+              <p>Still short.</p>
+              <p>Third line.</p>
+              <p>Fourth.</p>
+              <p>Fifth — may overflow.</p>
+            </div>
+          </div>
+        </div>
+        <div class="spiral-grid__cell"><div class="spiral-grid__content">4</div></div>
+        <div class="spiral-grid__cell"><div class="spiral-grid__content">5</div></div>
+        <div class="spiral-grid__cell"><div class="spiral-grid__content">6 (fill)</div></div>
+      </div>
+    </div>
+
+    <h2>5. Reverse + scroll — mirrored rotation signs</h2>
+    <p class="note">
+      Reverse spirals rotate in the opposite direction (−90° per step
+      instead of +90°). Confirms scroll behavior isn't sensitive to
+      rotation direction.
+    </p>
+    <div class="stage stage--sm">
+      <div class="spiral-grid spiral-grid--reverse demo">
+        <div class="spiral-grid__cell">
+          <div class="spiral-grid__content spiral-grid__content--scroll">
+            <div class="card">
+              <h3>Reverse cell 1</h3>
+              <p>Mirror-image spiral. Scrolling should work identically to
+                the forward version.</p>
+              <p>Quisque velit nisi, pretium ut lacinia in, elementum id
+                enim.</p>
+              <p>Cras ultricies ligula sed magna dictum porta.</p>
+              <p>Curabitur aliquet quam id dui posuere blandit.</p>
+            </div>
+          </div>
+        </div>
+        <div class="spiral-grid__cell">
+          <div class="spiral-grid__content spiral-grid__content--scroll">
+            <div class="card">
+              <h3>−90° rotate</h3>
+              <p>Rotated the other way. Wheel-scroll should still be
+                natural.</p>
+              <p>More content to overflow the cell.</p>
+              <p>And more.</p>
+            </div>
+          </div>
+        </div>
+        <div class="spiral-grid__cell">
+          <div class="spiral-grid__content spiral-grid__content--scroll">
+            <div class="card">
+              <h3>−180°</h3>
+              <p>Scrolling.</p>
+              <p>More.</p>
+              <p>More.</p>
+            </div>
+          </div>
+        </div>
+        <div class="spiral-grid__cell"><div class="spiral-grid__content">4</div></div>
+        <div class="spiral-grid__cell"><div class="spiral-grid__content">5</div></div>
+        <div class="spiral-grid__cell"><div class="spiral-grid__content">6 (fill)</div></div>
+      </div>
+    </div>
+  </body>
+</html>
