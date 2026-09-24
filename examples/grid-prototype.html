@@ -1,0 +1,216 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Spiral Grid — engine comparison: transform vs CSS Grid</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 2rem;
+        font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+        background: #fafafa;
+        color: #222;
+      }
+      h1 { margin: 0 0 0.25rem; font-size: 1.5rem; }
+      h2 { margin: 2.5rem 0 0.5rem; font-size: 1rem; color: #666; font-weight: 500; }
+      p  { max-width: 70ch; color: #444; }
+      .row { display: flex; gap: 1.5rem; flex-wrap: wrap; align-items: flex-start; }
+      .col { flex: 1 1 380px; max-width: 560px; }
+      .col--narrow { flex: 0 1 300px; }
+      .label { font-size: 0.8rem; color: #888; margin: 0 0 0.35rem; }
+      .stage { background: #1e1e1e; border-radius: 4px; padding: 1rem; }
+      pre.report { background: #fff; border: 1px solid #ddd; padding: 0.75rem; font-size: 0.75rem; overflow: auto; }
+      .ok { color: #2a7d2a; } .bad { color: #b00020; }
+      .controls { display: flex; gap: 1rem; margin: 0.5rem 0; font-size: 0.9rem; }
+      .resizer { resize: both; overflow: hidden; width: 300px; height: 420px; border: 1px dashed #aaa; padding: 4px; container-type: size; }
+    </style>
+  </head>
+  <body>
+    <h1>Engine comparison — transform vs CSS Grid</h1>
+    <p>
+      Left: current <code>src/spiral-grid.css</code> (scale + rotate per cell).
+      Right: <code>src/spiral-grid.grid.css</code> (φ-ratio grid tracks, no transforms).
+      Each demo is in its own Shadow DOM so both engines can coexist.
+    </p>
+
+    <h2>1. Parity — same 7 cells, 1px border + 8px padding inside every cell</h2>
+    <p>Borders/padding are authored in plain px. In the transform engine they shrink with each cell (1px → 0.15px by cell 5). In the grid engine they stay 1px / 8px.</p>
+    <div class="row">
+      <div class="col"><div class="label">transform</div><div class="stage" id="p-t"></div></div>
+      <div class="col"><div class="label">grid</div><div class="stage" id="p-g"></div></div>
+    </div>
+    <pre class="report" id="parity-report">measuring…</pre>
+
+    <h2>2. Gap 8px</h2>
+    <div class="row">
+      <div class="col"><div class="label">transform (clip-path)</div><div class="stage" id="gap-t"></div></div>
+      <div class="col"><div class="label">grid (margin gap/2 per cell)</div><div class="stage" id="gap-g"></div></div>
+    </div>
+
+    <h2>3. Orientation modifiers (grid engine only)</h2>
+    <div class="row">
+      <div class="col"><div class="label">--reverse</div><div class="stage" id="rev-g"></div></div>
+      <div class="col col--narrow"><div class="label">--portrait</div><div class="stage" id="por-g"></div></div>
+      <div class="col col--narrow"><div class="label">--portrait --reverse</div><div class="stage" id="porrev-g"></div></div>
+    </div>
+    <div class="row">
+      <div class="col"><div class="label">transform --reverse (reference)</div><div class="stage" id="rev-t"></div></div>
+      <div class="col col--narrow"><div class="label">transform --portrait (reference)</div><div class="stage" id="por-t"></div></div>
+    </div>
+
+    <h2>4. Fill cell for N = 3 … 10 (grid)</h2>
+    <div class="row" id="fill-row"></div>
+
+    <h2>5. --auto (resize the box)</h2>
+    <div class="resizer"><div id="auto-g"></div></div>
+
+    <h2>6. Per-cell scroll + real container units</h2>
+    <p>Cell 2 scrolls. Every cell's font-size is <code>clamp(0.7rem, 10cqi, 3rem)</code> — cqi is the cell's real width here.</p>
+    <div class="row">
+      <div class="col"><div class="stage" id="scroll-g"></div></div>
+    </div>
+
+    <h2>7. Zoom — container transform about the eye</h2>
+    <p>
+      Steps apply <code>scale(1/φᵏ) rotate(-90°·k)</code> to the whole grid. After k steps, cell k+1 must sit exactly
+      where cell 1 was (dashed outline). <code>--hero-rotate</code> pre-rotates content so the new hero reads upright.
+    </p>
+    <div class="controls">
+      <label><input type="radio" name="z" value="0" checked /> 0</label>
+      <label><input type="radio" name="z" value="1" /> 1 step</label>
+      <label><input type="radio" name="z" value="2" /> 2 steps</label>
+      <label><input type="radio" name="z" value="3" /> 3 steps</label>
+      <label><input type="checkbox" id="hero" checked /> hero-rotate</label>
+    </div>
+    <div class="row">
+      <div class="col"><div class="stage" style="position:relative; overflow:hidden" id="zoom-g"></div></div>
+    </div>
+    <pre class="report" id="zoom-report"></pre>
+
+    <script>
+      const COLORS = ["#ffadad","#ffd6a5","#fdffb6","#caffbf","#9bf6ff","#a0c4ff","#bdb2ff","#ffc6ff","#e0e0e0","#c9c9c9"];
+      const LABELS = "ABCDEFGHIJ";
+
+      function spiral(hostId, engine, { cells = 7, mods = "", style = "", gap = "0px", content, extra = "" } = {}) {
+        const host = typeof hostId === "string" ? document.getElementById(hostId) : hostId;
+        const root = host.attachShadow({ mode: "open" });
+        const css = engine === "grid" ? "../src/spiral-grid.grid.css" : "../src/spiral-grid.css";
+        let items = "";
+        for (let i = 0; i < cells; i++) {
+          const inner = content ? content(i) : `<b>${LABELS[i]}</b>`;
+          items += `<div class="spiral-grid__cell" style="background:${COLORS[i]}"><div class="spiral-grid__content">${inner}</div></div>`;
+        }
+        root.innerHTML = `
+          <link rel="stylesheet" href="${css}">
+          <style>
+            .spiral-grid__content { color:#222; ${style} }
+            ${extra}
+          </style>
+          <div class="spiral-grid ${mods}" style="--spiral-grid-gap:${gap}">${items}</div>`;
+        return root;
+      }
+
+      const BORDER = "border:1px solid #000; padding:8px; align-items:flex-start; justify-content:flex-start;";
+
+      // 1. parity
+      const pt = spiral("p-t", "transform", { style: BORDER });
+      const pg = spiral("p-g", "grid", { style: BORDER });
+
+      // 2. gap
+      spiral("gap-t", "transform", { gap: "8px" });
+      spiral("gap-g", "grid", { gap: "8px" });
+
+      // 3. orientation
+      spiral("rev-g", "grid", { mods: "spiral-grid--reverse" });
+      spiral("por-g", "grid", { mods: "spiral-grid--portrait" });
+      spiral("porrev-g", "grid", { mods: "spiral-grid--portrait spiral-grid--reverse" });
+      spiral("rev-t", "transform", { mods: "spiral-grid--reverse" });
+      spiral("por-t", "transform", { mods: "spiral-grid--portrait" });
+
+      // 4. fill
+      for (let n = 3; n <= 10; n++) {
+        const col = document.createElement("div");
+        col.className = "col"; col.style.flex = "0 1 260px";
+        col.innerHTML = `<div class="label">N = ${n}</div><div class="stage"></div>`;
+        document.getElementById("fill-row").appendChild(col);
+        spiral(col.querySelector(".stage"), "grid", { cells: n });
+      }
+
+      // 5. auto
+      spiral("auto-g", "grid", { mods: "spiral-grid--auto" });
+
+      // 6. scroll + cqi
+      spiral("scroll-g", "grid", {
+        style: "font-size: clamp(0.7rem, 10cqi, 3rem); padding: 4px;",
+        content: (i) => i === 1
+          ? Array.from({ length: 12 }, (_, k) => `<p style="margin:0 0 .5em">Line ${k + 1} — scrollable card content in cell B.</p>`).join("")
+          : `<b>${LABELS[i]}</b>`,
+        extra: `.spiral-grid__cell:nth-child(2) .spiral-grid__content { display:block; overflow-y:auto; text-align:start; }`,
+      });
+
+      // 7. zoom
+      const zg = spiral("zoom-g", "grid", {
+        mods: "spiral-grid--hero-rotate",
+        cells: 8,
+        style: "font-size: clamp(0.6rem, 14cqi, 4rem);",
+        extra: `.spiral-grid { --spiral-grid-transition: transform .6s ease; transition: transform .6s ease; }`,
+      });
+      const zGrid = zg.querySelector(".spiral-grid");
+      const ghost = document.createElement("div");
+      ghost.style.cssText = "position:absolute; border:2px dashed #fff; pointer-events:none; box-sizing:border-box;";
+      zg.appendChild(ghost); // inside the shadow root, or it won't render
+      const PHI = (Math.sqrt(5) - 1) / 2;
+
+      function placeGhost() {
+        const stage = document.getElementById("zoom-g").getBoundingClientRect();
+        const c1 = zg.querySelector(".spiral-grid__cell:nth-child(1)");
+        zGrid.style.transform = "none";
+        const r = c1.getBoundingClientRect();
+        ghost.style.left = r.left - stage.left + "px"; ghost.style.top = r.top - stage.top + "px";
+        ghost.style.width = r.width + "px"; ghost.style.height = r.height + "px";
+        applyZoom();
+      }
+      function applyZoom() {
+        const k = +document.querySelector('input[name="z"]:checked').value;
+        zGrid.classList.toggle("spiral-grid--hero-rotate", document.getElementById("hero").checked);
+        zGrid.style.transform = `scale(${1 / Math.pow(PHI, k)}) rotate(${-90 * k}deg)`;
+        setTimeout(() => {
+          const g = ghost.getBoundingClientRect();
+          const target = zg.querySelector(`.spiral-grid__cell:nth-child(${k + 1})`).getBoundingClientRect();
+          const d = ["left","top","width","height"].map(p => `${p}: ${(target[p] - g[p]).toFixed(2)}px`).join("  ");
+          document.getElementById("zoom-report").textContent =
+            `after ${k} step(s), cell ${k + 1} vs original cell-1 footprint — deltas → ${d}`;
+        }, 700);
+      }
+      document.querySelectorAll('input[name="z"], #hero').forEach(el => el.addEventListener("change", applyZoom));
+      window.addEventListener("resize", placeGhost);
+
+      // Parity measurement: compare visual rects of cells 1..7 between engines,
+      // normalised to each container's top-left.
+      function rects(root) {
+        const c = root.querySelector(".spiral-grid").getBoundingClientRect();
+        return [...root.querySelectorAll(".spiral-grid__cell")].map(el => {
+          const r = el.getBoundingClientRect();
+          return { x: r.left - c.left, y: r.top - c.top, w: r.width, h: r.height };
+        });
+      }
+      function report() {
+        const a = rects(pt), b = rects(pg);
+        let out = "cell   Δx      Δy      Δw      Δh   (grid − transform, px)\n", worst = 0;
+        a.forEach((r, i) => {
+          const s = b[i];
+          const d = [s.x - r.x, s.y - r.y, s.w - r.w, s.h - r.h];
+          worst = Math.max(worst, ...d.map(Math.abs));
+          out += `${LABELS[i]}    ${d.map(v => v.toFixed(2).padStart(7)).join(" ")}\n`;
+        });
+        const el = document.getElementById("parity-report");
+        el.textContent = out + `\nworst |Δ| = ${worst.toFixed(2)}px  ${worst < 1 ? "✓ sub-pixel parity" : "✗ mismatch"}`;
+        el.className = "report " + (worst < 1 ? "ok" : "bad");
+      }
+      // Wait for stylesheets inside shadow roots.
+      Promise.all([...document.querySelectorAll("*")].flatMap(h => h.shadowRoot ? [...h.shadowRoot.querySelectorAll("link")] : [])
+        .map(l => new Promise(r => { if (l.sheet) r(); else l.onload = l.onerror = r; })))
+        .then(() => requestAnimationFrame(() => { report(); placeGhost(); }));
+    </script>
+  </body>
+</html>

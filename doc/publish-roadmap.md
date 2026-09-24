@@ -85,6 +85,19 @@ Everything required to run `npm publish` at `0.1.0`. Nothing else blocks.
       section is ~80% of this already.
 - [x] Semver policy noted in README: `0.x` = API may shift, `1.0.0` = freeze
 
+### 3½. Engine decision — OPEN (blocks release)
+
+- [ ] **Transform engine vs CSS Grid engine.** Prototype
+      `src/spiral-grid.grid.css` reproduces the layout with 0.02px parity,
+      zoom works via container transform (≤0.08px over 3 steps), 179 lines
+      / 869 B gz vs 490 / 1623 B, no `pow()`, no fallback tables, px inside
+      cells are real px, `cqi` works per cell. Findings + feature mapping:
+      `doc/grid-engine.md`; comparison page `examples/grid-prototype.html`.
+      Recommendation: ship grid engine for v0.1. If accepted: replace
+      `src/spiral-grid.css`, retire `test/verify-fallback.mjs`, port
+      examples, update README (drop safe-zone / font-size-max / pow()
+      notes; add `--hero-rotate`), re-run size check.
+
 ### 4. Release runbook — PAUSED (2026-09-24)
 
 Package is built and committed locally; paused for pre-publish work. State
