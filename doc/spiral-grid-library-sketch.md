@@ -10,7 +10,7 @@ This doc tracks the **target API**. It is kept in sync with the prototype in `pr
 
 ## Package Identity
 
-- **Name:** `spiral-grid-css` (or `fibonacci-grid-css` if the npm name is available)
+- **Name:** `golden-spiral-grid` (decided — see roadmap §1; "fibonacci" is a keyword, not the name)
 - **CSS prefix:** `.spiral-grid` (deliberately long-ish to avoid collisions with user `.spiral` utility classes)
 - **Tagline:** "A golden-ratio spiral layout in pure CSS"
 - **Size target:** < 2KB gzipped for the core CSS
@@ -22,22 +22,15 @@ This doc tracks the **target API**. It is kept in sync with the prototype in `pr
 ## File Structure
 
 ```
-spiral-grid-css/
+golden-spiral-grid/
 ├── package.json
 ├── README.md
 ├── LICENSE
 ├── dist/
-│   ├── spiral-grid.css              # compiled, ready to <link>
-│   ├── spiral-grid.min.css
-│   └── spiral-grid.scss             # source for SCSS users who want to customize
+│   ├── spiral-grid.css              # ready to <link> (copy of src)
+│   └── spiral-grid.min.css          # minified
 ├── src/
-│   ├── spiral-grid.scss             # main entry
-│   ├── _variables.scss              # phi, shrinkage-point, defaults
-│   ├── _core.scss                   # container + cell transforms
-│   ├── _modifiers.scss              # reverse, portrait, no-fill, etc.
-│   ├── _gap.scss                    # gap + content safe-zone
-│   ├── _responsive.scss             # container query breakpoints
-│   └── _a11y.scss                   # reduced-motion fallback
+│   └── spiral-grid.css              # single plain-CSS source (no SCSS — see roadmap §1)
 ├── examples/
 │   ├── basic.html                   # plain HTML, no build
 │   ├── gap.html                     # gap + safe-zone feature
@@ -317,18 +310,16 @@ cell's reshape.
 
 ```json
 {
-  "name": "spiral-grid-css",
+  "name": "golden-spiral-grid",
   "version": "0.1.0",
   "description": "A golden-ratio spiral layout in pure CSS",
   "main": "dist/spiral-grid.css",
   "style": "dist/spiral-grid.css",
-  "sass": "src/spiral-grid.scss",
-  "files": ["dist/", "src/"],
+  "files": ["dist/"],
   "keywords": ["css", "layout", "golden-ratio", "fibonacci", "spiral", "grid"],
   "license": "MIT",
   "scripts": {
-    "build": "sass src/spiral-grid.scss dist/spiral-grid.css && cleancss dist/spiral-grid.css -o dist/spiral-grid.min.css",
-    "dev": "sass --watch src:dist"
+    "build": "cp src/spiral-grid.css dist/ && cssnano src/spiral-grid.css dist/spiral-grid.min.css"
   }
 }
 ```
@@ -340,7 +331,7 @@ cell's reshape.
 ### Plain HTML (zero build)
 
 ```html
-<link rel="stylesheet" href="https://unpkg.com/spiral-grid-css/dist/spiral-grid.min.css">
+<link rel="stylesheet" href="https://unpkg.com/golden-spiral-grid/dist/spiral-grid.min.css">
 
 <div class="spiral-grid">
     <div class="spiral-grid__cell"><div class="spiral-grid__content"><h1>Hello</h1></div></div>
@@ -360,7 +351,7 @@ With a visible gap and automatic content safe-zone:
 ### React
 
 ```jsx
-import 'spiral-grid-css/dist/spiral-grid.css';
+import 'golden-spiral-grid/dist/spiral-grid.css';
 
 function Portfolio({ projects }) {
     return (
@@ -377,18 +368,17 @@ function Portfolio({ projects }) {
 }
 ```
 
-### SCSS customization
+### Customization
 
-```scss
-@use "spiral-grid-css/src/spiral-grid" with (
-    $phi: 0.618033989,
-    $transition-duration: 0.6s
-);
+All customization happens through the public custom properties — there is no
+SCSS layer, and `--spiral-grid-phi` is internal (changing it invalidates the
+precomputed fallback table and geometry tests).
 
-.my-portfolio {
-    @extend .spiral-grid;
+```css
+.my-portfolio.spiral-grid {
     width: 80vw;
     --spiral-grid-gap: 4px;
+    --spiral-grid-transition: transform 0.6s ease;
 }
 ```
 
