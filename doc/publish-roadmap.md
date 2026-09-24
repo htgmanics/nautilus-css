@@ -51,8 +51,6 @@ Everything required to run `npm publish` at `0.1.0`. Nothing else blocks.
       build shrinks to a minify step + gzip size check. If the fallback tables ever need
       regenerating, a tiny Node script (extending `test/verify-fallback.mjs`)
       does it without a sass dependency.
-- [ ] Rename GitHub repo `fibonacci-grid` → `golden-spiral-grid` (before any
-      GitHub Pages URLs are set; GitHub auto-redirects old URLs)
 - [x] Decide shipped filename — **keep `dist/spiral-grid.css`** (matches the
       frozen `.spiral-grid` class prefix, which users read daily; the package
       name is only for finding the library. Package/file name mismatch in CDN
@@ -85,12 +83,33 @@ Everything required to run `npm publish` at `0.1.0`. Nothing else blocks.
 - [x] Rewrite README as a user-facing guide (install, usage, API table,
       browser compat note, reduced-motion behavior note). The sketch's API
       section is ~80% of this already.
-- [ ] Deploy `examples/` (the current prototype gallery) to GitHub Pages
 - [x] Semver policy noted in README: `0.x` = API may shift, `1.0.0` = freeze
 
-### 4. Publish
+### 4. Release runbook — PAUSED (2026-09-24)
 
-- [ ] First npm publish at `0.1.0`
+Package is built and committed locally; paused for pre-publish work. State
+when paused: local `main` is ahead of `origin/main` (docs + scroll commits,
+unpushed); scaffold lives on unpushed branch `feat/v0.1-package`.
+
+Run in this order — each step is public and hard to undo, and later steps
+depend on earlier URLs:
+
+- [ ] **Push** `main` and `feat/v0.1-package`; open a PR (or merge) into `main`
+- [ ] **Rename GitHub repo** `htgmanics/fibonacci-grid` → `golden-spiral-grid`
+      (`gh repo rename golden-spiral-grid`). GitHub auto-redirects old URLs.
+      Must happen before Pages so the demo URL is right the first time.
+- [ ] **Update `package.json`** `homepage` / `repository` / `bugs` URLs to the
+      new repo name; update local remote (`git remote set-url origin …`)
+- [ ] **GitHub Pages**: deploy from `main`, repo root — root, not
+      `examples/`, because examples link `../src/spiral-grid.css`. Demo at
+      `https://htgmanics.github.io/golden-spiral-grid/examples/`. Add that
+      link to README.
+- [ ] **Re-check npm name** `golden-spiral-grid` still free
+      (`npm view golden-spiral-grid` → 404) — last checked 2026-09-24
+- [ ] **`npm whoami`** — logged in as the intended account
+- [ ] **`npm publish`** at `0.1.0` (`prepublishOnly` runs test → build →
+      size check automatically). Then tag `v0.1.0` and push the tag.
+- [ ] **Smoke-test** the CDN link from README in a blank HTML page
 
 ---
 
