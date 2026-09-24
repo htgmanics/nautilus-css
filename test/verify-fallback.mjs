@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
  * Verify that the precomputed `@supports not (pow())` fallback rules in
- * prototype/spiral-grid.css match the math produced by the modern
+ * src/spiral-grid.css match the math produced by the modern
  * `pow(phi, i)` path.
  *
  * Run: `node test/verify-fallback.mjs`
@@ -19,7 +19,7 @@ import { dirname, resolve } from "node:path";
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const CSS_PATH = process.argv[2]
     ? resolve(process.cwd(), process.argv[2])
-    : resolve(__dirname, "..", "prototype", "spiral-grid.css");
+    : resolve(__dirname, "..", "src", "spiral-grid.css");
 const CSS = readFileSync(CSS_PATH, "utf8");
 
 // ---- Source of truth: phi = (√5 − 1) / 2 ------------------------------

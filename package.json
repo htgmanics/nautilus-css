@@ -1,0 +1,49 @@
+{
+  "name": "golden-spiral-grid",
+  "version": "0.1.0",
+  "description": "A golden-ratio (Fibonacci-style) spiral layout in pure CSS. Zero JavaScript.",
+  "keywords": [
+    "css",
+    "layout",
+    "golden-ratio",
+    "golden-spiral",
+    "fibonacci",
+    "fibonacci-spiral",
+    "spiral",
+    "grid",
+    "pure-css"
+  ],
+  "license": "MIT",
+  "author": "Henky Wu",
+  "homepage": "https://github.com/htgmanics/fibonacci-grid#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/htgmanics/fibonacci-grid.git"
+  },
+  "bugs": "https://github.com/htgmanics/fibonacci-grid/issues",
+  "style": "dist/spiral-grid.css",
+  "main": "dist/spiral-grid.css",
+  "unpkg": "dist/spiral-grid.min.css",
+  "jsdelivr": "dist/spiral-grid.min.css",
+  "exports": {
+    ".": "./dist/spiral-grid.css",
+    "./min": "./dist/spiral-grid.min.css",
+    "./dist/*": "./dist/*",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist"
+  ],
+  "sideEffects": [
+    "*.css"
+  ],
+  "scripts": {
+    "build": "mkdir -p dist && cp src/spiral-grid.css dist/ && lightningcss --minify src/spiral-grid.css -o dist/spiral-grid.min.css",
+    "size": "node -e \"const n=require('zlib').gzipSync(require('fs').readFileSync('dist/spiral-grid.min.css')).length;console.log(n+' B gzipped (limit 2048)');process.exit(n>2048?1:0)\"",
+    "test": "node test/verify-fallback.mjs",
+    "prepublishOnly": "npm test && npm run build && npm run size"
+  },
+  "devDependencies": {
+    "lightningcss-cli": "^1.33.0"
+  }
+}

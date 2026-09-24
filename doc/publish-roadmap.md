@@ -24,7 +24,7 @@ it stalls again. A live package motivates the rest.
       zero-dep. All 10 indices pass for both forward and reverse variants.
 - [x] Cell scrolling — shipped as cell-level modifiers
       (`spiral-grid__content--scroll`, `--scroll-x`, `--scroll-y`).
-      Stress-test at `prototype/scroll.html`; design notes in
+      Stress-test at `examples/scroll.html`; design notes in
       `doc/cell-scrolling.md`. Spiral-level `--scrollable` with a depth cap
       was rejected.
 - [x] Gap (`--spiral-grid-gap`) — resolved via `clip-path: inset()`; see
@@ -48,7 +48,7 @@ Everything required to run `npm publish` at `0.1.0`. Nothing else blocks.
 - [x] Decide source language — **plain CSS, no SCSS ever.** The only meaningful
       SCSS variable (`$phi`) is explicitly frozen, so SCSS customization is a
       feature already rejected; the prototype is shipped-quality plain CSS; the
-      build shrinks to minify + `size-limit`. If the fallback tables ever need
+      build shrinks to a minify step + gzip size check. If the fallback tables ever need
       regenerating, a tiny Node script (extending `test/verify-fallback.mjs`)
       does it without a sass dependency.
 - [ ] Rename GitHub repo `fibonacci-grid` → `golden-spiral-grid` (before any
@@ -57,32 +57,36 @@ Everything required to run `npm publish` at `0.1.0`. Nothing else blocks.
       frozen `.spiral-grid` class prefix, which users read daily; the package
       name is only for finding the library. Package/file name mismatch in CDN
       URLs is normal npm practice.)
-- [ ] Create `package.json` (name, version, license, exports, keywords, `files`)
-- [ ] Organise source into `src/` and build output into `dist/`
-- [ ] Rename `prototype/` → `examples/` (freeze before GitHub Pages URLs are set)
-- [ ] Confirm `LICENSE` is referenced from `package.json` and README
-- [ ] Add `.gitignore` entries for `node_modules`, `dist`, `.vscode`, etc.
-- [ ] Rely on the `files` field to control what ships
+- [x] Create `package.json` (name, version, license, exports, keywords, `files`)
+- [x] Organise source into `src/` and build output into `dist/`
+- [x] Rename `prototype/` → `examples/`; CSS moved to `src/spiral-grid.css` (examples link `../src/`)
+- [x] Confirm `LICENSE` is referenced from `package.json` and README
+- [x] `.gitignore` already covers `node_modules`, `dist`. `.vscode/settings.json`
+      stays tracked on purpose (Live Preview default path → `examples/`).
+- [x] Rely on the `files` field to control what ships
 
 ### 2. Build & Size
 
-- [ ] Set up build script (copy `src/spiral-grid.css` to `dist/` + cssnano minify)
-- [ ] Produce `spiral-grid.css` and `spiral-grid.min.css` in `dist/`
-- [ ] Enforce < 2 KB gzipped target via `size-limit` (not eyeballed).
+- [x] Set up build script — `npm run build`: copy to `dist/` + `lightningcss --minify` (one dev dep;
+      minified output keeps both `@supports` paths, numbers rounded to ~6 sig. digits)
+- [x] Produce `spiral-grid.css` and `spiral-grid.min.css` in `dist/`
+- [x] Enforce < 2 KB gzipped target — `npm run size` (Node built-in zlib, no
+      `size-limit` dep). **Measured: 1623 B** with fallback tables, so no
+      modern-only split needed.
       Decision (2026-09-24): the pow() fallback tables stay in the main file —
       already written, verified by `test/verify-fallback.mjs`, and gzip
-      compresses the repetitive rules well. Only if `size-limit` fails do we
+      compresses the repetitive rules well. Only if the size check fails do we
       split out a `spiral-grid.modern.css` (no fallback) — measure first,
       never delete working code for an unconfirmed size problem.
-- [ ] CDN-friendly: works via unpkg / jsdelivr out of the box
+- [x] CDN-friendly: `unpkg` / `jsdelivr` fields point at the minified file
 
 ### 3. Minimum docs & demo
 
-- [ ] Rewrite README as a user-facing guide (install, usage, API table,
+- [x] Rewrite README as a user-facing guide (install, usage, API table,
       browser compat note, reduced-motion behavior note). The sketch's API
       section is ~80% of this already.
 - [ ] Deploy `examples/` (the current prototype gallery) to GitHub Pages
-- [ ] Semver policy noted in README: `0.x` = API may shift, `1.0.0` = freeze
+- [x] Semver policy noted in README: `0.x` = API may shift, `1.0.0` = freeze
 
 ### 4. Publish
 
@@ -144,7 +148,7 @@ Out of scope until well after release; tracked so they don't sneak into v1.
 
 - [ ] Scroll-driven spiral zoom — `.spiral-grid--scroll-zoom` modifier using
       CSS Scroll-Driven Animations. Design notes in `doc/scroll-zoom.md`;
-      working prototype in `prototype/scroll-zoom.html`.
+      working prototype in `examples/scroll-zoom.html`.
 - [ ] Infinite zoom (v2) — zoom into the convergence point to reveal nested
       spirals; companion package. Same self-similarity math as scroll-driven
       zoom, different input.
