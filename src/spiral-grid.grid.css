@@ -32,7 +32,7 @@
     aspect-ratio: 1.618034 / 1;
     /* Track sizes are the only "table" in this engine. */
     --spiral-grid-tracks:
-        0.618034fr 0.090170fr 0.013156fr 0.008131fr 0.034442fr 0.236068fr;
+        0.618033989fr 0.090169944fr 0.013155617fr 0.008130619fr 0.034441854fr 0.236067977fr;
     grid-template-columns: var(--spiral-grid-tracks);
     grid-template-rows: var(--spiral-grid-tracks);
     overflow: hidden;
@@ -136,11 +136,13 @@
 /* ------------------------------------------------------------
    Zoom support. The spiral is self-similar about its eye:
    scale(1/φ) rotate(-90°) maps cell i+1 onto cell i.
-   Eye in container coords: (1 - s, 1 - s), s = φ²(1 - φ).
-   Apply to the container (or a wrapper) — cells are untouched.
+   Eye = where the lines converge: x = φ + φ⁵ + φ⁹ + … = φ / (1 - φ⁴)
+   = (5 + √5) / 10 ≈ 0.7236068 of the width, and the same fraction
+   of the height. Apply to the container (or a wrapper) — cells are
+   untouched.
    ------------------------------------------------------------ */
 .spiral-grid {
-    --spiral-grid-eye: 72.360680%;
+    --spiral-grid-eye: 72.3606798%;
     transform-origin: var(--spiral-grid-eye) var(--spiral-grid-eye);
 }
 .spiral-grid--reverse {

@@ -93,7 +93,9 @@ Everything required to run `npm publish` at `0.1.0`. Nothing else blocks.
       / 869 B gz vs 490 / 1623 B, no `pow()`, no fallback tables, px inside
       cells are real px, `cqi` works per cell. Findings + feature mapping:
       `doc/grid-engine.md`; comparison page `examples/grid-prototype.html`.
-      Recommendation: ship grid engine for v0.1. If accepted: replace
+      Recommendation: ship grid engine for v0.1. (Further evidence: the
+      infinite-zoom prototype, `doc/infinite-zoom.md`, was built on it in an
+      afternoon.) If accepted: replace
       `src/spiral-grid.css`, retire `test/verify-fallback.mjs`, port
       examples, update README (drop safe-zone / font-size-max / pow()
       notes; add `--hero-rotate`), re-run size check.
@@ -181,8 +183,10 @@ Out of scope until well after release; tracked so they don't sneak into v1.
 - [ ] Scroll-driven spiral zoom — `.spiral-grid--scroll-zoom` modifier using
       CSS Scroll-Driven Animations. Design notes in `doc/scroll-zoom.md`;
       working prototype in `examples/scroll-zoom.html`.
-- [ ] Infinite zoom (v2) — zoom into the convergence point to reveal nested
-      spirals; companion package. Same self-similarity math as scroll-driven
-      zoom, different input.
+- [ ] Infinite zoom (v2) — **prototype works** (2026-09-28):
+      `examples/infinite-zoom.html`, findings in `doc/infinite-zoom.md`.
+      Stacked layers on the grid engine, lap steps, forward-only; reset is
+      pixel-invisible (6 px diff, SSIM 0.99998). Remaining: zoom out, reduced
+      motion, packaging as a JS recipe/companion.
 - [ ] Theming presets (utility-class color schemes)
 - [ ] Interactive demo playground

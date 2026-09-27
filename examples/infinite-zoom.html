@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Spiral Grid — infinite zoom (stacked layers, lap steps)</title>
+    <link rel="stylesheet" href="../src/spiral-grid.grid.css" />
+    <style>
+      body {
+        margin: 0;
+        padding: 2rem;
+        font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+        background: #fafafa;
+        color: #222;
+      }
+      h1 { margin: 0 0 0.25rem; font-size: 1.5rem; }
+      p  { max-width: 70ch; color: #444; }
+      .controls { display: flex; gap: 0.75rem; align-items: center; margin: 0.75rem 0; font-size: 0.9rem; }
+      button { font: inherit; padding: 0.35rem 0.8rem; }
+      pre.report { background: #fff; border: 1px solid #ddd; padding: 0.75rem; font-size: 0.75rem; max-width: 560px; }
+
+      /* The viewport. */
+      .stage {
+        width: 640px;
+        aspect-ratio: 1.618034 / 1;
+        overflow: hidden;
+        background: #1e1e1e;
+        position: relative;
+      }
+      /* The thing that zooms. Same box as a spiral, same eye. */
+      .zoom {
+        position: absolute; inset: 0;
+        transform-origin: 72.3606798% 72.3606798%;
+        will-change: transform;
+      }
+      /* Layer k is a full-size spiral scaled by φ⁴ᵏ about the eye. Because
+         every layer is laid out at the same size and scaled about the same
+         point, layer k+1 lands exactly on layer k's fill cell — including
+         Chrome's 1/64px layout rounding, which is identical for all of them. */
+      .zoom > .spiral-grid { position: absolute; inset: 0; }
+      .zoom > .lvl-1 { transform: scale(0.145898034); z-index: 1; }   /* φ⁴  */
+      .zoom > .lvl-2 { transform: scale(0.021286236); z-index: 2; }   /* φ⁸  */
+      .zoom > .lvl-3 { transform: scale(0.003105620); z-index: 3; }   /* φ¹² */
+
+      .card {
+        width: 100%; height: 100%;
+        display: flex; flex-direction: column; justify-content: flex-end;
+        padding: 6cqi; box-sizing: border-box;
+        color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,.4);
+      }
+      .card b { font-size: 18cqi; line-height: 1; }
+      .card span { font-size: 6cqi; opacity: .85; }
+    </style>
+  </head>
+  <body>
+    <h1>Infinite zoom — stacked layers, lap steps, forward only</h1>
+    <p>
+      Four full-size spirals stacked, layer k scaled by φ⁴ᵏ about the eye, so each one sits exactly in the
+      previous one's fill cell. A step zooms the stack by <code>scale(φ⁻⁴) rotate(−360°)</code>; when it lands,
+      layer 1 occupies exactly layer 0's box, so we re-render with offset+4 and drop the transform in the same
+      frame. Wheel = continuous, snaps to the nearest lap when idle.
+    </p>
+    <div class="controls">
+      <button id="next">Next (→)</button>
+      <label>offset: <b id="offset">0</b></label>
+      <label>progress: <b id="prog">0.00</b></label>
+    </div>
+    <div class="stage" id="stage"><div class="zoom" id="zoom"></div></div>
+    <pre class="report" id="report">—</pre>
+
+    <script>
+      const PHI = (Math.sqrt(5) - 1) / 2;
+      const LAP = 4;              // cells per lap = one 360° turn
+      const LEVELS = 4;           // layers rendered; deepest ≈ φ¹² ≈ 0.3% of width
+      const DURATION = 1200;
+      const zoom = document.getElementById("zoom");
+      const $ = (id) => document.getElementById(id);
+
+      const item = (n) => ({ n, hue: (n * 47) % 360 });
+
+      // One full-size spiral: 4 squares + an (empty) fill cell.
+      function spiral(offset, level) {
+        const grid = document.createElement("div");
+        grid.className = `spiral-grid lvl-${level}`;
+        for (let i = 0; i < LAP; i++) {
+          const { n, hue } = item(offset + i);
+          const cell = document.createElement("div");
+          cell.className = "spiral-grid__cell";
+          cell.style.background = `hsl(${hue} 70% 55%)`;
+          cell.innerHTML = `<div class="spiral-grid__content"><div class="card"><b>${n}</b><span>item ${n}</span></div></div>`;
+          grid.appendChild(cell);
+        }
+        const fill = document.createElement("div");
+        fill.className = "spiral-grid__cell";
+        fill.style.background = "#111";
+        grid.appendChild(fill);
+        return grid;
+      }
+
+      let offset = 0;
+      let progress = 0;          // 0..1 within the current lap
+      let anim = null;
+
+      function render() {
+        zoom.replaceChildren(...Array.from({ length: LEVELS }, (_, k) => spiral(offset + LAP * k, k)));
+        $("offset").textContent = offset;
+      }
+      const lapTransform = (p) => `scale(${Math.pow(PHI, -LAP * p)}) rotate(${-360 * p}deg)`;
+      const setProgress = (p) => { progress = p; zoom.style.transform = p ? lapTransform(p) : ""; $("prog").textContent = p.toFixed(2); };
+
+      // The reset: new content, no transform — one task, one paint.
+      function commitLap() { offset += LAP; render(); }
+
+      // --- Lap step via Web Animations API, with frame-time measurement ---
+      const frames = [];
+      function step() {
+        if (anim) return Promise.resolve();
+        frames.length = 0;
+        let last = performance.now(), raf;
+        const tick = (t) => { frames.push(t - last); last = t; raf = requestAnimationFrame(tick); };
+        raf = requestAnimationFrame(tick);
+        const from = progress;
+        zoom.style.transform = "";
+        anim = zoom.animate(
+          [{ transform: lapTransform(from) }, { transform: lapTransform(1) }],
+          { duration: DURATION * (1 - from), easing: "cubic-bezier(.6,0,.2,1)", fill: "forwards" }
+        );
+        return anim.finished.then(() => {
+          cancelAnimationFrame(raf);
+          commitLap();          // new DOM in place…
+          anim.cancel();        // …then drop the forwards fill. Same task → same paint.
+          anim = null;
+          setProgress(0);
+          const avg = frames.reduce((a, b) => a + b, 0) / frames.length;
+          const max = Math.max(...frames);
+          $("report").textContent =
+            `lap ${offset / LAP}: ${frames.length} frames, avg ${avg.toFixed(1)}ms, max ${max.toFixed(1)}ms, >2 frames dropped: ${frames.filter((f) => f > 34).length}`;
+        });
+      }
+
+      // --- Continuous via wheel ---
+      let settleTimer = null;
+      $("stage").addEventListener("wheel", (e) => {
+        e.preventDefault();
+        if (anim) return;
+        let p = Math.max(0, progress + e.deltaY / 1200);
+        while (p >= 1) { p -= 1; commitLap(); }
+        setProgress(p);
+        clearTimeout(settleTimer);
+        settleTimer = setTimeout(settle, 160);
+      }, { passive: false });
+
+      function settle() {
+        if (progress === 0 || anim) return;
+        if (progress >= 0.5) { step(); return; }
+        const from = progress;
+        zoom.style.transform = "";
+        anim = zoom.animate([{ transform: lapTransform(from) }, { transform: lapTransform(0) }],
+          { duration: 600 * from, easing: "ease-out", fill: "forwards" });
+        anim.finished.then(() => { anim.cancel(); anim = null; setProgress(0); });
+      }
+
+      $("next").addEventListener("click", step);
+      document.addEventListener("keydown", (e) => { if (e.key === "ArrowRight" || e.key === " ") { e.preventDefault(); step(); } });
+
+      render();
+
+      // --- Test hooks ---
+      const rectsOf = (sel) => {
+        const s = $("stage").getBoundingClientRect();
+        return [...zoom.querySelectorAll(sel)].slice(0, LAP).map((el) => {
+          const r = el.getBoundingClientRect();
+          return [r.left - s.left, r.top - s.top, r.width, r.height].map((v) => +v.toFixed(2));
+        });
+      };
+      window.__test = {
+        freezeAtLapEnd() { zoom.style.transform = lapTransform(1); },
+        commit() { commitLap(); zoom.style.transform = ""; },
+        step,
+        get offset() { return offset; },
+        rootRects: () => rectsOf(".lvl-0 > .spiral-grid__cell"),
+        nestedRects: () => rectsOf(".lvl-1 > .spiral-grid__cell"),
+      };
+    </script>
+  </body>
+</html>
