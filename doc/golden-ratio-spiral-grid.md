@@ -1,5 +1,7 @@
 # Golden Ratio Spiral Grid
 
+> **Historical (transform engine).** The derivation of the eye and the self-similarity argument are still correct and used by the zoom features; the transform-based construction and the React layer system have been replaced — see `doc/shared-lines.md` and `doc/tunnel.md`. Kept for the record.
+
 A CSS-based layout system that constructs a Fibonacci spiral using CSS transforms, then creates an infinite zoom effect by layering and recycling duplicate grids with `react-spring`.
 
 Reference implementation: [htgmanics/portfolio-2021](https://github.com/htgmanics/portfolio-2021)

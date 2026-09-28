@@ -1,5 +1,7 @@
 # Gap Feature — Post-Mortem
 
+> **Historical (transform engine).** This describes how the gap was solved when cells were scaled copies. In the shipped CSS Grid engine the gap is a `margin: gap / 2` on each cell — see `doc/shared-lines.md` §7. Kept for the record.
+
 Research notes from the first attempt at implementing `--spiral-grid-gap`.
 
 ## Goal

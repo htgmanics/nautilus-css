@@ -161,25 +161,26 @@
   <body>
     <h1>Spiral Grid — Gap Feature Prototype</h1>
     <p class="note">
-      Experimental <code>--spiral-grid-gap</code> implementation via
-      <code>clip-path: inset()</code>. Each cell is clipped inward by
-      <code>(gap / 2) / pow(phi, i)</code>, so the post-scale visual gap
-      between neighbors equals <code>--spiral-grid-gap</code> regardless of
-      cell depth. The dark stage color shows through the gap.
+      <code>--spiral-grid-gap</code> is a <code>clip-path: inset(gap / 2)</code>
+      on every cell plus the same padding on its content. Cells are real grid
+      items (no scaling), so the inset is a constant and the visible gap
+      between neighbours is exactly <code>--spiral-grid-gap</code> at every
+      depth; the layout is never touched, so every cell stays a perfect
+      square. The dark stage colour shows through the gap.
     </p>
     <p class="note">
-      See <code>doc/gap-postmortem.md</code> for the history of why this
-      was hard. The short version: padding distorts the fill cell,
-      transparent borders fight with <code>background-clip</code>, and
-      both get devoured by sub-pixel rendering at deep cells.
-      <code>clip-path</code> avoids layout entirely — pure paint.
+      History: in the transform engine the inset had to be divided by
+      <code>pow(φ, i)</code> per cell (see <code>doc/gap-postmortem.md</code>);
+      here it's a constant. Native grid <code>gap</code> was rejected because
+      it shrinks the tracks and distorts the squares; margin or padding on
+      the cell was rejected because both feed the track-sizing minimums and
+      break the tiny eye tracks once the gap exceeds them.
     </p>
 
     <h2>1. Gap sweep (forward, 7 cells, fill)</h2>
     <p class="note">
-      The visible gap should stay constant between large and small cells.
-      If clip-path scaled the gap with the cell, cell 5 would have a
-      hair-thin gap and cell 7 would have none at all.
+      The visible gap should stay constant between large and small cells —
+      cell 7's gutter as wide as cell 1's.
     </p>
     <div class="grid-sweep">
       <div>
@@ -352,12 +353,8 @@
 
     <h2>8. Complex backgrounds (gradients)</h2>
     <p class="note">
-      The original <code>border: transparent</code> approach broke here
-      because the <code>background</code> shorthand reset
-      <code>background-clip</code>, making the transparent border
-      invisible. <code>clip-path</code> clips the whole rendered element
-      (backgrounds included), so gradients, images, and any
-      <code>background</code> shorthand just work.
+      <code>clip-path</code> clips the whole painted cell, so gradients,
+      images and any <code>background</code> shorthand on the cell just work.
     </p>
     <div class="stage stage--sm">
       <div
@@ -374,42 +371,16 @@
       </div>
     </div>
 
-    <h2>9. Content clipping — handled by default</h2>
+    <h2>9. Content at the cell edge — nothing to clip</h2>
     <p class="note">
-      <code>clip-path</code> trims pixels at paint time; it does
-      <strong>not</strong> shrink the cell's layout box. Anything
-      inside that reaches the cell edge — a border, a bleeding
-      background, an absolutely-positioned badge, justified text —
-      would get visually clipped by the gap.
+      <code>.spiral-grid__content</code> carries a constant
+      <code>gap / 2</code> padding, so its content box is exactly the visible
+      cell: a border, a bleeding background, an absolutely positioned badge
+      all stop at the gap. Nothing depth-dependent to compensate. Each card below has a visible
+      border; <code>--spiral-grid-gap: 16px</code>.
     </p>
-    <p class="note">
-      To prevent this, setting <code>--spiral-grid-gap</code> also
-      installs a matching safe zone on
-      <code>.spiral-grid__content</code> via
-      <code>--spiral-grid-safe-zone</code> (defaults to
-      <code>gap / 2</code>, scale-compensated so the visible padding
-      stays constant at every cell depth). Centered flex content
-      doesn't notice; edge-bleeding content stays clear of the clip
-      for free.
-    </p>
-    <p class="note">
-      For full-bleed content (e.g. a photo that should reach all the
-      way to the clip edge), opt out per spiral:
-    </p>
-    <pre class="note" style="background:#f0f0f0;padding:0.75rem;border-radius:3px;font-family:monospace;font-size:0.85rem;margin-bottom:1rem"><code>.my-spiral { --spiral-grid-safe-zone: 0; }</code></pre>
-    <p class="note">
-      Each cell below contains an inner box with a visible border. On
-      the left the spiral sets
-      <code>--spiral-grid-safe-zone: 0</code> and the border
-      gets eaten by the gap. On the right, the default safe zone
-      keeps the border clear. Both use the same
-      <code>--spiral-grid-gap: 16px</code>.
-    </p>
-    <div class="grid-sweep" style="grid-template-columns:repeat(auto-fit,minmax(300px,1fr))">
-      <div>
-        <p class="label"><code>--spiral-grid-safe-zone: 0</code> — border edges get clipped</p>
-        <div class="stage">
-          <div class="spiral-grid demo edge-demo" style="--spiral-grid-gap: 16px; --spiral-grid-safe-zone: 0">
+    <div class="stage stage--sm">
+      <div class="spiral-grid demo edge-demo" style="--spiral-grid-gap: 16px">
             <div class="spiral-grid__cell"><div class="spiral-grid__content"><div class="content-box"><div class="content-box__title">Card A</div><div class="content-box__body">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</div><div class="content-box__meta">01 · lorem</div></div></div></div>
             <div class="spiral-grid__cell"><div class="spiral-grid__content"><div class="content-box"><div class="content-box__title">Card B</div><div class="content-box__body">Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</div><div class="content-box__meta">02 · ipsum</div></div></div></div>
             <div class="spiral-grid__cell"><div class="spiral-grid__content"><div class="content-box"><div class="content-box__title">Card C</div><div class="content-box__body">Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.</div><div class="content-box__meta">03 · dolor</div></div></div></div>
@@ -419,21 +390,6 @@
             <div class="spiral-grid__cell"><div class="spiral-grid__content"><div class="content-box"><div class="content-box__title">G</div><div class="content-box__body">At vero eos.</div></div></div></div>
           </div>
         </div>
-      </div>
-      <div>
-        <p class="label">Default (<code>gap / 2</code> safe zone) — clean borders</p>
-        <div class="stage">
-          <div class="spiral-grid demo edge-demo" style="--spiral-grid-gap: 16px">
-            <div class="spiral-grid__cell"><div class="spiral-grid__content"><div class="content-box"><div class="content-box__title">Card A</div><div class="content-box__body">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</div><div class="content-box__meta">01 · lorem</div></div></div></div>
-            <div class="spiral-grid__cell"><div class="spiral-grid__content"><div class="content-box"><div class="content-box__title">Card B</div><div class="content-box__body">Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</div><div class="content-box__meta">02 · ipsum</div></div></div></div>
-            <div class="spiral-grid__cell"><div class="spiral-grid__content"><div class="content-box"><div class="content-box__title">Card C</div><div class="content-box__body">Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.</div><div class="content-box__meta">03 · dolor</div></div></div></div>
-            <div class="spiral-grid__cell"><div class="spiral-grid__content"><div class="content-box"><div class="content-box__title">Card D</div><div class="content-box__body">Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit.</div><div class="content-box__meta">04 · sit</div></div></div></div>
-            <div class="spiral-grid__cell"><div class="spiral-grid__content"><div class="content-box"><div class="content-box__title">Card E</div><div class="content-box__body">Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium.</div><div class="content-box__meta">05</div></div></div></div>
-            <div class="spiral-grid__cell"><div class="spiral-grid__content"><div class="content-box"><div class="content-box__title">F</div><div class="content-box__body">Nemo enim ipsam voluptatem.</div></div></div></div>
-            <div class="spiral-grid__cell"><div class="spiral-grid__content"><div class="content-box"><div class="content-box__title">G</div><div class="content-box__body">At vero eos.</div></div></div></div>
-          </div>
-        </div>
-      </div>
     </div>
 
     <h2>10. Self-scaling gap with container query units</h2>

@@ -148,8 +148,8 @@
         coordinates, regardless of the cell's rotation.</li>
       <li>Touch test (mobile/trackpad): two-finger scroll on rotated cells
         (90°, 180°, 270°) should feel natural.</li>
-      <li>Scrollbar hygiene: the scrollbar should sit inside the clip
-        (never truncated) thanks to the auto safe-zone.</li>
+      <li>Scrollbar hygiene: the scrollbar is a normal scrollbar in a
+        normal box — never truncated, never scaled.</li>
       <li>Scroll chain: scrolling past the end of a cell should NOT scroll
         the page (<code>overscroll-behavior: contain</code>).</li>
     </ul>
@@ -361,12 +361,12 @@
       </div>
     </div>
 
-    <h2>4. Scroll + gap — safe-zone interaction</h2>
+    <h2>4. Scroll + gap</h2>
     <p class="note">
       Combines <code>--spiral-grid-gap: 12px</code> with scrollable
-      content. The scrollbar should sit on the inside of the safe zone
-      (never clipped by the gap's clip-path) and the content's top/bottom
-      padding should scale with the cell.
+      content. The content's <code>gap / 2</code> padding matches the cell's
+      clip inset, so the scrollbar sits inside the visible cell with nothing
+      depth-dependent to compensate.
     </p>
     <div class="stage stage--sm">
       <div class="spiral-grid demo" style="--spiral-grid-gap: 12px">
@@ -374,8 +374,8 @@
           <div class="spiral-grid__content spiral-grid__content--scroll">
             <div class="card">
               <h3>With gap</h3>
-              <p>The safe-zone padding keeps scrollbars + text clear of
-                the clip-path gap. Scroll me.</p>
+              <p>Scrollbar and text sit inside the gap with no extra
+                padding needed. Scroll me.</p>
               <p>Ac diam pretium tincidunt. Etiam ac libero ut mauris
                 interdum tincidunt.</p>
               <p>Cras sit amet libero. Phasellus vel lorem ac sapien

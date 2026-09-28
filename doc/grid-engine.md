@@ -4,9 +4,9 @@ Date: 2026-09-24. Status: **prototype, decision pending** (see roadmap).
 
 Side-by-side comparison of the current transform engine
 (`src/spiral-grid.css`) against a CSS Grid engine with the same public API
-(`src/spiral-grid.grid.css`). Comparison page: `examples/grid-prototype.html`
-(both engines coexist via Shadow DOM; the page measures cell rectangles and
-prints deltas).
+(`src/spiral-grid.grid.css`). Comparison page was `examples/grid-prototype.html` (both engines via Shadow
+DOM, measured cell rectangles, printed deltas); removed with the transform
+engine on 2026-09-28 — see git history (commit 36208ee) to re-run it.
 
 ## Why this was explored
 
@@ -47,7 +47,7 @@ column list).
 | `--reverse`, `--portrait`, `--portrait --reverse` | match transform engine visually |
 | `--auto` (container query) | switches to portrait ✓ |
 | Fill cell, N = 3…10 | correct remainder for every N |
-| Gap 8px | all cells exact squares; one gap between neighbours |
+| Gap 8px / 16px, 215px and 528px containers | all cells exact squares; one gap between neighbours (after switching from margin to clip-path — margins broke the eye tracks at 215px) |
 | Per-cell scroll | native scrollbar, normal size |
 | `cqi` inside cells | reports the cell's real width ✓ (impossible in transform engine) |
 | 1px border / 8px padding inside cells | 1px / 8px in every cell (transform engine: 0.15px / 1.2px by cell 5) |
@@ -61,8 +61,8 @@ Source size: 179 lines vs 490. Minified+gzipped: **869 B** vs 1623 B.
 | `scale(pow(φ,i)) rotate(90i)` per cell + `pow()` fallback tables | 6 `fr` tracks + 10 `grid-area` rules |
 | Counter-rotation of content | none needed |
 | Font-size compensation `1rem / pow(φ,i)` | none needed; use `cqi` for per-cell scaling |
-| Gap via `clip-path: inset(gap/2/pow(φ,i))` | `margin: gap/2` on each cell (grid `gap` would distort squares — both axes lose 5 gaps but have different lengths) |
-| `--spiral-grid-safe-zone` | not needed — content box already excludes the gap |
+| Gap via `clip-path: inset(gap/2/pow(φ,i))` + content padding `/pow(φ,i)` | `clip-path: inset(gap/2)` + content padding `gap/2` — constants (grid `gap` distorts squares; cell margin/padding feed track minimums and break the eye tracks) |
+| `--spiral-grid-safe-zone` | folded into the constant `gap/2` content padding |
 | `z-index` by index | none needed — no overlap |
 | `--reverse`: mirrored origins + separate transform tables | `direction: rtl` on the grid, `ltr` reset on content |
 | `--portrait`: separate origins + fill rules | `writing-mode: vertical-rl` on the grid, `horizontal-tb` reset on content |

@@ -66,7 +66,7 @@ On `.spiral-grid`:
 | `spiral-grid--portrait` | Tall golden rectangle (1 : 1.618) |
 | `spiral-grid--auto` | Switch to portrait automatically when the container is taller than wide (container query) |
 | `spiral-grid--no-fill` | Keep the last cell square, leaving the wedge at the eye visible |
-| `spiral-grid--no-counter-rotate` | Let content rotate with its cell |
+| `spiral-grid--hero-rotate` | Pre-rotate each cell's content by 90° × its index, so after a zoom step the new hero reads upright (see `doc/tunnel.md`) |
 
 On `.spiral-grid__content`:
 
@@ -84,17 +84,19 @@ Set these on `.spiral-grid`:
 
 | Property | Default | Purpose |
 |---|---|---|
-| `--spiral-grid-gap` | `0px` | Visible gutter between cells. Stays constant at every depth. |
-| `--spiral-grid-safe-zone` | `gap / 2` | Content padding that keeps content clear of the gap. Set `0` for full-bleed images. |
-| `--spiral-grid-font-size-max` | `8rem` | Cap on compensated font-size in deep cells |
-| `--spiral-grid-transition` | `none` | Cell transition, e.g. `transform 0.4s ease` |
+| `--spiral-grid-gap` | `0px` | Visible gutter between cells. Same width at every depth. |
+| `--spiral-grid-transition` | `none` | Cell transition, e.g. `background 0.4s ease` |
 
 ```html
 <div class="spiral-grid" style="--spiral-grid-gap: 8px">…</div>
 ```
 
-`--spiral-grid-phi` and `--spiral-grid-shrinkage` are internal — don't
-override them.
+`--spiral-grid-tracks` and `--spiral-grid-eye` are internal — don't override
+them.
+
+**Sizing content per cell:** every cell is a container, so `cqi` inside
+`.spiral-grid__content` means *that cell's* width — `font-size: 10cqi` scales
+type with the cell at every depth.
 
 **Gap and depth:** because cells shrink exponentially, a large gap makes the
 deepest cells vanish. Keep the gap small relative to the container, or scale
@@ -102,10 +104,9 @@ it with the container (e.g. `--spiral-grid-gap: 0.5cqi`).
 
 ## Browser support
 
-- Evergreen browsers use CSS `pow()` for the geometry.
-- Browsers without `pow()` get precomputed per-cell rules with identical
-  output.
-- `--auto` requires container queries.
+Plain CSS Grid — no transforms, no `pow()`. Needs `aspect-ratio`,
+`writing-mode` (for `--portrait`) and container queries (for `--auto` and
+`cqi`): every evergreen browser since 2023.
 
 ## Accessibility
 
@@ -120,23 +121,27 @@ Clone the repo and open any of these in a browser:
 
 - [`examples/index.html`](examples/index.html) — gallery: fill, reverse,
   portrait, multi-spiral, responsive resize
-- [`examples/gap.html`](examples/gap.html) — gap and safe-zone
+- [`examples/gap.html`](examples/gap.html) — the gap at every depth
 - [`examples/scroll.html`](examples/scroll.html) — per-cell scrolling
 - [`examples/scroll-zoom.html`](examples/scroll-zoom.html) — experimental
   scroll-driven zoom (not part of the 0.1 API)
+- [`examples/infinite-zoom.html`](examples/infinite-zoom.html) — the tunnel:
+  infinite zoom into the eye, ~130 lines of JS on top of the CSS
+  (add `?images` for photos)
 
 ## How it works
 
-The math — why φ, where the convergence point sits, why the gap is divided by
-`pow(φ, i)` — is written up in
-[`doc/golden-ratio-spiral-grid.md`](doc/golden-ratio-spiral-grid.md). Design
-notes for each feature live in [`doc/`](doc/).
+The whole spiral is one 6×6 CSS Grid: ten cells share only seven distinct
+lines in each direction, and the six track sizes are powers of φ.
+[`doc/shared-lines.md`](doc/shared-lines.md) explains it from scratch;
+[`doc/tunnel.md`](doc/tunnel.md) explains the infinite zoom. Design notes and
+decision records live in [`doc/`](doc/).
 
 ## Development
 
 ```sh
 npm install
-npm test        # verify pow() fallback tables match the math
+npm test        # geometry check: tracks sum to 1, every cell area is square
 npm run build   # src/spiral-grid.css → dist/ (+ minified)
 npm run size    # gzip size check (limit 2 KB)
 ```

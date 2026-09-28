@@ -40,7 +40,7 @@
   "scripts": {
     "build": "mkdir -p dist && cp src/spiral-grid.css dist/ && lightningcss --minify src/spiral-grid.css -o dist/spiral-grid.min.css",
     "size": "node -e \"const n=require('zlib').gzipSync(require('fs').readFileSync('dist/spiral-grid.min.css')).length;console.log(n+' B gzipped (limit 2048)');process.exit(n>2048?1:0)\"",
-    "test": "node test/verify-fallback.mjs",
+    "test": "node test/geometry.mjs",
     "prepublishOnly": "npm test && npm run build && npm run size"
   },
   "devDependencies": {

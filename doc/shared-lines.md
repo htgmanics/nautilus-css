@@ -314,14 +314,24 @@ subtle: `gap` makes room for itself by shrinking the tracks. Our grid has
 about 1.6× the height, so losing the same 40px from each changes their
 ratio. Every "square" comes out ~5% wider than tall.
 
-Instead, each cell gets `margin: calc(gap / 2)`. The cell's grid *area*
-stays a perfect square; the cell just sits inset inside it by half a gap.
-Two neighbours are each inset by gap/2, so between them is exactly one gap.
-Along the container's outer edge, cells are inset by gap/2 — which is what
-the transform engine's clip-path produced too, so the two engines look
-identical.
+The next idea, `margin: calc(gap / 2)` on each cell, looked right at
+528px and was wrong: a grid item's margin counts toward the minimum size of
+its track even when `min-width` is 0, and the eye tracks are only a few
+pixels wide. Once the gap exceeded them, the whole `fr` distribution
+shifted and the squares went off by the gap width. Padding on the cell has
+the same problem.
 
-No division by φⁱ anywhere. The gap is a plain margin on a plain box.
+What works is to leave layout alone entirely: `clip-path: inset(gap / 2)`
+on the cell (paint only — the box is unchanged, the browser just doesn't
+draw the outer strip) and the same `gap / 2` as padding on the content, so
+the content box is exactly the visible cell. Two neighbours are each inset
+by gap/2, so between them is exactly one gap. Content padding doesn't feed
+track sizing because the cell is a scroll container, whose automatic
+minimum is 0.
+
+The transform engine also used clip-path — but had to divide the inset by
+φⁱ per cell, and pad the content by the same. Here nothing is scaled, so
+both are one constant.
 
 ---
 

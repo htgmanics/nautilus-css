@@ -4,7 +4,7 @@ A proposal for turning the Fibonacci Spiral Grid into a shareable, framework-agn
 
 **Scope of v1:** Static spiral layout, with the visual gap / content safe-zone feature. No infinite zoom (that's v2). Scroll-driven zoom ships as an opt-in modifier; its design notes live in `doc/scroll-zoom.md`.
 
-This doc tracks the **target API**. It is kept in sync with the prototype in `src/spiral-grid.css`.
+This doc tracks the **target API**. Since 2026-09-28 `src/spiral-grid.css` is the CSS Grid engine (`doc/shared-lines.md`); the custom-property list below is the authoritative one — `--spiral-grid-safe-zone` and `--spiral-grid-font-size-max` are gone, `--no-counter-rotate` became `--hero-rotate`. The implementation sketch further down is the old transform engine and is historical.
 
 ---
 

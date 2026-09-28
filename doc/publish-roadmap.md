@@ -87,12 +87,15 @@ Everything required to run `npm publish` at `0.1.0`. Nothing else blocks.
 
 ### 3½. Engine decision — OPEN (blocks release)
 
-- [ ] **Transform engine vs CSS Grid engine.** Prototype
+- [x] **Transform engine vs CSS Grid engine — grid engine shipped (2026-09-28).**
+      Swap done: `src/spiral-grid.css` is the grid engine, transform engine in
+      git history; `test/geometry.mjs` replaces the fallback verifier; examples
+      ported; README updated; 933 B gzipped. Original note: Prototype
       `src/spiral-grid.grid.css` reproduces the layout with 0.02px parity,
       zoom works via container transform (≤0.08px over 3 steps), 179 lines
       / 869 B gz vs 490 / 1623 B, no `pow()`, no fallback tables, px inside
       cells are real px, `cqi` works per cell. Findings + feature mapping:
-      `doc/grid-engine.md`; comparison page `examples/grid-prototype.html`.
+      `doc/grid-engine.md`; comparison page `examples/grid-prototype.html` (removed with the swap; git history).
       Recommendation: ship grid engine for v0.1. (Further evidence: the
       infinite-zoom prototype, `doc/infinite-zoom.md`, was built on it in an
       afternoon.) If accepted: replace
