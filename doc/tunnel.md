@@ -134,10 +134,11 @@ between laps, never during motion. Memory is constant either way (four
 layers, forever), but recycling keeps the *state* of the three visible
 layers intact.
 
-Two follow-ons for heavy content, not built yet: fill the deepest layer
-with lightweight placeholders and load real media only when a layer is
-promoted to depth 2; and preload the *next* four items at rest so the
-refill finds them cached.
+Two follow-ons for heavy content, both in the prototype (`?images`): media
+is only given a real `src` once its layer is at a depth where it can be
+seen, and the *next* four items are preloaded and decoded at rest so the
+refill finds them cached. Tested with 16 photos: no dropped frames over 8
+laps, reset still 4 pixels.
 
 That's the whole state of the system: **one number, the offset.** No layer
 bookkeeping, no "move the outermost to the innermost", no array of

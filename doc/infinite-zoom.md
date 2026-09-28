@@ -100,6 +100,22 @@ and one transform origin. That is the layer stack.
 | DOM | 20 cells (4 layers × 5), constant across laps; ~130 lines JS |
 | Reset recycling | layers 1–3 keep their DOM nodes (verified by node identity); only the off-screen layer is refilled |
 
+## With real images (`?images`)
+
+16 photos (picsum, 800px, one per cell), all four layers loaded, preload
+of the next 4 at rest, `img.decode()` on preload.
+
+| Check | Result |
+|---|---|
+| 8 consecutive laps | 71–74 frames each, avg 16.4–16.9ms, max 33ms once, 0 dropped |
+| Reset diff | 4 px (same as placeholders) |
+| Mid-lap sharpness, incoming layer | 31 (photos have more edges than flat cards) |
+| Lazy-load at depth ≤ 2 only | pop-in visible as 131 px diff at a 13px cell when depth 3 → 2 got its `src`; loading at depth ≤ 3 (2px cells) removed it |
+
+The lazy-by-depth + preload mechanism stays in the code for deeper stacks
+or heavier media; with 4 layers and 800px JPEGs it's simply set to load
+everything at rest.
+
 ## Inputs
 
 - **Click / → / space**: one lap via WAAPI, `cubic-bezier(.6,0,.2,1)`.

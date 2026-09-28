@@ -49,6 +49,10 @@
       }
       .card b { font-size: 18cqi; line-height: 1; }
       .card span { font-size: 6cqi; opacity: .85; }
+      /* Image mode (?images): photo fills the cell, caption on top. */
+      .card img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+      .card { position: relative; }
+      .card b, .card span { position: relative; }
     </style>
   </head>
   <body>
@@ -79,6 +83,10 @@
       const $ = (id) => document.getElementById(id);
 
       const item = (n) => ({ n, hue: (n * 47) % 360 });
+      // ?images → real photos (picsum, 800px, deterministic per item).
+      const IMAGES = new URLSearchParams(location.search).has("images");
+      const imgUrl = (n) => `https://picsum.photos/seed/${n}/800/800`;
+      const LOAD_DEPTH = 3;   // load at depth ≤ 3 (2px cells: a photo popping in is imperceptible). Deeper stacks: placeholders.
 
       // One full-size spiral: 4 squares + an (empty) fill cell.
       function spiral() {
@@ -87,7 +95,7 @@
         for (let i = 0; i <= LAP; i++) {
           const cell = document.createElement("div");
           cell.className = "spiral-grid__cell";
-          if (i < LAP) cell.innerHTML = `<div class="spiral-grid__content"><div class="card"><b></b><span></span></div></div>`;
+          if (i < LAP) cell.innerHTML = `<div class="spiral-grid__content"><div class="card">${IMAGES ? "<img alt=\"\">" : ""}<b></b><span></span></div></div>`;
           else cell.style.background = "#111";
           grid.appendChild(cell);
         }
@@ -101,9 +109,22 @@
         [...el.children].slice(0, LAP).forEach((cell, i) => {
           const { n, hue } = item(start + i);
           cell.style.background = `hsl(${hue} 70% 55%)`;
+          cell.dataset.n = n;
           cell.querySelector("b").textContent = n;
           cell.querySelector("span").textContent = `item ${n}`;
+          const img = cell.querySelector("img");
+          if (img) img.removeAttribute("src");      // placeholder until promoted (see loadMedia)
         });
+      }
+      // Lazy by depth: only layers at depth ≤ LOAD_DEPTH carry a real src.
+      // Runs at rest (relabel), so decoding never overlaps the animation.
+      function loadMedia(el) {
+        el.querySelectorAll("img:not([src])").forEach((img) => { img.src = imgUrl(img.closest(".spiral-grid__cell").dataset.n); });
+      }
+      // Preload the 4 items the recycled layer will need next lap.
+      function preloadNext() {
+        if (!IMAGES) return;
+        for (let i = 0; i < LAP; i++) { const im = new Image(); im.src = imgUrl(offset + LAP * LEVELS + i); im.decode?.().catch(() => {}); }
       }
 
       let offset = 0;
@@ -117,9 +138,10 @@
       }
       // Depth classes drive z-index; transforms drive position.
       function relabel() {
-        layers().forEach((el, k) => { el.className = `spiral-grid lvl-${k}`; });
+        layers().forEach((el, k) => { el.className = `spiral-grid lvl-${k}`; if (IMAGES && k <= LOAD_DEPTH) loadMedia(el); });
         applyTransforms(0);
         $("offset").textContent = offset;
+        preloadNext();
       }
       // Pure scale about the eye = straight "tunnel" zoom (default). After a
       // full lap the orientation is back where it started anyway, so the
