@@ -1,7 +1,9 @@
-# golden-spiral-grid
+# Nautilus
 
-A golden-ratio (Fibonacci-style) spiral layout in pure CSS. Zero JavaScript,
-~1.6 KB gzipped.
+**The golden spiral, in CSS.** `nautilus-grid` on npm.
+
+A golden-ratio (Fibonacci-style) spiral grid layout in pure CSS. Zero JavaScript,
+under 1 KB gzipped.
 
 Cells are squares scaled by powers of φ (≈ 0.618) and rotated 90° around the
 spiral's convergence point, producing the classic golden-spiral tiling. The
@@ -15,18 +17,18 @@ empty wedge.
 ## Install
 
 ```sh
-npm install golden-spiral-grid
+npm install nautilus-grid
 ```
 
 ```js
-import 'golden-spiral-grid';            // dist/spiral-grid.css
-// or: import 'golden-spiral-grid/min'; // dist/spiral-grid.min.css
+import 'nautilus-grid';            // dist/spiral-grid.css
+// or: import 'nautilus-grid/min'; // dist/spiral-grid.min.css
 ```
 
 Or via CDN, no build step:
 
 ```html
-<link rel="stylesheet" href="https://unpkg.com/golden-spiral-grid@0.1/dist/spiral-grid.min.css">
+<link rel="stylesheet" href="https://unpkg.com/nautilus-grid@0.1/dist/spiral-grid.min.css">
 ```
 
 ## Usage

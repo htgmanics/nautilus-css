@@ -1,7 +1,7 @@
 {
-  "name": "golden-spiral-grid",
+  "name": "nautilus-grid",
   "version": "0.1.0",
-  "description": "A golden-ratio (Fibonacci-style) spiral layout in pure CSS. Zero JavaScript.",
+  "description": "Nautilus — a golden-spiral CSS grid layout. Fibonacci-style, pure CSS, zero JavaScript.",
   "keywords": [
     "css",
     "layout",
@@ -15,12 +15,12 @@
   ],
   "license": "MIT",
   "author": "Henky Wu",
-  "homepage": "https://github.com/htgmanics/fibonacci-grid#readme",
+  "homepage": "https://github.com/htgmanics/nautilus-grid#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/htgmanics/fibonacci-grid.git"
+    "url": "git+https://github.com/htgmanics/nautilus-grid.git"
   },
-  "bugs": "https://github.com/htgmanics/fibonacci-grid/issues",
+  "bugs": "https://github.com/htgmanics/nautilus-grid/issues",
   "style": "dist/spiral-grid.css",
   "main": "dist/spiral-grid.css",
   "unpkg": "dist/spiral-grid.min.css",

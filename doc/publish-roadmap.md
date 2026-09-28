@@ -38,13 +38,18 @@ Everything required to run `npm publish` at `0.1.0`. Nothing else blocks.
 
 ### 1. Package Structure
 
-- [x] Decide package name — **`golden-spiral-grid`** (npm 404-free as of
-      2026-09-24; `golden-ratio-grid` was taken). Contains the frozen CSS
-      prefix `spiral-grid` verbatim, and carries three search keywords
-      (golden, spiral, grid) in the name itself. "Fibonacci" and "pure CSS"
-      live in the tagline/keywords, not the name. Mathematically honest:
-      cells scale by exact powers of φ (golden spiral), not integer
-      Fibonacci ratios.
+- [x] Decide package name — **`nautilus-grid`**, brand **Nautilus** (2026-09-29;
+      npm-free). Supersedes `golden-spiral-grid` (2026-09-24). Reasoning:
+      the project has a visual identity (the tunnel demo), and brand names
+      win for those — "nautilus" is the picture people remember; "grid"
+      carries the category for search and cold reads. Bare `nautilus` is
+      taken on npm (abandoned 2022 package; a dispute would take 4+ weeks);
+      `@scope/nautilus` bakes an org into every install line. Search intent
+      ("golden ratio", "fibonacci", "spiral") is covered by description +
+      keywords, which npm search indexes. Class prefix stays `.spiral-grid`
+      (describes the thing, not the brand). GitHub repo was renamed to
+      `nautilus-css` by the owner on 2026-09-29; rename once more to
+      `nautilus-grid` to match.
 - [x] Decide source language — **plain CSS, no SCSS ever.** The only meaningful
       SCSS variable (`$phi`) is explicitly frozen, so SCSS customization is a
       feature already rejected; the prototype is shipped-quality plain CSS; the
@@ -112,18 +117,19 @@ unpushed); scaffold lives on unpushed branch `feat/v0.1-package`.
 Run in this order — each step is public and hard to undo, and later steps
 depend on earlier URLs:
 
-- [ ] **Push** `main` and `feat/v0.1-package`; open a PR (or merge) into `main`
-- [ ] **Rename GitHub repo** `htgmanics/fibonacci-grid` → `golden-spiral-grid`
-      (`gh repo rename golden-spiral-grid`). GitHub auto-redirects old URLs.
-      Must happen before Pages so the demo URL is right the first time.
-- [ ] **Update `package.json`** `homepage` / `repository` / `bugs` URLs to the
-      new repo name; update local remote (`git remote set-url origin …`)
+- [x] **Push** `main` and `feat/v0.1-package`; PR #3 open (2026-09-29)
+- [ ] **Rename GitHub repo** `htgmanics/nautilus-css` → `nautilus-grid` (owner
+      does it on GitHub). GitHub auto-redirects old URLs. Must happen before
+      Pages so the demo URL is right the first time.
+- [x] **Update `package.json`** `homepage` / `repository` / `bugs` URLs to
+      `nautilus-grid` (done 2026-09-29)
+- [ ] Update local remote: `git remote set-url origin https://github.com/htgmanics/nautilus-grid.git`
 - [ ] **GitHub Pages**: deploy from `main`, repo root — root, not
       `examples/`, because examples link `../src/spiral-grid.css`. Demo at
-      `https://htgmanics.github.io/golden-spiral-grid/examples/`. Add that
+      `https://htgmanics.github.io/nautilus-grid/examples/`. Add that
       link to README.
-- [ ] **Re-check npm name** `golden-spiral-grid` still free
-      (`npm view golden-spiral-grid` → 404) — last checked 2026-09-24
+- [ ] **Re-check npm name** `nautilus-grid` still free
+      (`npm view nautilus-grid` → 404) — last checked 2026-09-29
 - [ ] **`npm whoami`** — logged in as the intended account
 - [ ] **`npm publish`** at `0.1.0` (`prepublishOnly` runs test → build →
       size check automatically). Then tag `v0.1.0` and push the tag.
