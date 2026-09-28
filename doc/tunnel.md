@@ -118,11 +118,26 @@ layer 2:  items 13–16, scale 0.021
 layer 3:  items 17–20, scale 0.003     ← new, 2px, nobody sees it appear
 ```
 
-So we do exactly that. In one go: add 4 to the content offset, rebuild the
-four layers, remove the animation. The screen doesn't change — every pixel
-that was there is still there, it just belongs to a different layer now.
-The user sees continuous motion; the browser sees a brand-new page every
-1.2 seconds.
+So we do that — but **recycle, don't rebuild**. In one go: add 4 to the
+offset; take layer 0 (the one that just flew off-screen), move its DOM node
+to the back of the stack and refill its four cells with items 17–20; leave
+layers 1–3 completely alone — same nodes, same content, they just become
+depths 0–2 by relabelling; remove the animation. The screen doesn't change:
+every pixel that was there is still there, painted by the same element.
+
+Why not just rebuild all four? With placeholder divs you'd never notice.
+With real content you would: rebuilding means every image re-decodes, every
+video restarts, every iframe reloads, scroll positions and form state inside
+cells vanish — at every lap. Recycling touches one layer's content per lap,
+and that layer is 2px wide when it gets it, so any decoding happens at rest,
+between laps, never during motion. Memory is constant either way (four
+layers, forever), but recycling keeps the *state* of the three visible
+layers intact.
+
+Two follow-ons for heavy content, not built yet: fill the deepest layer
+with lightweight placeholders and load real media only when a layer is
+promoted to depth 2; and preload the *next* four items at rest so the
+refill finds them cached.
 
 That's the whole state of the system: **one number, the offset.** No layer
 bookkeeping, no "move the outermost to the innermost", no array of
@@ -141,8 +156,10 @@ const anims = layers.map((el, k) => el.animate(
 ));
 Promise.all(anims.map(a => a.finished)).then(() => {
   offset += 4;
-  render();                              // …swap the content underneath…
-  anims.forEach(a => a.cancel());        // …then let go. Same task → same paint.
+  zoom.appendChild(zoom.firstElementChild);          // layer 0 → back of the stack
+  fillLayer(zoom.lastElementChild, offset + 12);     // …with the next 4 items
+  relabel();                                         // depths 0–3, rest transforms
+  anims.forEach(a => a.cancel());                    // …then let go. Same task → same paint.
 });
 ```
 

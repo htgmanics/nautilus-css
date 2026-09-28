@@ -97,7 +97,8 @@ and one transform origin. That is the layer stack.
 | Wheel: Δ 0.83 then idle | settles forward, commits (+4) |
 | Wheel: Δ 1.25 | commits once, keeps 0.25, settles back to 0 |
 | 5 consecutive laps | offset 20 → 32, rects unchanged |
-| DOM | 20 cells (4 layers × 5), ~120 lines JS |
+| DOM | 20 cells (4 layers × 5), constant across laps; ~130 lines JS |
+| Reset recycling | layers 1–3 keep their DOM nodes (verified by node identity); only the off-screen layer is refilled |
 
 ## Inputs
 
@@ -120,6 +121,11 @@ and one transform origin. That is the layer stack.
   off-screen; measure paint cost before optimising.
 - **Content = a list + an offset.** That's the whole data model. Infinite by
   construction; finite lists just clamp the offset.
+- **Recycle, don't rebuild** (2026-09-28). The reset moves the off-screen
+  layer's node to the back and refills only its 4 cells; the other three
+  layers are untouched, so decoded images / playing video / scroll state
+  survive laps. For heavy media: placeholders at depth 3, real `src` on
+  promotion to depth 2, preload the next 4 items at rest.
 - **Reduced motion**: skip the animation, commit immediately.
 - **Packaging**: this is JavaScript, so it does not belong in the CSS package.
   Ship as `examples/` recipe first; a `golden-spiral-navigator` package only if

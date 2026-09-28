@@ -58,7 +58,8 @@
       previous one's fill cell. A step zooms the stack straight out of the eye by <code>scale(φ⁻⁴)</code> — no
       rotation; cells are born at the eye and fly past you. When it lands,
       layer 1 occupies exactly layer 0's box, so we re-render with offset+4 and drop the transform in the same
-      frame. Wheel = continuous, snaps to the nearest lap when idle.
+      frame — recycling the off-screen layer's DOM rather than rebuilding, so media in the other three layers keeps its
+      decoded state. Wheel = continuous, snaps to the nearest lap when idle.
     </p>
     <div class="controls">
       <button id="next">Next (→)</button>
@@ -80,22 +81,29 @@
       const item = (n) => ({ n, hue: (n * 47) % 360 });
 
       // One full-size spiral: 4 squares + an (empty) fill cell.
-      function spiral(offset, level) {
+      function spiral() {
         const grid = document.createElement("div");
-        grid.className = `spiral-grid lvl-${level}`;
-        for (let i = 0; i < LAP; i++) {
-          const { n, hue } = item(offset + i);
+        grid.className = "spiral-grid";
+        for (let i = 0; i <= LAP; i++) {
           const cell = document.createElement("div");
           cell.className = "spiral-grid__cell";
-          cell.style.background = `hsl(${hue} 70% 55%)`;
-          cell.innerHTML = `<div class="spiral-grid__content"><div class="card"><b>${n}</b><span>item ${n}</span></div></div>`;
+          if (i < LAP) cell.innerHTML = `<div class="spiral-grid__content"><div class="card"><b></b><span></span></div></div>`;
+          else cell.style.background = "#111";
           grid.appendChild(cell);
         }
-        const fill = document.createElement("div");
-        fill.className = "spiral-grid__cell";
-        fill.style.background = "#111";
-        grid.appendChild(fill);
         return grid;
+      }
+      // Fill a layer's 4 cells with items from `start`. This is the only
+      // place content is touched — and after the first render it runs on ONE
+      // layer per lap (the recycled one), so images/videos in the other three
+      // keep their decoded state.
+      function fillLayer(el, start) {
+        [...el.children].slice(0, LAP).forEach((cell, i) => {
+          const { n, hue } = item(start + i);
+          cell.style.background = `hsl(${hue} 70% 55%)`;
+          cell.querySelector("b").textContent = n;
+          cell.querySelector("span").textContent = `item ${n}`;
+        });
       }
 
       let offset = 0;
@@ -103,7 +111,13 @@
       let anim = null;
 
       function render() {
-        zoom.replaceChildren(...Array.from({ length: LEVELS }, (_, k) => spiral(offset + LAP * k, k)));
+        zoom.replaceChildren(...Array.from({ length: LEVELS }, () => spiral()));
+        layers().forEach((el, k) => fillLayer(el, offset + LAP * k));
+        relabel();
+      }
+      // Depth classes drive z-index; transforms drive position.
+      function relabel() {
+        layers().forEach((el, k) => { el.className = `spiral-grid lvl-${k}`; });
         applyTransforms(0);
         $("offset").textContent = offset;
       }
@@ -117,8 +131,16 @@
       const applyTransforms = (p) => layers().forEach((el, k) => { el.style.transform = layerTransform(k, p); });
       const setProgress = (p) => { progress = p; applyTransforms(p); $("prog").textContent = p.toFixed(2); };
 
-      // The reset: new content, no transform — one task, one paint.
-      function commitLap() { offset += LAP; render(); }
+      // The reset — recycle, don't rebuild: layer 0 (now off-screen) moves to
+      // the back and gets the next 4 items; layers 1–3 keep their DOM and
+      // simply become 0–2. One task, one paint.
+      function commitLap() {
+        offset += LAP;
+        const recycled = zoom.firstElementChild;
+        zoom.appendChild(recycled);                        // moves the node
+        fillLayer(recycled, offset + LAP * (LEVELS - 1));
+        relabel();
+      }
 
       // --- Lap step via Web Animations API, with frame-time measurement ---
       const frames = [];
