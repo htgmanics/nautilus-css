@@ -50,6 +50,19 @@ anim.finished.then(() => {
 `transition` or `fill: "none"`, the untransformed frame can paint before the
 new content is in.
 
+**4. Animate each layer, not a wrapper — or it pixelates.** The first
+version animated one wrapper around the four layers. Chrome rasters a
+composited layer once, at the scale it has when the animation starts, then
+lets the GPU stretch the bitmap: layer 1 was painted at 0.146× (its text a
+~10px bitmap) and stretched 6.85× — visibly blurry until the lap landed and
+Chrome re-rastered. Chrome chooses a layer's raster scale from the *maximum
+scale of animations on that layer itself*, so animating each layer's own
+transform (layer k: φ⁴ᵏ → φ⁴⁽ᵏ⁻¹⁾) gets layer 1 painted at 1× before it
+grows into view. Measured mid-lap sharpness (Laplacian σ): wrapper 6.2,
+per-layer 16.5, resting layout 19. The outgoing layer 0 still softens as it
+flies out (Chrome caps raster size for a layer that would be 4400px wide);
+it's leaving the viewer's focus, acceptable.
+
 ## What was tried first and why it lost
 
 **Nesting the next spiral inside the fill cell.** Geometrically exact on
@@ -75,9 +88,10 @@ and one transform origin. That is the layer stack.
 | Check | Result |
 |---|---|
 | Layer 1 at lap end vs layer 0 at rest (4 squares, viewport rects) | **identical** to 0.01px (same numbers) |
-| Screenshot before vs after reset | **6 differing pixels** of 252,800 (fuzz 8%); SSIM 0.99998 |
+| Screenshot before vs after reset | **4 differing pixels** of 252,800 (fuzz 8%); SSIM 0.99998 |
 | Same, after 1.5px blur (catches shape shifts) | 8 pixels |
-| Animated lap (WAAPI, 1.2s) | 71 frames, avg 16.8ms, max 29.2ms, 0 dropped |
+| Animated lap (WAAPI, 1.2s, 4 layer animations) | 72 frames, avg 16.6ms, max 29.1ms, 0 dropped |
+| Mid-lap sharpness, incoming layer (Laplacian σ ×1000) | wrapper-animated 6.2 → per-layer 16.5 (rest: 19) |
 | Wheel: Δ 0.83 then idle | settles forward, commits (+4) |
 | Wheel: Δ 1.25 | commits once, keeps 0.25, settles back to 0 |
 | 5 consecutive laps | offset 20 → 32, rects unchanged |

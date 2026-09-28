@@ -27,19 +27,19 @@
         position: relative;
       }
       /* The thing that zooms. Same box as a spiral, same eye. */
-      .zoom {
-        position: absolute; inset: 0;
-        transform-origin: 72.3606798% 72.3606798%;
-        will-change: transform;
-      }
-      /* Layer k is a full-size spiral scaled by φ⁴ᵏ about the eye. Because
-         every layer is laid out at the same size and scaled about the same
-         point, layer k+1 lands exactly on layer k's fill cell — including
-         Chrome's 1/64px layout rounding, which is identical for all of them. */
-      .zoom > .spiral-grid { position: absolute; inset: 0; }
-      .zoom > .lvl-1 { transform: scale(0.145898034); z-index: 1; }   /* φ⁴  */
-      .zoom > .lvl-2 { transform: scale(0.021286236); z-index: 2; }   /* φ⁸  */
-      .zoom > .lvl-3 { transform: scale(0.003105620); z-index: 3; }   /* φ¹² */
+      .zoom { position: absolute; inset: 0; }
+      /* Layer k is a full-size spiral scaled by φ⁴ᵏ about the eye (set from
+         JS). Because every layer is laid out at the same size and scaled about
+         the same point, layer k+1 lands exactly on layer k's fill cell —
+         including Chrome's 1/64px layout rounding, identical for all of them.
+
+         Each layer animates its OWN transform (not a wrapper): Chrome picks a
+         layer's raster resolution from the max scale of animations on that
+         layer, so layer 1 is rastered at 1× before it grows into view. A
+         wrapper animation would leave it rastered at 0.146× and stretched —
+         the pixelation seen in the first version. */
+      .zoom > .spiral-grid { position: absolute; inset: 0; will-change: transform; }
+      .zoom > .lvl-1 { z-index: 1; } .zoom > .lvl-2 { z-index: 2; } .zoom > .lvl-3 { z-index: 3; }
 
       .card {
         width: 100%; height: 100%;
@@ -104,14 +104,18 @@
 
       function render() {
         zoom.replaceChildren(...Array.from({ length: LEVELS }, (_, k) => spiral(offset + LAP * k, k)));
+        applyTransforms(0);
         $("offset").textContent = offset;
       }
       // Pure scale about the eye = straight "tunnel" zoom (default). After a
       // full lap the orientation is back where it started anyway, so the
       // 360° spin is purely cosmetic — optional, off by default.
-      const lapTransform = (p) =>
-        `scale(${Math.pow(PHI, -LAP * p)})` + ($("spin").checked ? ` rotate(${-360 * p}deg)` : "");
-      const setProgress = (p) => { progress = p; zoom.style.transform = p ? lapTransform(p) : ""; $("prog").textContent = p.toFixed(2); };
+      // Layer k at lap progress p: scale φ^(4k − 4p). At p = 1 layer k sits where layer k−1 was.
+      const layerTransform = (k, p) =>
+        `scale(${Math.pow(PHI, LAP * (k - p))})` + ($("spin").checked ? ` rotate(${-360 * p}deg)` : "");
+      const layers = () => [...zoom.children];
+      const applyTransforms = (p) => layers().forEach((el, k) => { el.style.transform = layerTransform(k, p); });
+      const setProgress = (p) => { progress = p; applyTransforms(p); $("prog").textContent = p.toFixed(2); };
 
       // The reset: new content, no transform — one task, one paint.
       function commitLap() { offset += LAP; render(); }
@@ -125,15 +129,14 @@
         const tick = (t) => { frames.push(t - last); last = t; raf = requestAnimationFrame(tick); };
         raf = requestAnimationFrame(tick);
         const from = progress;
-        zoom.style.transform = "";
-        anim = zoom.animate(
-          [{ transform: lapTransform(from) }, { transform: lapTransform(1) }],
-          { duration: DURATION * (1 - from), easing: "cubic-bezier(.6,0,.2,1)", fill: "forwards" }
-        );
-        return anim.finished.then(() => {
+        const opts = { duration: DURATION * (1 - from), easing: "cubic-bezier(.6,0,.2,1)", fill: "forwards" };
+        const anims = layers().map((el, k) =>
+          el.animate([{ transform: layerTransform(k, from) }, { transform: layerTransform(k, 1) }], opts));
+        anim = anims[0];
+        return Promise.all(anims.map((a) => a.finished)).then(() => {
           cancelAnimationFrame(raf);
-          commitLap();          // new DOM in place…
-          anim.cancel();        // …then drop the forwards fill. Same task → same paint.
+          commitLap();                      // new DOM (with rest transforms) in place…
+          anims.forEach((a) => a.cancel()); // …then drop the forwards fills. Same task → same paint.
           anim = null;
           setProgress(0);
           const avg = frames.reduce((a, b) => a + b, 0) / frames.length;
@@ -159,10 +162,11 @@
         if (progress === 0 || anim) return;
         if (progress >= 0.5) { step(); return; }
         const from = progress;
-        zoom.style.transform = "";
-        anim = zoom.animate([{ transform: lapTransform(from) }, { transform: lapTransform(0) }],
-          { duration: 600 * from, easing: "ease-out", fill: "forwards" });
-        anim.finished.then(() => { anim.cancel(); anim = null; setProgress(0); });
+        const opts = { duration: 600 * from, easing: "ease-out", fill: "forwards" };
+        const anims = layers().map((el, k) =>
+          el.animate([{ transform: layerTransform(k, from) }, { transform: layerTransform(k, 0) }], opts));
+        anim = anims[0];
+        Promise.all(anims.map((a) => a.finished)).then(() => { setProgress(0); anims.forEach((a) => a.cancel()); anim = null; });
       }
 
       $("next").addEventListener("click", step);
@@ -179,8 +183,8 @@
         });
       };
       window.__test = {
-        freezeAtLapEnd() { zoom.style.transform = lapTransform(1); },
-        commit() { commitLap(); zoom.style.transform = ""; },
+        freezeAtLapEnd() { applyTransforms(1); },
+        commit() { commitLap(); },
         step,
         get offset() { return offset; },
         rootRects: () => rectsOf(".lvl-0 > .spiral-grid__cell"),
