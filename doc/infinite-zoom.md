@@ -11,13 +11,18 @@ lines of vanilla JS on top of the grid engine, and adds measurements.
 
 Three ideas, in the order they matter.
 
-**1. Self-similarity gives the zoom.** Scaling the spiral by φ⁻⁴ and rotating
-360° about the eye maps cell 5 onto cell 1, cell 6 onto cell 2, … . One lap
-in = four cells deeper, and everything is upright again. So a "step" is:
+**1. Self-similarity gives the zoom.** Scaling the spiral by φ⁻⁴ about the
+eye maps cell 5 onto cell 1, cell 6 onto cell 2, … . One lap in = four cells
+deeper, and because four cells is a full turn of the spiral, the orientation
+is back where it started — no rotation needed. So a "step" is:
 
 ```js
-transform: scale(φ⁻⁴) rotate(-360deg)   // on the container, 1.2s
+transform: scale(φ⁻⁴)   // on the container, 1.2s — straight out of the eye
 ```
+
+That's the **tunnel**: cells are born at the eye and fly past the viewer
+(decided 2026-09-28). Adding `rotate(-360deg)` lands in the same place and
+makes it a spin instead; kept as an off-by-default toggle in the prototype.
 
 **2. Stacked layers fill the eye.** A single spiral has a hole at its eye
 that *grows* as you zoom (from φ¹⁰ to φ⁶ of the width by the end of a lap).
@@ -87,10 +92,11 @@ and one transform origin. That is the layer stack.
 
 ## Design notes for the real thing
 
-- **Lap steps are the default** (decided 2026-09-27). Four items per step,
-  always upright. Single-cell steps (90°) are possible with the grid engine's
-  `--hero-rotate` modifier — the geometry is identical — but non-hero cells
-  then show rotated content at rest. Offer as an option, not default.
+- **Lap steps, no spin, toward the viewer** (decided 2026-09-27/28). Four
+  items per step, the same layout every time the motion finishes. Single-cell
+  steps (90°) would need the rotation back plus the grid engine's
+  `--hero-rotate` modifier, and non-hero cells then show rotated content at
+  rest. Not planned.
 - **Zooming out** (not built yet): render layer −1 as the current layer's
   parent — a full-size spiral scaled by φ⁻⁴ whose fill cell is the current
   view. Same stack, one more layer, root transform in [1, φ⁻⁴] instead of

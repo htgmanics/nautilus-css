@@ -185,7 +185,7 @@ Out of scope until well after release; tracked so they don't sneak into v1.
       working prototype in `examples/scroll-zoom.html`.
 - [ ] Infinite zoom (v2) — **prototype works** (2026-09-28):
       `examples/infinite-zoom.html`, findings in `doc/infinite-zoom.md`.
-      Stacked layers on the grid engine, lap steps, forward-only; reset is
+      Stacked layers on the grid engine, lap steps, pure scale (no spin), forward-only; reset is
       pixel-invisible (6 px diff, SSIM 0.99998). Remaining: zoom out, reduced
       motion, packaging as a JS recipe/companion.
 - [ ] Theming presets (utility-class color schemes)

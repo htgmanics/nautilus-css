@@ -52,10 +52,11 @@
     </style>
   </head>
   <body>
-    <h1>Infinite zoom — stacked layers, lap steps, forward only</h1>
+    <h1>Infinite zoom — the tunnel</h1>
     <p>
       Four full-size spirals stacked, layer k scaled by φ⁴ᵏ about the eye, so each one sits exactly in the
-      previous one's fill cell. A step zooms the stack by <code>scale(φ⁻⁴) rotate(−360°)</code>; when it lands,
+      previous one's fill cell. A step zooms the stack straight out of the eye by <code>scale(φ⁻⁴)</code> — no
+      rotation; cells are born at the eye and fly past you. When it lands,
       layer 1 occupies exactly layer 0's box, so we re-render with offset+4 and drop the transform in the same
       frame. Wheel = continuous, snaps to the nearest lap when idle.
     </p>
@@ -63,6 +64,7 @@
       <button id="next">Next (→)</button>
       <label>offset: <b id="offset">0</b></label>
       <label>progress: <b id="prog">0.00</b></label>
+      <label><input type="checkbox" id="spin" /> spin (360° per lap)</label>
     </div>
     <div class="stage" id="stage"><div class="zoom" id="zoom"></div></div>
     <pre class="report" id="report">—</pre>
@@ -104,7 +106,11 @@
         zoom.replaceChildren(...Array.from({ length: LEVELS }, (_, k) => spiral(offset + LAP * k, k)));
         $("offset").textContent = offset;
       }
-      const lapTransform = (p) => `scale(${Math.pow(PHI, -LAP * p)}) rotate(${-360 * p}deg)`;
+      // Pure scale about the eye = straight "tunnel" zoom (default). After a
+      // full lap the orientation is back where it started anyway, so the
+      // 360° spin is purely cosmetic — optional, off by default.
+      const lapTransform = (p) =>
+        `scale(${Math.pow(PHI, -LAP * p)})` + ($("spin").checked ? ` rotate(${-360 * p}deg)` : "");
       const setProgress = (p) => { progress = p; zoom.style.transform = p ? lapTransform(p) : ""; $("prog").textContent = p.toFixed(2); };
 
       // The reset: new content, no transform — one task, one paint.
