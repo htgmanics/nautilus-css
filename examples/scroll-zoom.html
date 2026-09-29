@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <title>Spiral Grid — Scroll-Driven Zoom Prototype</title>
-    <link rel="stylesheet" href="../src/spiral-grid.css" />
+    <link rel="stylesheet" href="../src/nautilus.css" />
     <style>
       :root {
         color-scheme: light dark;
@@ -74,7 +74,7 @@
            .scene          — tall spacer that owns the view-timeline
            .scene__pin     — sticky box that stays in view while .scene
                              passes the viewport
-           .scene__spiral  — animated wrapper around .spiral-grid
+           .scene__spiral  — animated wrapper around .nautilus
 
          The animation runs over the full `cover` range of .scene, i.e.
          from when .scene enters the viewport to when it leaves.
@@ -123,14 +123,14 @@
          - animation-timeline binds progress to the .scene view range
       */
       .scene__spiral {
-        --spiral-grid-shrinkage: 0.276393202250021;
+        --nautilus-shrinkage: 0.276393202250021;
         --convergence-offset: -22.3606797749979%;
         /* Full-width spiral. Capped so height stays within the viewport
            (aspect ratio is 1.618:1, so width / 1.618 must be <= 100vh). */
         width: min(100vw, calc(100vh * 1.6180339887));
         transform-origin:
-          calc((1 - var(--spiral-grid-shrinkage)) * 100%)
-          calc((1 - var(--spiral-grid-shrinkage)) * 100%);
+          calc((1 - var(--nautilus-shrinkage)) * 100%)
+          calc((1 - var(--nautilus-shrinkage)) * 100%);
         transform:
           translate(var(--convergence-offset), var(--convergence-offset))
           scale(1)
@@ -218,25 +218,25 @@
          Demo cell styling — distinct colors so each cell is visually
          trackable as it rotates and scales into the hero position.
          ============================================================ */
-      .demo .spiral-grid__cell:nth-child(1) .spiral-grid__content { background: #ffadad; }
-      .demo .spiral-grid__cell:nth-child(2) .spiral-grid__content { background: #ffd6a5; }
-      .demo .spiral-grid__cell:nth-child(3) .spiral-grid__content { background: #fdffb6; }
-      .demo .spiral-grid__cell:nth-child(4) .spiral-grid__content { background: #caffbf; }
-      .demo .spiral-grid__cell:nth-child(5) .spiral-grid__content { background: #9bf6ff; }
-      .demo .spiral-grid__cell:nth-child(6) .spiral-grid__content { background: #a0c4ff; }
-      .demo .spiral-grid__cell:nth-child(7) .spiral-grid__content { background: #bdb2ff; }
-      .demo .spiral-grid__cell:nth-child(8) .spiral-grid__content { background: #ffc6ff; }
+      .demo .nautilus__cell:nth-child(1) .nautilus__content { background: #ffadad; }
+      .demo .nautilus__cell:nth-child(2) .nautilus__content { background: #ffd6a5; }
+      .demo .nautilus__cell:nth-child(3) .nautilus__content { background: #fdffb6; }
+      .demo .nautilus__cell:nth-child(4) .nautilus__content { background: #caffbf; }
+      .demo .nautilus__cell:nth-child(5) .nautilus__content { background: #9bf6ff; }
+      .demo .nautilus__cell:nth-child(6) .nautilus__content { background: #a0c4ff; }
+      .demo .nautilus__cell:nth-child(7) .nautilus__content { background: #bdb2ff; }
+      .demo .nautilus__cell:nth-child(8) .nautilus__content { background: #ffc6ff; }
 
-      .demo .spiral-grid__cell:nth-child(1) { background: #ffadad; }
-      .demo .spiral-grid__cell:nth-child(2) { background: #ffd6a5; }
-      .demo .spiral-grid__cell:nth-child(3) { background: #fdffb6; }
-      .demo .spiral-grid__cell:nth-child(4) { background: #caffbf; }
-      .demo .spiral-grid__cell:nth-child(5) { background: #9bf6ff; }
-      .demo .spiral-grid__cell:nth-child(6) { background: #a0c4ff; }
-      .demo .spiral-grid__cell:nth-child(7) { background: #bdb2ff; }
-      .demo .spiral-grid__cell:nth-child(8) { background: #ffc6ff; }
+      .demo .nautilus__cell:nth-child(1) { background: #ffadad; }
+      .demo .nautilus__cell:nth-child(2) { background: #ffd6a5; }
+      .demo .nautilus__cell:nth-child(3) { background: #fdffb6; }
+      .demo .nautilus__cell:nth-child(4) { background: #caffbf; }
+      .demo .nautilus__cell:nth-child(5) { background: #9bf6ff; }
+      .demo .nautilus__cell:nth-child(6) { background: #a0c4ff; }
+      .demo .nautilus__cell:nth-child(7) { background: #bdb2ff; }
+      .demo .nautilus__cell:nth-child(8) { background: #ffc6ff; }
 
-      .demo .spiral-grid__content {
+      .demo .nautilus__content {
         font-weight: 700;
         color: #222;
       }
@@ -269,7 +269,7 @@
       <p>
         Design notes:
         <code>doc/scroll-zoom.md</code>. This prototype uses 8 cells,
-        <code>--spiral-grid-gap: 3px</code> (kept small because the
+        <code>--nautilus-gap: 3px</code> (kept small because the
         gap scales visually with the zoom — see the design doc), and
         a 4-step zoom (scale ≈ 6.854).
       </p>
@@ -282,32 +282,32 @@
           scroll · <strong>zoom into the eye</strong> · 4 × 90°
         </p>
         <div
-          class="spiral-grid spiral-grid--hero-rotate demo scene__spiral"
-          style="--spiral-grid-gap: 3px"
+          class="nautilus nautilus--hero-rotate demo scene__spiral"
+          style="--nautilus-gap: 3px"
         >
-          <div class="spiral-grid__cell">
-            <div class="spiral-grid__content">1</div>
+          <div class="nautilus__cell">
+            <div class="nautilus__content">1</div>
           </div>
-          <div class="spiral-grid__cell">
-            <div class="spiral-grid__content">2</div>
+          <div class="nautilus__cell">
+            <div class="nautilus__content">2</div>
           </div>
-          <div class="spiral-grid__cell">
-            <div class="spiral-grid__content">3</div>
+          <div class="nautilus__cell">
+            <div class="nautilus__content">3</div>
           </div>
-          <div class="spiral-grid__cell">
-            <div class="spiral-grid__content">4</div>
+          <div class="nautilus__cell">
+            <div class="nautilus__content">4</div>
           </div>
-          <div class="spiral-grid__cell">
-            <div class="spiral-grid__content">5</div>
+          <div class="nautilus__cell">
+            <div class="nautilus__content">5</div>
           </div>
-          <div class="spiral-grid__cell">
-            <div class="spiral-grid__content">6</div>
+          <div class="nautilus__cell">
+            <div class="nautilus__content">6</div>
           </div>
-          <div class="spiral-grid__cell">
-            <div class="spiral-grid__content">7</div>
+          <div class="nautilus__cell">
+            <div class="nautilus__content">7</div>
           </div>
-          <div class="spiral-grid__cell">
-            <div class="spiral-grid__content">8</div>
+          <div class="nautilus__cell">
+            <div class="nautilus__content">8</div>
           </div>
         </div>
       </div>
@@ -354,7 +354,7 @@
           second, and so on.
         </li>
         <li>
-          The <code>--spiral-grid-gap</code> (a per-cell margin) survives
+          The <code>--nautilus-gap</code> (a per-cell margin) survives
           the zoom and scales proportionally with it. Pre-zoom gaps of
           3px end at ~20px at full zoom — expected behavior for a
           vector-scale-style zoom.

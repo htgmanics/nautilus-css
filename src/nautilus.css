@@ -21,25 +21,25 @@
    the fill cell is just "span to the remainder's far lines".
    ============================================================ */
 
-.spiral-grid {
+.nautilus {
     /* Public knobs — identical to the transform engine. */
-    --spiral-grid-gap: 0px;
-    --spiral-grid-transition: none;
+    --nautilus-gap: 0px;
+    --nautilus-transition: none;
 
     display: grid;
     position: relative;   /* overlays inside the spiral position against it */
     width: 100%;
     aspect-ratio: 1.618034 / 1;
     /* Track sizes are the only "table" in this engine. */
-    --spiral-grid-tracks:
+    --nautilus-tracks:
         0.618033989fr 0.090169944fr 0.013155617fr 0.008130619fr 0.034441854fr 0.236067977fr;
-    grid-template-columns: var(--spiral-grid-tracks);
-    grid-template-rows: var(--spiral-grid-tracks);
+    grid-template-columns: var(--nautilus-tracks);
+    grid-template-rows: var(--nautilus-tracks);
     overflow: hidden;
     container-type: inline-size;
 }
 
-.spiral-grid__cell {
+.nautilus__cell {
     position: relative;
     min-width: 0;
     min-height: 0;
@@ -50,13 +50,13 @@
        feed the track-sizing minimums, which breaks the tiny eye
        tracks once the gap exceeds them). clip-path never touches
        layout; the content padding below keeps content inside it. */
-    clip-path: inset(calc(var(--spiral-grid-gap) / 2));
-    transition: var(--spiral-grid-transition);
+    clip-path: inset(calc(var(--nautilus-gap) / 2));
+    transition: var(--nautilus-transition);
     /* Real per-cell container: cqi inside content means this cell's width. */
     container-type: inline-size;
 }
 
-.spiral-grid__content {
+.nautilus__content {
     width: 100%;
     height: 100%;
     display: flex;
@@ -64,76 +64,76 @@
     justify-content: center;
     box-sizing: border-box;
     /* Content box = the visible (clipped) cell. */
-    padding: calc(var(--spiral-grid-gap) / 2);
+    padding: calc(var(--nautilus-gap) / 2);
     /* Undo the orientation tricks used by --reverse / --portrait. */
     direction: ltr;
     writing-mode: horizontal-tb;
 }
 
 /* Placement: row-start / col-start / row-end / col-end */
-.spiral-grid__cell:nth-child(1)  { grid-area: 1 / 1 / 7 / 2; }
-.spiral-grid__cell:nth-child(2)  { grid-area: 1 / 2 / 2 / 7; }
-.spiral-grid__cell:nth-child(3)  { grid-area: 2 / 6 / 7 / 7; }
-.spiral-grid__cell:nth-child(4)  { grid-area: 6 / 2 / 7 / 6; }
-.spiral-grid__cell:nth-child(5)  { grid-area: 2 / 2 / 6 / 3; }
-.spiral-grid__cell:nth-child(6)  { grid-area: 2 / 3 / 3 / 6; }
-.spiral-grid__cell:nth-child(7)  { grid-area: 3 / 5 / 6 / 6; }
-.spiral-grid__cell:nth-child(8)  { grid-area: 5 / 3 / 6 / 5; }
-.spiral-grid__cell:nth-child(9)  { grid-area: 3 / 3 / 5 / 4; }
-.spiral-grid__cell:nth-child(10) { grid-area: 3 / 4 / 4 / 5; }
-.spiral-grid__cell:nth-child(n+11) { display: none; }
+.nautilus__cell:nth-child(1)  { grid-area: 1 / 1 / 7 / 2; }
+.nautilus__cell:nth-child(2)  { grid-area: 1 / 2 / 2 / 7; }
+.nautilus__cell:nth-child(3)  { grid-area: 2 / 6 / 7 / 7; }
+.nautilus__cell:nth-child(4)  { grid-area: 6 / 2 / 7 / 6; }
+.nautilus__cell:nth-child(5)  { grid-area: 2 / 2 / 6 / 3; }
+.nautilus__cell:nth-child(6)  { grid-area: 2 / 3 / 3 / 6; }
+.nautilus__cell:nth-child(7)  { grid-area: 3 / 5 / 6 / 6; }
+.nautilus__cell:nth-child(8)  { grid-area: 5 / 3 / 6 / 5; }
+.nautilus__cell:nth-child(9)  { grid-area: 3 / 3 / 5 / 4; }
+.nautilus__cell:nth-child(10) { grid-area: 3 / 4 / 4 / 5; }
+.nautilus__cell:nth-child(n+11) { display: none; }
 
 /* Non-cell children (eye markers, badges, captions) must not take a grid
    track. Make them overlays automatically. */
-.spiral-grid > :not(.spiral-grid__cell) { position: absolute; }
+.nautilus > :not(.nautilus__cell) { position: absolute; }
 
 /* Default fill: the last cell also covers the remainder after it.
-   Opt out with .spiral-grid--no-fill. */
-.spiral-grid:not(.spiral-grid--no-fill) > .spiral-grid__cell:nth-child(1):nth-last-child(1 of .spiral-grid__cell)  { grid-area: 1 / 1 / 7 / 7; }
-.spiral-grid:not(.spiral-grid--no-fill) > .spiral-grid__cell:nth-child(2):nth-last-child(1 of .spiral-grid__cell)  { grid-area: 1 / 2 / 7 / 7; }
-.spiral-grid:not(.spiral-grid--no-fill) > .spiral-grid__cell:nth-child(3):nth-last-child(1 of .spiral-grid__cell)  { grid-area: 2 / 2 / 7 / 7; }
-.spiral-grid:not(.spiral-grid--no-fill) > .spiral-grid__cell:nth-child(4):nth-last-child(1 of .spiral-grid__cell)  { grid-area: 2 / 2 / 7 / 6; }
-.spiral-grid:not(.spiral-grid--no-fill) > .spiral-grid__cell:nth-child(5):nth-last-child(1 of .spiral-grid__cell)  { grid-area: 2 / 2 / 6 / 6; }
-.spiral-grid:not(.spiral-grid--no-fill) > .spiral-grid__cell:nth-child(6):nth-last-child(1 of .spiral-grid__cell)  { grid-area: 2 / 3 / 6 / 6; }
-.spiral-grid:not(.spiral-grid--no-fill) > .spiral-grid__cell:nth-child(7):nth-last-child(1 of .spiral-grid__cell)  { grid-area: 3 / 3 / 6 / 6; }
-.spiral-grid:not(.spiral-grid--no-fill) > .spiral-grid__cell:nth-child(8):nth-last-child(1 of .spiral-grid__cell)  { grid-area: 3 / 3 / 6 / 5; }
-.spiral-grid:not(.spiral-grid--no-fill) > .spiral-grid__cell:nth-child(9):nth-last-child(1 of .spiral-grid__cell)  { grid-area: 3 / 3 / 5 / 5; }
-.spiral-grid:not(.spiral-grid--no-fill) > .spiral-grid__cell:nth-child(10):nth-last-child(1 of .spiral-grid__cell) { grid-area: 3 / 4 / 5 / 5; }
+   Opt out with .nautilus--no-fill. */
+.nautilus:not(.nautilus--no-fill) > .nautilus__cell:nth-child(1):nth-last-child(1 of .nautilus__cell)  { grid-area: 1 / 1 / 7 / 7; }
+.nautilus:not(.nautilus--no-fill) > .nautilus__cell:nth-child(2):nth-last-child(1 of .nautilus__cell)  { grid-area: 1 / 2 / 7 / 7; }
+.nautilus:not(.nautilus--no-fill) > .nautilus__cell:nth-child(3):nth-last-child(1 of .nautilus__cell)  { grid-area: 2 / 2 / 7 / 7; }
+.nautilus:not(.nautilus--no-fill) > .nautilus__cell:nth-child(4):nth-last-child(1 of .nautilus__cell)  { grid-area: 2 / 2 / 7 / 6; }
+.nautilus:not(.nautilus--no-fill) > .nautilus__cell:nth-child(5):nth-last-child(1 of .nautilus__cell)  { grid-area: 2 / 2 / 6 / 6; }
+.nautilus:not(.nautilus--no-fill) > .nautilus__cell:nth-child(6):nth-last-child(1 of .nautilus__cell)  { grid-area: 2 / 3 / 6 / 6; }
+.nautilus:not(.nautilus--no-fill) > .nautilus__cell:nth-child(7):nth-last-child(1 of .nautilus__cell)  { grid-area: 3 / 3 / 6 / 6; }
+.nautilus:not(.nautilus--no-fill) > .nautilus__cell:nth-child(8):nth-last-child(1 of .nautilus__cell)  { grid-area: 3 / 3 / 6 / 5; }
+.nautilus:not(.nautilus--no-fill) > .nautilus__cell:nth-child(9):nth-last-child(1 of .nautilus__cell)  { grid-area: 3 / 3 / 5 / 5; }
+.nautilus:not(.nautilus--no-fill) > .nautilus__cell:nth-child(10):nth-last-child(1 of .nautilus__cell) { grid-area: 3 / 4 / 5 / 5; }
 
 /* ------------------------------------------------------------
    Orientation modifiers: mirror / transpose the grid itself.
    direction flips the inline axis; writing-mode swaps axes.
-   Content resets both (see .spiral-grid__content).
+   Content resets both (see .nautilus__content).
    ------------------------------------------------------------ */
-.spiral-grid--reverse  { direction: rtl; }
+.nautilus--reverse  { direction: rtl; }
 
-.spiral-grid--portrait {
+.nautilus--portrait {
     writing-mode: vertical-rl;
     aspect-ratio: 1 / 1.618034;
 }
-.spiral-grid--portrait.spiral-grid--reverse { writing-mode: vertical-lr; direction: ltr; }
+.nautilus--portrait.nautilus--reverse { writing-mode: vertical-lr; direction: ltr; }
 
 @container (aspect-ratio < 1) {
-    .spiral-grid--auto {
+    .nautilus--auto {
         writing-mode: vertical-rl;
         aspect-ratio: 1 / 1.618034;
     }
-    .spiral-grid--auto.spiral-grid--reverse { writing-mode: vertical-lr; direction: ltr; }
+    .nautilus--auto.nautilus--reverse { writing-mode: vertical-lr; direction: ltr; }
 }
 
 /* ------------------------------------------------------------
    Per-cell scrolling — no safe-zone dance needed, the scrollbar
    is a normal scrollbar in a normal box.
    ------------------------------------------------------------ */
-.spiral-grid__content--scroll,
-.spiral-grid__content--scroll-y {
+.nautilus__content--scroll,
+.nautilus__content--scroll-y {
     display: block;
     overflow-y: auto;
     overflow-x: hidden;
     overscroll-behavior: contain;
     text-align: start;
 }
-.spiral-grid__content--scroll-x {
+.nautilus__content--scroll-x {
     display: block;
     overflow-x: auto;
     overflow-y: hidden;
@@ -149,36 +149,36 @@
    of the height. Apply to the container (or a wrapper) — cells are
    untouched.
    ------------------------------------------------------------ */
-.spiral-grid {
-    --spiral-grid-eye: 72.3606798%;
-    transform-origin: var(--spiral-grid-eye) var(--spiral-grid-eye);
+.nautilus {
+    --nautilus-eye: 72.3606798%;
+    transform-origin: var(--nautilus-eye) var(--nautilus-eye);
 }
-.spiral-grid--reverse {
-    transform-origin: calc(100% - var(--spiral-grid-eye)) var(--spiral-grid-eye);
+.nautilus--reverse {
+    transform-origin: calc(100% - var(--nautilus-eye)) var(--nautilus-eye);
 }
-.spiral-grid--portrait {
-    transform-origin: var(--spiral-grid-eye) calc(100% - var(--spiral-grid-eye));
+.nautilus--portrait {
+    transform-origin: var(--nautilus-eye) calc(100% - var(--nautilus-eye));
 }
-.spiral-grid--portrait.spiral-grid--reverse {
-    transform-origin: calc(100% - var(--spiral-grid-eye)) calc(100% - var(--spiral-grid-eye));
+.nautilus--portrait.nautilus--reverse {
+    transform-origin: calc(100% - var(--nautilus-eye)) calc(100% - var(--nautilus-eye));
 }
 
 /* Sequential-hero: pre-rotate cell i's content by 90°·(i-1) so that
    after a k-step zoom (rotate -90°·k) cell k+1 reads upright.
    Replaces --no-counter-rotate from the transform engine. */
-.spiral-grid--hero-rotate .spiral-grid__cell:nth-child(2) .spiral-grid__content { transform: rotate(90deg); }
-.spiral-grid--hero-rotate .spiral-grid__cell:nth-child(3) .spiral-grid__content { transform: rotate(180deg); }
-.spiral-grid--hero-rotate .spiral-grid__cell:nth-child(4) .spiral-grid__content { transform: rotate(270deg); }
-.spiral-grid--hero-rotate .spiral-grid__cell:nth-child(6) .spiral-grid__content { transform: rotate(90deg); }
-.spiral-grid--hero-rotate .spiral-grid__cell:nth-child(7) .spiral-grid__content { transform: rotate(180deg); }
-.spiral-grid--hero-rotate .spiral-grid__cell:nth-child(8) .spiral-grid__content { transform: rotate(270deg); }
-.spiral-grid--hero-rotate .spiral-grid__cell:nth-child(10) .spiral-grid__content { transform: rotate(90deg); }
+.nautilus--hero-rotate .nautilus__cell:nth-child(2) .nautilus__content { transform: rotate(90deg); }
+.nautilus--hero-rotate .nautilus__cell:nth-child(3) .nautilus__content { transform: rotate(180deg); }
+.nautilus--hero-rotate .nautilus__cell:nth-child(4) .nautilus__content { transform: rotate(270deg); }
+.nautilus--hero-rotate .nautilus__cell:nth-child(6) .nautilus__content { transform: rotate(90deg); }
+.nautilus--hero-rotate .nautilus__cell:nth-child(7) .nautilus__content { transform: rotate(180deg); }
+.nautilus--hero-rotate .nautilus__cell:nth-child(8) .nautilus__content { transform: rotate(270deg); }
+.nautilus--hero-rotate .nautilus__cell:nth-child(10) .nautilus__content { transform: rotate(90deg); }
 
 /* ------------------------------------------------------------
    Reduced motion: plain stacked column.
    ------------------------------------------------------------ */
 @media (prefers-reduced-motion: reduce) {
-    .spiral-grid.spiral-grid {
+    .nautilus.nautilus {
         grid-template-columns: 1fr;
         grid-template-rows: none;
         aspect-ratio: auto;
@@ -188,6 +188,6 @@
         transform: none;
         overflow: visible;
     }
-    .spiral-grid.spiral-grid > .spiral-grid__cell { grid-area: auto; }
-    .spiral-grid.spiral-grid .spiral-grid__content { transform: none; overflow: visible; }
+    .nautilus.nautilus > .nautilus__cell { grid-area: auto; }
+    .nautilus.nautilus .nautilus__content { transform: none; overflow: visible; }
 }

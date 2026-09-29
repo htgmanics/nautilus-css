@@ -13,9 +13,9 @@ export interface SpiralProps extends Omit<ComponentPropsWithoutRef<"div">, "chil
   noFill?: boolean;
   /** Pre-rotate each cell's content by 90° × index, for zoom scenes. */
   heroRotate?: boolean;
-  /** Visible gutter between cells. A number is px. Sets `--spiral-grid-gap`. */
+  /** Visible gutter between cells. A number is px. Sets `--nautilus-gap`. */
   gap?: number | string;
-  /** Sets `--spiral-grid-transition`, e.g. `"background 0.4s ease"`. */
+  /** Sets `--nautilus-transition`, e.g. `"background 0.4s ease"`. */
   transition?: string;
   style?: CSSProperties & Record<`--${string}`, string | number>;
   /** Up to 10 `<Cell>`s. */
@@ -29,9 +29,9 @@ export interface CellProps extends Omit<ComponentPropsWithoutRef<"div">, "childr
   scroll?: boolean;
   /** Horizontal scroll container. */
   scrollX?: boolean;
-  /** Class for the inner `.spiral-grid__content` wrapper. */
+  /** Class for the inner `.nautilus__content` wrapper. */
   contentClassName?: string;
-  /** Style for the inner `.spiral-grid__content` wrapper. */
+  /** Style for the inner `.nautilus__content` wrapper. */
   contentStyle?: CSSProperties;
   children?: ReactNode;
 }

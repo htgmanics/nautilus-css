@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <title>Spiral Grid — Scroll Prototype</title>
-    <link rel="stylesheet" href="../src/spiral-grid.css" />
+    <link rel="stylesheet" href="../src/nautilus.css" />
     <style>
       body {
         margin: 0;
@@ -73,15 +73,15 @@
       /* Demo cell backgrounds (on __cell — library preserves through fill
          reshape). Colors chosen so rotated cells are visually distinguishable
          from their content wrappers. */
-      .demo .spiral-grid__cell:nth-child(1)  { background: #ffadad; }
-      .demo .spiral-grid__cell:nth-child(2)  { background: #ffd6a5; }
-      .demo .spiral-grid__cell:nth-child(3)  { background: #fdffb6; }
-      .demo .spiral-grid__cell:nth-child(4)  { background: #caffbf; }
-      .demo .spiral-grid__cell:nth-child(5)  { background: #9bf6ff; }
-      .demo .spiral-grid__cell:nth-child(6)  { background: #a0c4ff; }
-      .demo .spiral-grid__cell:nth-child(7)  { background: #bdb2ff; }
-      .demo .spiral-grid__cell:nth-child(8)  { background: #ffc6ff; }
-      .demo .spiral-grid__cell:nth-child(9)  { background: #fffffc; }
+      .demo .nautilus__cell:nth-child(1)  { background: #ffadad; }
+      .demo .nautilus__cell:nth-child(2)  { background: #ffd6a5; }
+      .demo .nautilus__cell:nth-child(3)  { background: #fdffb6; }
+      .demo .nautilus__cell:nth-child(4)  { background: #caffbf; }
+      .demo .nautilus__cell:nth-child(5)  { background: #9bf6ff; }
+      .demo .nautilus__cell:nth-child(6)  { background: #a0c4ff; }
+      .demo .nautilus__cell:nth-child(7)  { background: #bdb2ff; }
+      .demo .nautilus__cell:nth-child(8)  { background: #ffc6ff; }
+      .demo .nautilus__cell:nth-child(9)  { background: #fffffc; }
 
       /* Card content — long enough to overflow the cell and force scroll. */
       .card {
@@ -136,7 +136,7 @@
   <body>
     <h1>Spiral Grid — Per-Cell Scrolling Prototype</h1>
     <p class="note">
-      Stress-tests the <code>spiral-grid__content--scroll</code>,
+      Stress-tests the <code>nautilus__content--scroll</code>,
       <code>--scroll-x</code>, and <code>--scroll-y</code> modifiers. Each
       demo annotates the rotation applied to each cell so you can verify
       wheel/touch behavior is intuitive in screen space (not cell-local
@@ -156,14 +156,14 @@
 
     <h2>1. All cells scrollable — rotation stress test</h2>
     <p class="note">
-      Every cell gets <code>spiral-grid__content--scroll</code>. Cell 2 is
+      Every cell gets <code>nautilus__content--scroll</code>. Cell 2 is
       rotated 90°, cell 3 is 180°, cell 4 is 270°, etc. Wheel-scroll each
       cell and confirm content moves in screen-Y, not cell-local-Y.
     </p>
     <div class="stage stage--sm">
-      <div class="spiral-grid demo">
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content spiral-grid__content--scroll">
+      <div class="nautilus demo">
+        <div class="nautilus__cell">
+          <div class="nautilus__content nautilus__content--scroll">
             <div class="card">
               <span class="rotation-badge">0° rotate</span>
               <h3>Cell 1 — Hero</h3>
@@ -184,8 +184,8 @@
             </div>
           </div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content spiral-grid__content--scroll">
+        <div class="nautilus__cell">
+          <div class="nautilus__content nautilus__content--scroll">
             <div class="card">
               <span class="rotation-badge">90° rotate</span>
               <h3>Cell 2</h3>
@@ -202,8 +202,8 @@
             </div>
           </div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content spiral-grid__content--scroll">
+        <div class="nautilus__cell">
+          <div class="nautilus__content nautilus__content--scroll">
             <div class="card">
               <span class="rotation-badge">180° rotate</span>
               <h3>Cell 3</h3>
@@ -217,8 +217,8 @@
             </div>
           </div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content spiral-grid__content--scroll">
+        <div class="nautilus__cell">
+          <div class="nautilus__content nautilus__content--scroll">
             <div class="card">
               <span class="rotation-badge">270° rotate</span>
               <h3>Cell 4</h3>
@@ -228,8 +228,8 @@
             </div>
           </div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content spiral-grid__content--scroll">
+        <div class="nautilus__cell">
+          <div class="nautilus__content nautilus__content--scroll">
             <div class="card">
               <span class="rotation-badge">360° rotate</span>
               <h3>Cell 5</h3>
@@ -240,8 +240,8 @@
             </div>
           </div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content spiral-grid__content--scroll">
+        <div class="nautilus__cell">
+          <div class="nautilus__content nautilus__content--scroll">
             <div class="card">
               <h3>Cell 6 (fill)</h3>
               <p>Last cell is the reshaped golden rectangle. Scrolling
@@ -259,9 +259,9 @@
       like — opt-in per cell rather than blanket.
     </p>
     <div class="stage stage--sm">
-      <div class="spiral-grid demo">
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content spiral-grid__content--scroll">
+      <div class="nautilus demo">
+        <div class="nautilus__cell">
+          <div class="nautilus__content nautilus__content--scroll">
             <div class="card">
               <h3>Cell 1 — scrollable</h3>
               <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.
@@ -272,8 +272,8 @@
             </div>
           </div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content spiral-grid__content--scroll">
+        <div class="nautilus__cell">
+          <div class="nautilus__content nautilus__content--scroll">
             <div class="card">
               <h3>Cell 2 — scrollable</h3>
               <p>Excepteur sint occaecat cupidatat non proident, sunt in
@@ -282,34 +282,34 @@
             </div>
           </div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content spiral-grid__content--scroll">
+        <div class="nautilus__cell">
+          <div class="nautilus__content nautilus__content--scroll">
             <div class="card">
               <h3>Cell 3 — scrollable</h3>
               <p>Overflows to scroll. Overflows to scroll.</p>
             </div>
           </div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content spiral-grid__content--scroll">
+        <div class="nautilus__cell">
+          <div class="nautilus__content nautilus__content--scroll">
             <div class="card">
               <h3>4 — scroll</h3>
               <p>Tiny but still OK.</p>
             </div>
           </div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content spiral-grid__content--scroll">
+        <div class="nautilus__cell">
+          <div class="nautilus__content nautilus__content--scroll">
             <div class="card">
               <h3>5 sc</h3>
             </div>
           </div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">6</div>
+        <div class="nautilus__cell">
+          <div class="nautilus__content">6</div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">7 (fill)</div>
+        <div class="nautilus__cell">
+          <div class="nautilus__content">7 (fill)</div>
         </div>
       </div>
     </div>
@@ -323,9 +323,9 @@
       <em>cell-local</em> horizontal, not screen-horizontal.
     </p>
     <div class="stage stage--sm">
-      <div class="spiral-grid demo">
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content spiral-grid__content--scroll-x">
+      <div class="nautilus demo">
+        <div class="nautilus__cell">
+          <div class="nautilus__content nautilus__content--scroll-x">
             <div class="strip">
               <div class="tile" style="background:#e74c3c">1</div>
               <div class="tile" style="background:#e67e22">2</div>
@@ -342,8 +342,8 @@
             </div>
           </div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content spiral-grid__content--scroll-x">
+        <div class="nautilus__cell">
+          <div class="nautilus__content nautilus__content--scroll-x">
             <div class="strip">
               <div class="tile" style="background:#e74c3c">A</div>
               <div class="tile" style="background:#3498db">B</div>
@@ -354,24 +354,24 @@
             </div>
           </div>
         </div>
-        <div class="spiral-grid__cell"><div class="spiral-grid__content">3</div></div>
-        <div class="spiral-grid__cell"><div class="spiral-grid__content">4</div></div>
-        <div class="spiral-grid__cell"><div class="spiral-grid__content">5</div></div>
-        <div class="spiral-grid__cell"><div class="spiral-grid__content">6</div></div>
+        <div class="nautilus__cell"><div class="nautilus__content">3</div></div>
+        <div class="nautilus__cell"><div class="nautilus__content">4</div></div>
+        <div class="nautilus__cell"><div class="nautilus__content">5</div></div>
+        <div class="nautilus__cell"><div class="nautilus__content">6</div></div>
       </div>
     </div>
 
     <h2>4. Scroll + gap</h2>
     <p class="note">
-      Combines <code>--spiral-grid-gap: 12px</code> with scrollable
+      Combines <code>--nautilus-gap: 12px</code> with scrollable
       content. The content's <code>gap / 2</code> padding matches the cell's
       clip inset, so the scrollbar sits inside the visible cell with nothing
       depth-dependent to compensate.
     </p>
     <div class="stage stage--sm">
-      <div class="spiral-grid demo" style="--spiral-grid-gap: 12px">
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content spiral-grid__content--scroll">
+      <div class="nautilus demo" style="--nautilus-gap: 12px">
+        <div class="nautilus__cell">
+          <div class="nautilus__content nautilus__content--scroll">
             <div class="card">
               <h3>With gap</h3>
               <p>Scrollbar and text sit inside the gap with no extra
@@ -384,8 +384,8 @@
             </div>
           </div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content spiral-grid__content--scroll">
+        <div class="nautilus__cell">
+          <div class="nautilus__content nautilus__content--scroll">
             <div class="card">
               <h3>90° + gap</h3>
               <p>Rotated cell with gap. Wheel-scroll should still map to
@@ -394,8 +394,8 @@
             </div>
           </div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content spiral-grid__content--scroll">
+        <div class="nautilus__cell">
+          <div class="nautilus__content nautilus__content--scroll">
             <div class="card">
               <h3>180°</h3>
               <p>Short.</p>
@@ -406,9 +406,9 @@
             </div>
           </div>
         </div>
-        <div class="spiral-grid__cell"><div class="spiral-grid__content">4</div></div>
-        <div class="spiral-grid__cell"><div class="spiral-grid__content">5</div></div>
-        <div class="spiral-grid__cell"><div class="spiral-grid__content">6 (fill)</div></div>
+        <div class="nautilus__cell"><div class="nautilus__content">4</div></div>
+        <div class="nautilus__cell"><div class="nautilus__content">5</div></div>
+        <div class="nautilus__cell"><div class="nautilus__content">6 (fill)</div></div>
       </div>
     </div>
 
@@ -419,9 +419,9 @@
       rotation direction.
     </p>
     <div class="stage stage--sm">
-      <div class="spiral-grid spiral-grid--reverse demo">
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content spiral-grid__content--scroll">
+      <div class="nautilus nautilus--reverse demo">
+        <div class="nautilus__cell">
+          <div class="nautilus__content nautilus__content--scroll">
             <div class="card">
               <h3>Reverse cell 1</h3>
               <p>Mirror-image spiral. Scrolling should work identically to
@@ -433,8 +433,8 @@
             </div>
           </div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content spiral-grid__content--scroll">
+        <div class="nautilus__cell">
+          <div class="nautilus__content nautilus__content--scroll">
             <div class="card">
               <h3>−90° rotate</h3>
               <p>Rotated the other way. Wheel-scroll should still be
@@ -444,8 +444,8 @@
             </div>
           </div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content spiral-grid__content--scroll">
+        <div class="nautilus__cell">
+          <div class="nautilus__content nautilus__content--scroll">
             <div class="card">
               <h3>−180°</h3>
               <p>Scrolling.</p>
@@ -454,9 +454,9 @@
             </div>
           </div>
         </div>
-        <div class="spiral-grid__cell"><div class="spiral-grid__content">4</div></div>
-        <div class="spiral-grid__cell"><div class="spiral-grid__content">5</div></div>
-        <div class="spiral-grid__cell"><div class="spiral-grid__content">6 (fill)</div></div>
+        <div class="nautilus__cell"><div class="nautilus__content">4</div></div>
+        <div class="nautilus__cell"><div class="nautilus__content">5</div></div>
+        <div class="nautilus__cell"><div class="nautilus__content">6 (fill)</div></div>
       </div>
     </div>
   </body>

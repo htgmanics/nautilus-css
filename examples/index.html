@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <title>Spiral Grid — Prototype</title>
-    <link rel="stylesheet" href="../src/spiral-grid.css" />
+    <link rel="stylesheet" href="../src/nautilus.css" />
     <style>
       body {
         margin: 0;
@@ -33,63 +33,63 @@
       .stage--md { max-width: 500px; }
 
       /* Demo styling for cells — not part of the library */
-      .demo .spiral-grid__cell:nth-child(1) .spiral-grid__content {
+      .demo .nautilus__cell:nth-child(1) .nautilus__content {
         background: #ffadad;
       }
-      .demo .spiral-grid__cell:nth-child(2) .spiral-grid__content {
+      .demo .nautilus__cell:nth-child(2) .nautilus__content {
         background: #ffd6a5;
       }
-      .demo .spiral-grid__cell:nth-child(3) .spiral-grid__content {
+      .demo .nautilus__cell:nth-child(3) .nautilus__content {
         background: #fdffb6;
       }
-      .demo .spiral-grid__cell:nth-child(4) .spiral-grid__content {
+      .demo .nautilus__cell:nth-child(4) .nautilus__content {
         background: #caffbf;
       }
-      .demo .spiral-grid__cell:nth-child(5) .spiral-grid__content {
+      .demo .nautilus__cell:nth-child(5) .nautilus__content {
         background: #9bf6ff;
       }
-      .demo .spiral-grid__cell:nth-child(6) .spiral-grid__content {
+      .demo .nautilus__cell:nth-child(6) .nautilus__content {
         background: #a0c4ff;
       }
-      .demo .spiral-grid__cell:nth-child(7) .spiral-grid__content {
+      .demo .nautilus__cell:nth-child(7) .nautilus__content {
         background: #bdb2ff;
       }
-      .demo .spiral-grid__cell:nth-child(8) .spiral-grid__content {
+      .demo .nautilus__cell:nth-child(8) .nautilus__content {
         background: #ffc6ff;
       }
-      .demo .spiral-grid__cell:nth-child(9) .spiral-grid__content {
+      .demo .nautilus__cell:nth-child(9) .nautilus__content {
         background: #fffffc;
       }
       /* Set background directly on the cell; the library's fill-cell reshape
          preserves it (applies to both regular and fill cells). */
-      .demo .spiral-grid__cell:nth-child(1) {
+      .demo .nautilus__cell:nth-child(1) {
         background: #ffadad;
       }
-      .demo .spiral-grid__cell:nth-child(2) {
+      .demo .nautilus__cell:nth-child(2) {
         background: #ffd6a5;
       }
-      .demo .spiral-grid__cell:nth-child(3) {
+      .demo .nautilus__cell:nth-child(3) {
         background: #fdffb6;
       }
-      .demo .spiral-grid__cell:nth-child(4) {
+      .demo .nautilus__cell:nth-child(4) {
         background: #caffbf;
       }
-      .demo .spiral-grid__cell:nth-child(5) {
+      .demo .nautilus__cell:nth-child(5) {
         background: #9bf6ff;
       }
-      .demo .spiral-grid__cell:nth-child(6) {
+      .demo .nautilus__cell:nth-child(6) {
         background: #a0c4ff;
       }
-      .demo .spiral-grid__cell:nth-child(7) {
+      .demo .nautilus__cell:nth-child(7) {
         background: #bdb2ff;
       }
-      .demo .spiral-grid__cell:nth-child(8) {
+      .demo .nautilus__cell:nth-child(8) {
         background: #ffc6ff;
       }
-      .demo .spiral-grid__cell:nth-child(9) {
+      .demo .nautilus__cell:nth-child(9) {
         background: #fffffc;
       }
-      .demo .spiral-grid__content {
+      .demo .nautilus__content {
         font-weight: 600;
         color: #222;
       }
@@ -117,7 +117,7 @@
         z-index: 100;
         pointer-events: none;
       }
-      .spiral-grid--reverse .convergence-dot {
+      .nautilus--reverse .convergence-dot {
         left: calc(0.276393202250021 * 100%);
       }
     </style>
@@ -131,46 +131,46 @@
 
     <h2>1. Default behavior — last cell auto-fills (no white space)</h2>
     <div class="stage stage--sm">
-      <div class="spiral-grid demo">
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">A</div>
+      <div class="nautilus demo">
+        <div class="nautilus__cell">
+          <div class="nautilus__content">A</div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">B</div>
+        <div class="nautilus__cell">
+          <div class="nautilus__content">B</div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">C</div>
+        <div class="nautilus__cell">
+          <div class="nautilus__content">C</div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">D</div>
+        <div class="nautilus__cell">
+          <div class="nautilus__content">D</div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">E</div>
+        <div class="nautilus__cell">
+          <div class="nautilus__content">E</div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">F</div>
+        <div class="nautilus__cell">
+          <div class="nautilus__content">F</div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">G</div>
+        <div class="nautilus__cell">
+          <div class="nautilus__content">G</div>
         </div>
         <span class="convergence-dot"></span>
       </div>
     </div>
 
-    <h2>1a. With <code>spiral-grid--no-fill</code> (opt-out, wedge at eye)</h2>
+    <h2>1a. With <code>nautilus--no-fill</code> (opt-out, wedge at eye)</h2>
     <div class="stage stage--sm">
-      <div class="spiral-grid spiral-grid--no-fill demo">
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">A</div>
+      <div class="nautilus nautilus--no-fill demo">
+        <div class="nautilus__cell">
+          <div class="nautilus__content">A</div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">B</div>
+        <div class="nautilus__cell">
+          <div class="nautilus__content">B</div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">C</div>
+        <div class="nautilus__cell">
+          <div class="nautilus__content">C</div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">D</div>
+        <div class="nautilus__cell">
+          <div class="nautilus__content">D</div>
         </div>
         <span class="convergence-dot"></span>
       </div>
@@ -179,9 +179,9 @@
     <h2>1b. Sweep 1–6 cells (forward)</h2>
     <p class="demo-sweep-label">1 cell (entire spiral is fill)</p>
     <div class="stage stage--sm">
-      <div class="spiral-grid demo">
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">A</div>
+      <div class="nautilus demo">
+        <div class="nautilus__cell">
+          <div class="nautilus__content">A</div>
         </div>
         <span class="convergence-dot"></span>
       </div>
@@ -189,12 +189,12 @@
 
     <p class="demo-sweep-label">2 cells</p>
     <div class="stage stage--sm">
-      <div class="spiral-grid demo">
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">A</div>
+      <div class="nautilus demo">
+        <div class="nautilus__cell">
+          <div class="nautilus__content">A</div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">B</div>
+        <div class="nautilus__cell">
+          <div class="nautilus__content">B</div>
         </div>
         <span class="convergence-dot"></span>
       </div>
@@ -202,15 +202,15 @@
 
     <p class="demo-sweep-label">3 cells</p>
     <div class="stage stage--sm">
-      <div class="spiral-grid demo">
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">A</div>
+      <div class="nautilus demo">
+        <div class="nautilus__cell">
+          <div class="nautilus__content">A</div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">B</div>
+        <div class="nautilus__cell">
+          <div class="nautilus__content">B</div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">C</div>
+        <div class="nautilus__cell">
+          <div class="nautilus__content">C</div>
         </div>
         <span class="convergence-dot"></span>
       </div>
@@ -218,18 +218,18 @@
 
     <p class="demo-sweep-label">4 cells</p>
     <div class="stage stage--sm">
-      <div class="spiral-grid demo">
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">A</div>
+      <div class="nautilus demo">
+        <div class="nautilus__cell">
+          <div class="nautilus__content">A</div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">B</div>
+        <div class="nautilus__cell">
+          <div class="nautilus__content">B</div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">C</div>
+        <div class="nautilus__cell">
+          <div class="nautilus__content">C</div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">D</div>
+        <div class="nautilus__cell">
+          <div class="nautilus__content">D</div>
         </div>
         <span class="convergence-dot"></span>
       </div>
@@ -237,21 +237,21 @@
 
     <p class="demo-sweep-label">5 cells</p>
     <div class="stage stage--sm">
-      <div class="spiral-grid demo">
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">A</div>
+      <div class="nautilus demo">
+        <div class="nautilus__cell">
+          <div class="nautilus__content">A</div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">B</div>
+        <div class="nautilus__cell">
+          <div class="nautilus__content">B</div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">C</div>
+        <div class="nautilus__cell">
+          <div class="nautilus__content">C</div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">D</div>
+        <div class="nautilus__cell">
+          <div class="nautilus__content">D</div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">E</div>
+        <div class="nautilus__cell">
+          <div class="nautilus__content">E</div>
         </div>
         <span class="convergence-dot"></span>
       </div>
@@ -259,24 +259,24 @@
 
     <p class="demo-sweep-label">6 cells</p>
     <div class="stage stage--sm">
-      <div class="spiral-grid demo">
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">A</div>
+      <div class="nautilus demo">
+        <div class="nautilus__cell">
+          <div class="nautilus__content">A</div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">B</div>
+        <div class="nautilus__cell">
+          <div class="nautilus__content">B</div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">C</div>
+        <div class="nautilus__cell">
+          <div class="nautilus__content">C</div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">D</div>
+        <div class="nautilus__cell">
+          <div class="nautilus__content">D</div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">E</div>
+        <div class="nautilus__cell">
+          <div class="nautilus__content">E</div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">F</div>
+        <div class="nautilus__cell">
+          <div class="nautilus__content">F</div>
         </div>
         <span class="convergence-dot"></span>
       </div>
@@ -285,9 +285,9 @@
     <h2>1c. Sweep 1–6 cells (portrait)</h2>
     <p class="demo-sweep-label">1 cell (entire spiral is fill)</p>
     <div class="stage" style="max-width: 400px">
-      <div class="spiral-grid spiral-grid--portrait demo">
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">A</div>
+      <div class="nautilus nautilus--portrait demo">
+        <div class="nautilus__cell">
+          <div class="nautilus__content">A</div>
         </div>
         <span
           class="convergence-dot"
@@ -298,12 +298,12 @@
 
     <p class="demo-sweep-label">2 cells</p>
     <div class="stage" style="max-width: 400px">
-      <div class="spiral-grid spiral-grid--portrait demo">
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">A</div>
+      <div class="nautilus nautilus--portrait demo">
+        <div class="nautilus__cell">
+          <div class="nautilus__content">A</div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">B</div>
+        <div class="nautilus__cell">
+          <div class="nautilus__content">B</div>
         </div>
         <span
           class="convergence-dot"
@@ -314,15 +314,15 @@
 
     <p class="demo-sweep-label">3 cells</p>
     <div class="stage" style="max-width: 400px">
-      <div class="spiral-grid spiral-grid--portrait demo">
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">A</div>
+      <div class="nautilus nautilus--portrait demo">
+        <div class="nautilus__cell">
+          <div class="nautilus__content">A</div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">B</div>
+        <div class="nautilus__cell">
+          <div class="nautilus__content">B</div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">C</div>
+        <div class="nautilus__cell">
+          <div class="nautilus__content">C</div>
         </div>
         <span
           class="convergence-dot"
@@ -333,18 +333,18 @@
 
     <p class="demo-sweep-label">4 cells</p>
     <div class="stage" style="max-width: 400px">
-      <div class="spiral-grid spiral-grid--portrait demo">
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">A</div>
+      <div class="nautilus nautilus--portrait demo">
+        <div class="nautilus__cell">
+          <div class="nautilus__content">A</div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">B</div>
+        <div class="nautilus__cell">
+          <div class="nautilus__content">B</div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">C</div>
+        <div class="nautilus__cell">
+          <div class="nautilus__content">C</div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">D</div>
+        <div class="nautilus__cell">
+          <div class="nautilus__content">D</div>
         </div>
         <span
           class="convergence-dot"
@@ -355,21 +355,21 @@
 
     <p class="demo-sweep-label">5 cells</p>
     <div class="stage" style="max-width: 400px">
-      <div class="spiral-grid spiral-grid--portrait demo">
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">A</div>
+      <div class="nautilus nautilus--portrait demo">
+        <div class="nautilus__cell">
+          <div class="nautilus__content">A</div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">B</div>
+        <div class="nautilus__cell">
+          <div class="nautilus__content">B</div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">C</div>
+        <div class="nautilus__cell">
+          <div class="nautilus__content">C</div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">D</div>
+        <div class="nautilus__cell">
+          <div class="nautilus__content">D</div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">E</div>
+        <div class="nautilus__cell">
+          <div class="nautilus__content">E</div>
         </div>
         <span
           class="convergence-dot"
@@ -380,24 +380,24 @@
 
     <p class="demo-sweep-label">6 cells</p>
     <div class="stage" style="max-width: 400px">
-      <div class="spiral-grid spiral-grid--portrait demo">
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">A</div>
+      <div class="nautilus nautilus--portrait demo">
+        <div class="nautilus__cell">
+          <div class="nautilus__content">A</div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">B</div>
+        <div class="nautilus__cell">
+          <div class="nautilus__content">B</div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">C</div>
+        <div class="nautilus__cell">
+          <div class="nautilus__content">C</div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">D</div>
+        <div class="nautilus__cell">
+          <div class="nautilus__content">D</div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">E</div>
+        <div class="nautilus__cell">
+          <div class="nautilus__content">E</div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">F</div>
+        <div class="nautilus__cell">
+          <div class="nautilus__content">F</div>
         </div>
         <span
           class="convergence-dot"
@@ -408,18 +408,18 @@
 
     <h2>2a. Reverse 4-cell</h2>
     <div class="stage stage--sm">
-      <div class="spiral-grid spiral-grid--reverse demo">
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">A</div>
+      <div class="nautilus nautilus--reverse demo">
+        <div class="nautilus__cell">
+          <div class="nautilus__content">A</div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">B</div>
+        <div class="nautilus__cell">
+          <div class="nautilus__content">B</div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">C</div>
+        <div class="nautilus__cell">
+          <div class="nautilus__content">C</div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">D</div>
+        <div class="nautilus__cell">
+          <div class="nautilus__content">D</div>
         </div>
         <span class="convergence-dot"></span>
       </div>
@@ -427,61 +427,61 @@
 
     <h2>2b. Reverse 7-cell</h2>
     <div class="stage stage--sm">
-      <div class="spiral-grid spiral-grid--reverse demo">
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">A</div>
+      <div class="nautilus nautilus--reverse demo">
+        <div class="nautilus__cell">
+          <div class="nautilus__content">A</div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">B</div>
+        <div class="nautilus__cell">
+          <div class="nautilus__content">B</div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">C</div>
+        <div class="nautilus__cell">
+          <div class="nautilus__content">C</div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">D</div>
+        <div class="nautilus__cell">
+          <div class="nautilus__content">D</div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">E</div>
+        <div class="nautilus__cell">
+          <div class="nautilus__content">E</div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">F</div>
+        <div class="nautilus__cell">
+          <div class="nautilus__content">F</div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">G</div>
+        <div class="nautilus__cell">
+          <div class="nautilus__content">G</div>
         </div>
         <span class="convergence-dot"></span>
       </div>
     </div>
 
-    <h2>3. 9 cells with <code>spiral-grid--no-fill</code></h2>
+    <h2>3. 9 cells with <code>nautilus--no-fill</code></h2>
     <div class="stage stage--sm">
-      <div class="spiral-grid spiral-grid--no-fill demo">
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">1</div>
+      <div class="nautilus nautilus--no-fill demo">
+        <div class="nautilus__cell">
+          <div class="nautilus__content">1</div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">2</div>
+        <div class="nautilus__cell">
+          <div class="nautilus__content">2</div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">3</div>
+        <div class="nautilus__cell">
+          <div class="nautilus__content">3</div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">4</div>
+        <div class="nautilus__cell">
+          <div class="nautilus__content">4</div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">5</div>
+        <div class="nautilus__cell">
+          <div class="nautilus__content">5</div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">6</div>
+        <div class="nautilus__cell">
+          <div class="nautilus__content">6</div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">7</div>
+        <div class="nautilus__cell">
+          <div class="nautilus__content">7</div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">8</div>
+        <div class="nautilus__cell">
+          <div class="nautilus__content">8</div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">9</div>
+        <div class="nautilus__cell">
+          <div class="nautilus__content">9</div>
         </div>
         <span class="convergence-dot"></span>
       </div>
@@ -489,10 +489,10 @@
 
     <h2>4. With real content (portfolio-style)</h2>
     <div class="stage stage--sm">
-      <div class="spiral-grid demo">
-        <div class="spiral-grid__cell">
+      <div class="nautilus demo">
+        <div class="nautilus__cell">
           <div
-            class="spiral-grid__content"
+            class="nautilus__content"
             style="
               background: #2d3142;
               color: #fff;
@@ -505,43 +505,43 @@
             <div>Featured Project</div>
           </div>
         </div>
-        <div class="spiral-grid__cell">
+        <div class="nautilus__cell">
           <div
-            class="spiral-grid__content"
+            class="nautilus__content"
             style="background: #ef8354; color: #fff"
           >
             02
           </div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content" style="background: #bfc0c0">03</div>
+        <div class="nautilus__cell">
+          <div class="nautilus__content" style="background: #bfc0c0">03</div>
         </div>
-        <div class="spiral-grid__cell">
+        <div class="nautilus__cell">
           <div
-            class="spiral-grid__content"
+            class="nautilus__content"
             style="background: #4f5d75; color: #fff"
           >
             04
           </div>
         </div>
-        <div class="spiral-grid__cell">
+        <div class="nautilus__cell">
           <div
-            class="spiral-grid__content"
+            class="nautilus__content"
             style="background: #2d3142; color: #fff"
           >
             05
           </div>
         </div>
-        <div class="spiral-grid__cell">
+        <div class="nautilus__cell">
           <div
-            class="spiral-grid__content"
+            class="nautilus__content"
             style="background: #ef8354; color: #fff"
           >
             06
           </div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content" style="background: #bfc0c0">07</div>
+        <div class="nautilus__cell">
+          <div class="nautilus__content" style="background: #bfc0c0">07</div>
         </div>
         <span class="convergence-dot"></span>
       </div>
@@ -549,51 +549,51 @@
 
     <h2>4b. 15 cells — overflow hidden (cells 11+ are hidden)</h2>
     <div class="stage stage--sm">
-      <div class="spiral-grid demo">
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">1</div>
+      <div class="nautilus demo">
+        <div class="nautilus__cell">
+          <div class="nautilus__content">1</div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">2</div>
+        <div class="nautilus__cell">
+          <div class="nautilus__content">2</div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">3</div>
+        <div class="nautilus__cell">
+          <div class="nautilus__content">3</div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">4</div>
+        <div class="nautilus__cell">
+          <div class="nautilus__content">4</div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">5</div>
+        <div class="nautilus__cell">
+          <div class="nautilus__content">5</div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">6</div>
+        <div class="nautilus__cell">
+          <div class="nautilus__content">6</div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">7</div>
+        <div class="nautilus__cell">
+          <div class="nautilus__content">7</div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">8</div>
+        <div class="nautilus__cell">
+          <div class="nautilus__content">8</div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">9</div>
+        <div class="nautilus__cell">
+          <div class="nautilus__content">9</div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">10</div>
+        <div class="nautilus__cell">
+          <div class="nautilus__content">10</div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">11</div>
+        <div class="nautilus__cell">
+          <div class="nautilus__content">11</div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">12</div>
+        <div class="nautilus__cell">
+          <div class="nautilus__content">12</div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">13</div>
+        <div class="nautilus__cell">
+          <div class="nautilus__content">13</div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">14</div>
+        <div class="nautilus__cell">
+          <div class="nautilus__content">14</div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">15</div>
+        <div class="nautilus__cell">
+          <div class="nautilus__content">15</div>
         </div>
         <span class="convergence-dot"></span>
       </div>
@@ -601,56 +601,56 @@
 
     <h2>4c. 15 cells — split into two spirals (8 + 7)</h2>
     <div class="stage stage--sm">
-      <div class="spiral-grid demo">
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">1</div>
+      <div class="nautilus demo">
+        <div class="nautilus__cell">
+          <div class="nautilus__content">1</div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">2</div>
+        <div class="nautilus__cell">
+          <div class="nautilus__content">2</div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">3</div>
+        <div class="nautilus__cell">
+          <div class="nautilus__content">3</div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">4</div>
+        <div class="nautilus__cell">
+          <div class="nautilus__content">4</div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">5</div>
+        <div class="nautilus__cell">
+          <div class="nautilus__content">5</div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">6</div>
+        <div class="nautilus__cell">
+          <div class="nautilus__content">6</div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">7</div>
+        <div class="nautilus__cell">
+          <div class="nautilus__content">7</div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">8</div>
+        <div class="nautilus__cell">
+          <div class="nautilus__content">8</div>
         </div>
         <span class="convergence-dot"></span>
       </div>
     </div>
     <div class="stage stage--sm" style="margin-top: 1rem">
-      <div class="spiral-grid spiral-grid--reverse demo">
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">9</div>
+      <div class="nautilus nautilus--reverse demo">
+        <div class="nautilus__cell">
+          <div class="nautilus__content">9</div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">10</div>
+        <div class="nautilus__cell">
+          <div class="nautilus__content">10</div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">11</div>
+        <div class="nautilus__cell">
+          <div class="nautilus__content">11</div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">12</div>
+        <div class="nautilus__cell">
+          <div class="nautilus__content">12</div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">13</div>
+        <div class="nautilus__cell">
+          <div class="nautilus__content">13</div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">14</div>
+        <div class="nautilus__cell">
+          <div class="nautilus__content">14</div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">15</div>
+        <div class="nautilus__cell">
+          <div class="nautilus__content">15</div>
         </div>
         <span class="convergence-dot"></span>
       </div>
@@ -658,111 +658,111 @@
 
     <h2>4d. Seamless multi-spiral (8 + 7, no gap)</h2>
     <div class="stage stage--sm" style="padding: 0; border: none">
-      <div class="spiral-grid demo" style="width: 100%">
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">1</div>
+      <div class="nautilus demo" style="width: 100%">
+        <div class="nautilus__cell">
+          <div class="nautilus__content">1</div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">2</div>
+        <div class="nautilus__cell">
+          <div class="nautilus__content">2</div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">3</div>
+        <div class="nautilus__cell">
+          <div class="nautilus__content">3</div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">4</div>
+        <div class="nautilus__cell">
+          <div class="nautilus__content">4</div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">5</div>
+        <div class="nautilus__cell">
+          <div class="nautilus__content">5</div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">6</div>
+        <div class="nautilus__cell">
+          <div class="nautilus__content">6</div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">7</div>
+        <div class="nautilus__cell">
+          <div class="nautilus__content">7</div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">8</div>
+        <div class="nautilus__cell">
+          <div class="nautilus__content">8</div>
         </div>
       </div>
       <div
-        class="spiral-grid spiral-grid--reverse demo"
+        class="nautilus nautilus--reverse demo"
         style="width: 100%"
       >
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">9</div>
+        <div class="nautilus__cell">
+          <div class="nautilus__content">9</div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">10</div>
+        <div class="nautilus__cell">
+          <div class="nautilus__content">10</div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">11</div>
+        <div class="nautilus__cell">
+          <div class="nautilus__content">11</div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">12</div>
+        <div class="nautilus__cell">
+          <div class="nautilus__content">12</div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">13</div>
+        <div class="nautilus__cell">
+          <div class="nautilus__content">13</div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">14</div>
+        <div class="nautilus__cell">
+          <div class="nautilus__content">14</div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">15</div>
+        <div class="nautilus__cell">
+          <div class="nautilus__content">15</div>
         </div>
       </div>
     </div>
 
     <h2>4e. Hero-rotate (content pre-rotated 90° × index — for zoom scenes)</h2>
     <div class="stage stage--sm">
-      <div class="spiral-grid spiral-grid--hero-rotate demo">
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">A</div>
+      <div class="nautilus nautilus--hero-rotate demo">
+        <div class="nautilus__cell">
+          <div class="nautilus__content">A</div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">B</div>
+        <div class="nautilus__cell">
+          <div class="nautilus__content">B</div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">C</div>
+        <div class="nautilus__cell">
+          <div class="nautilus__content">C</div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">D</div>
+        <div class="nautilus__cell">
+          <div class="nautilus__content">D</div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">E</div>
+        <div class="nautilus__cell">
+          <div class="nautilus__content">E</div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">F</div>
+        <div class="nautilus__cell">
+          <div class="nautilus__content">F</div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">G</div>
+        <div class="nautilus__cell">
+          <div class="nautilus__content">G</div>
         </div>
         <span class="convergence-dot"></span>
       </div>
     </div>
 
-    <h2>5. Portrait modifier with <code>spiral-grid--no-fill</code></h2>
+    <h2>5. Portrait modifier with <code>nautilus--no-fill</code></h2>
     <div class="stage" style="max-width: 400px">
-      <div class="spiral-grid spiral-grid--portrait spiral-grid--no-fill demo">
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">A</div>
+      <div class="nautilus nautilus--portrait nautilus--no-fill demo">
+        <div class="nautilus__cell">
+          <div class="nautilus__content">A</div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">B</div>
+        <div class="nautilus__cell">
+          <div class="nautilus__content">B</div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">C</div>
+        <div class="nautilus__cell">
+          <div class="nautilus__content">C</div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">D</div>
+        <div class="nautilus__cell">
+          <div class="nautilus__content">D</div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">E</div>
+        <div class="nautilus__cell">
+          <div class="nautilus__content">E</div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">F</div>
+        <div class="nautilus__cell">
+          <div class="nautilus__content">F</div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">G</div>
+        <div class="nautilus__cell">
+          <div class="nautilus__content">G</div>
         </div>
         <span
           class="convergence-dot"
@@ -773,27 +773,27 @@
 
     <h2>5b. Portrait modifier (default fill)</h2>
     <div class="stage" style="max-width: 400px">
-      <div class="spiral-grid spiral-grid--portrait demo">
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">A</div>
+      <div class="nautilus nautilus--portrait demo">
+        <div class="nautilus__cell">
+          <div class="nautilus__content">A</div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">B</div>
+        <div class="nautilus__cell">
+          <div class="nautilus__content">B</div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">C</div>
+        <div class="nautilus__cell">
+          <div class="nautilus__content">C</div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">D</div>
+        <div class="nautilus__cell">
+          <div class="nautilus__content">D</div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">E</div>
+        <div class="nautilus__cell">
+          <div class="nautilus__content">E</div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">F</div>
+        <div class="nautilus__cell">
+          <div class="nautilus__content">F</div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">G</div>
+        <div class="nautilus__cell">
+          <div class="nautilus__content">G</div>
         </div>
         <span
           class="convergence-dot"
@@ -807,51 +807,51 @@
       class="stage"
       style="max-width: 300px; resize: both; overflow: auto; min-height: 200px"
     >
-      <div class="spiral-grid spiral-grid--auto demo">
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">A</div>
+      <div class="nautilus nautilus--auto demo">
+        <div class="nautilus__cell">
+          <div class="nautilus__content">A</div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">B</div>
+        <div class="nautilus__cell">
+          <div class="nautilus__content">B</div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">C</div>
+        <div class="nautilus__cell">
+          <div class="nautilus__content">C</div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">D</div>
+        <div class="nautilus__cell">
+          <div class="nautilus__content">D</div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">E</div>
+        <div class="nautilus__cell">
+          <div class="nautilus__content">E</div>
         </div>
       </div>
     </div>
     <h2>6b. Cell count sweep: 8, 9, 10 cells</h2>
     <p class="demo-sweep-label">8 cells</p>
     <div class="stage stage--sm">
-      <div class="spiral-grid demo">
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">1</div>
+      <div class="nautilus demo">
+        <div class="nautilus__cell">
+          <div class="nautilus__content">1</div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">2</div>
+        <div class="nautilus__cell">
+          <div class="nautilus__content">2</div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">3</div>
+        <div class="nautilus__cell">
+          <div class="nautilus__content">3</div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">4</div>
+        <div class="nautilus__cell">
+          <div class="nautilus__content">4</div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">5</div>
+        <div class="nautilus__cell">
+          <div class="nautilus__content">5</div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">6</div>
+        <div class="nautilus__cell">
+          <div class="nautilus__content">6</div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">7</div>
+        <div class="nautilus__cell">
+          <div class="nautilus__content">7</div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">8</div>
+        <div class="nautilus__cell">
+          <div class="nautilus__content">8</div>
         </div>
         <span class="convergence-dot"></span>
       </div>
@@ -859,33 +859,33 @@
 
     <p class="demo-sweep-label">9 cells</p>
     <div class="stage stage--sm">
-      <div class="spiral-grid demo">
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">1</div>
+      <div class="nautilus demo">
+        <div class="nautilus__cell">
+          <div class="nautilus__content">1</div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">2</div>
+        <div class="nautilus__cell">
+          <div class="nautilus__content">2</div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">3</div>
+        <div class="nautilus__cell">
+          <div class="nautilus__content">3</div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">4</div>
+        <div class="nautilus__cell">
+          <div class="nautilus__content">4</div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">5</div>
+        <div class="nautilus__cell">
+          <div class="nautilus__content">5</div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">6</div>
+        <div class="nautilus__cell">
+          <div class="nautilus__content">6</div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">7</div>
+        <div class="nautilus__cell">
+          <div class="nautilus__content">7</div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">8</div>
+        <div class="nautilus__cell">
+          <div class="nautilus__content">8</div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">9</div>
+        <div class="nautilus__cell">
+          <div class="nautilus__content">9</div>
         </div>
         <span class="convergence-dot"></span>
       </div>
@@ -893,36 +893,36 @@
 
     <p class="demo-sweep-label">10 cells</p>
     <div class="stage stage--sm">
-      <div class="spiral-grid demo">
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">1</div>
+      <div class="nautilus demo">
+        <div class="nautilus__cell">
+          <div class="nautilus__content">1</div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">2</div>
+        <div class="nautilus__cell">
+          <div class="nautilus__content">2</div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">3</div>
+        <div class="nautilus__cell">
+          <div class="nautilus__content">3</div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">4</div>
+        <div class="nautilus__cell">
+          <div class="nautilus__content">4</div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">5</div>
+        <div class="nautilus__cell">
+          <div class="nautilus__content">5</div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">6</div>
+        <div class="nautilus__cell">
+          <div class="nautilus__content">6</div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">7</div>
+        <div class="nautilus__cell">
+          <div class="nautilus__content">7</div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">8</div>
+        <div class="nautilus__cell">
+          <div class="nautilus__content">8</div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">9</div>
+        <div class="nautilus__cell">
+          <div class="nautilus__content">9</div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">10</div>
+        <div class="nautilus__cell">
+          <div class="nautilus__content">10</div>
         </div>
         <span class="convergence-dot"></span>
       </div>
@@ -931,22 +931,22 @@
     <h2>7a. Portrait + reverse (no-fill)</h2>
     <div class="stage" style="max-width: 400px">
       <div
-        class="spiral-grid spiral-grid--portrait spiral-grid--reverse spiral-grid--no-fill demo"
+        class="nautilus nautilus--portrait nautilus--reverse nautilus--no-fill demo"
       >
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">A</div>
+        <div class="nautilus__cell">
+          <div class="nautilus__content">A</div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">B</div>
+        <div class="nautilus__cell">
+          <div class="nautilus__content">B</div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">C</div>
+        <div class="nautilus__cell">
+          <div class="nautilus__content">C</div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">D</div>
+        <div class="nautilus__cell">
+          <div class="nautilus__content">D</div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">E</div>
+        <div class="nautilus__cell">
+          <div class="nautilus__content">E</div>
         </div>
         <span
           class="convergence-dot"
@@ -957,27 +957,27 @@
 
     <h2>7b. Portrait + reverse (default fill)</h2>
     <div class="stage" style="max-width: 400px">
-      <div class="spiral-grid spiral-grid--portrait spiral-grid--reverse demo">
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">A</div>
+      <div class="nautilus nautilus--portrait nautilus--reverse demo">
+        <div class="nautilus__cell">
+          <div class="nautilus__content">A</div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">B</div>
+        <div class="nautilus__cell">
+          <div class="nautilus__content">B</div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">C</div>
+        <div class="nautilus__cell">
+          <div class="nautilus__content">C</div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">D</div>
+        <div class="nautilus__cell">
+          <div class="nautilus__content">D</div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">E</div>
+        <div class="nautilus__cell">
+          <div class="nautilus__content">E</div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">F</div>
+        <div class="nautilus__cell">
+          <div class="nautilus__content">F</div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">G</div>
+        <div class="nautilus__cell">
+          <div class="nautilus__content">G</div>
         </div>
         <span
           class="convergence-dot"
@@ -991,21 +991,21 @@
       class="stage"
       style="max-width: 300px; resize: both; overflow: auto; min-height: 200px"
     >
-      <div class="spiral-grid spiral-grid--auto spiral-grid--reverse demo">
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">A</div>
+      <div class="nautilus nautilus--auto nautilus--reverse demo">
+        <div class="nautilus__cell">
+          <div class="nautilus__content">A</div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">B</div>
+        <div class="nautilus__cell">
+          <div class="nautilus__content">B</div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">C</div>
+        <div class="nautilus__cell">
+          <div class="nautilus__content">C</div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">D</div>
+        <div class="nautilus__cell">
+          <div class="nautilus__content">D</div>
         </div>
-        <div class="spiral-grid__cell">
-          <div class="spiral-grid__content">E</div>
+        <div class="nautilus__cell">
+          <div class="nautilus__content">E</div>
         </div>
       </div>
     </div>

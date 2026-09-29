@@ -2,7 +2,7 @@
 
 How a golden spiral becomes a plain CSS Grid — explained from scratch.
 
-This is the conceptual companion to `src/spiral-grid.grid.css`. It is written
+This is the conceptual companion to `src/nautilus.grid.css`. It is written
 for someone who knows basic CSS and has never thought about golden rectangles.
 The comparison numbers and the engine decision live in `doc/grid-engine.md`;
 this document is only about *the idea*.
@@ -71,7 +71,7 @@ scaled by φ² and rotated 180°. In general:
 ```
 
 with `transform-origin` at the eye. One formula covers every cell. This is
-what the original engine (`spiral-grid.css`) does, and it's genuinely
+what the original engine (`nautilus.css`) does, and it's genuinely
 elegant.
 
 But look at what the browser is actually doing. It lays out every cell as a
@@ -200,7 +200,7 @@ And because `fr` only cares about ratios, a list that's φ × another list
 *is the same list*. So:
 
 ```css
-grid-template-rows: var(--spiral-grid-tracks);   /* same six numbers */
+grid-template-rows: var(--nautilus-tracks);   /* same six numbers */
 ```
 
 The container's `aspect-ratio: 1.618 / 1` makes it the right height; `fr`
@@ -229,16 +229,16 @@ grid-area: row-start / column-start / row-end / column-end;
 Reading the ten placements off the subdivision:
 
 ```css
-.spiral-grid__cell:nth-child(1)  { grid-area: 1 / 1 / 7 / 2; }  /* column 1, all rows      */
-.spiral-grid__cell:nth-child(2)  { grid-area: 1 / 2 / 2 / 7; }  /* row 1, columns 2..6     */
-.spiral-grid__cell:nth-child(3)  { grid-area: 2 / 6 / 7 / 7; }  /* column 6, rows 2..6     */
-.spiral-grid__cell:nth-child(4)  { grid-area: 6 / 2 / 7 / 6; }  /* row 6, columns 2..5     */
-.spiral-grid__cell:nth-child(5)  { grid-area: 2 / 2 / 6 / 3; }
-.spiral-grid__cell:nth-child(6)  { grid-area: 2 / 3 / 3 / 6; }
-.spiral-grid__cell:nth-child(7)  { grid-area: 3 / 5 / 6 / 6; }
-.spiral-grid__cell:nth-child(8)  { grid-area: 5 / 3 / 6 / 5; }
-.spiral-grid__cell:nth-child(9)  { grid-area: 3 / 3 / 5 / 4; }
-.spiral-grid__cell:nth-child(10) { grid-area: 3 / 4 / 4 / 5; }
+.nautilus__cell:nth-child(1)  { grid-area: 1 / 1 / 7 / 2; }  /* column 1, all rows      */
+.nautilus__cell:nth-child(2)  { grid-area: 1 / 2 / 2 / 7; }  /* row 1, columns 2..6     */
+.nautilus__cell:nth-child(3)  { grid-area: 2 / 6 / 7 / 7; }  /* column 6, rows 2..6     */
+.nautilus__cell:nth-child(4)  { grid-area: 6 / 2 / 7 / 6; }  /* row 6, columns 2..5     */
+.nautilus__cell:nth-child(5)  { grid-area: 2 / 2 / 6 / 3; }
+.nautilus__cell:nth-child(6)  { grid-area: 2 / 3 / 3 / 6; }
+.nautilus__cell:nth-child(7)  { grid-area: 3 / 5 / 6 / 6; }
+.nautilus__cell:nth-child(8)  { grid-area: 5 / 3 / 6 / 5; }
+.nautilus__cell:nth-child(9)  { grid-area: 3 / 3 / 5 / 4; }
+.nautilus__cell:nth-child(10) { grid-area: 3 / 4 / 4 / 5; }
 ```
 
 Look at the pattern in the first four: cell 1 takes a column, cell 2 takes a
@@ -266,7 +266,7 @@ cell is always a golden rectangle, and its edges are always existing
 lines, so "swallow the remainder" is always just a bigger span.
 
 ```css
-.spiral-grid:not(.spiral-grid--no-fill) > .spiral-grid__cell:nth-child(4):last-child { grid-area: 2 / 2 / 7 / 6; }
+.nautilus:not(.nautilus--no-fill) > .nautilus__cell:nth-child(4):last-child { grid-area: 2 / 2 / 7 / 6; }
 ```
 
 `:nth-child(4):last-child` means "the 4th child, when it's also the last."
@@ -351,7 +351,7 @@ engines produce the same rectangles (measured: within 0.02px), so the same
 container transform works on both:
 
 ```css
-.spiral-grid { transform-origin: 72.36% 72.36%; }          /* the eye */
+.nautilus { transform-origin: 72.36% 72.36%; }          /* the eye */
 .zoomed      { transform: scale(1.618) rotate(-90deg); }   /* one step in */
 ```
 
@@ -364,7 +364,7 @@ One detail the transform engine got "for free" that the grid engine adds
 back explicitly: after a one-step zoom, cell 2 is in cell 1's spot but
 rotated −90°. If you want each cell to read upright when it becomes the
 hero, its content must be pre-rotated by +90° × (i − 1). That's the
-`--hero-rotate` modifier: seven `rotate()` rules on `.spiral-grid__content`,
+`--hero-rotate` modifier: seven `rotate()` rules on `.nautilus__content`,
 opt-in, only for zoom scenes.
 
 ---

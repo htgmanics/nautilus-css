@@ -21,40 +21,40 @@ npm install nautilus-grid
 ```
 
 ```js
-import 'nautilus-grid';            // dist/spiral-grid.css
-// or: import 'nautilus-grid/min'; // dist/spiral-grid.min.css
+import 'nautilus-grid';            // dist/nautilus.css
+// or: import 'nautilus-grid/min'; // dist/nautilus.min.css
 ```
 
 Or via CDN, no build step:
 
 ```html
-<link rel="stylesheet" href="https://unpkg.com/nautilus-grid@0.1/dist/spiral-grid.min.css">
+<link rel="stylesheet" href="https://unpkg.com/nautilus-grid@0.1/dist/nautilus.min.css">
 ```
 
 ## Usage
 
 ```html
-<div class="spiral-grid">
-  <div class="spiral-grid__cell"><div class="spiral-grid__content">1</div></div>
-  <div class="spiral-grid__cell"><div class="spiral-grid__content">2</div></div>
-  <div class="spiral-grid__cell"><div class="spiral-grid__content">3</div></div>
-  <div class="spiral-grid__cell"><div class="spiral-grid__content">4</div></div>
-  <div class="spiral-grid__cell"><div class="spiral-grid__content">5</div></div>
+<div class="nautilus">
+  <div class="nautilus__cell"><div class="nautilus__content">1</div></div>
+  <div class="nautilus__cell"><div class="nautilus__content">2</div></div>
+  <div class="nautilus__cell"><div class="nautilus__content">3</div></div>
+  <div class="nautilus__cell"><div class="nautilus__content">4</div></div>
+  <div class="nautilus__cell"><div class="nautilus__content">5</div></div>
 </div>
 ```
 
-- `.spiral-grid` is a golden rectangle (1.618 : 1) at `width: 100%`. Size it
+- `.nautilus` is a golden rectangle (1.618 : 1) at `width: 100%`. Size it
   with plain `width` / `max-width`.
-- `.spiral-grid__cell` is positioned, scaled and rotated automatically by its
+- `.nautilus__cell` is positioned, scaled and rotated automatically by its
   position (`:nth-child`). Style its `background` freely.
-- `.spiral-grid__content` is counter-rotated so content stays upright, with
+- `.nautilus__content` is counter-rotated so content stays upright, with
   font-size compensated for the cell's scale. Put your content here.
 
 ### Markup rules
 
 - **Up to 10 cells.** Cells beyond the 10th are hidden. Need more? Put two
   spirals side by side.
-- **Only cells may be `<div>` children** of `.spiral-grid`. The fill cell is
+- **Only cells may be `<div>` children** of `.nautilus`. The fill cell is
   found with `:last-of-type`, so use another tag (e.g. `<span>`) for any
   overlay element inside the container.
 
@@ -80,49 +80,49 @@ beyond a few string joins. Plain `className` usage works without it.
 
 ## Modifiers
 
-On `.spiral-grid`:
+On `.nautilus`:
 
 | Class | Effect |
 |---|---|
-| `spiral-grid--reverse` | Mirror horizontally — spiral coils in from the left |
-| `spiral-grid--portrait` | Tall golden rectangle (1 : 1.618) |
-| `spiral-grid--auto` | Switch to portrait automatically when the container is taller than wide (container query) |
-| `spiral-grid--no-fill` | Keep the last cell square, leaving the wedge at the eye visible |
-| `spiral-grid--hero-rotate` | Pre-rotate each cell's content by 90° × its index, so after a zoom step the new hero reads upright (see `doc/tunnel.md`) |
+| `nautilus--reverse` | Mirror horizontally — spiral coils in from the left |
+| `nautilus--portrait` | Tall golden rectangle (1 : 1.618) |
+| `nautilus--auto` | Switch to portrait automatically when the container is taller than wide (container query) |
+| `nautilus--no-fill` | Keep the last cell square, leaving the wedge at the eye visible |
+| `nautilus--hero-rotate` | Pre-rotate each cell's content by 90° × its index, so after a zoom step the new hero reads upright (see `doc/tunnel.md`) |
 
-On `.spiral-grid__content`:
+On `.nautilus__content`:
 
 | Class | Effect |
 |---|---|
-| `spiral-grid__content--scroll` / `--scroll-y` | Make the cell a vertical scroll container |
-| `spiral-grid__content--scroll-x` | Horizontal scroll container (image strips, timelines) |
+| `nautilus__content--scroll` / `--scroll-y` | Make the cell a vertical scroll container |
+| `nautilus__content--scroll-x` | Horizontal scroll container (image strips, timelines) |
 
 Scrolling works best on cells 1–5; deeper cells are too small for a usable
 scrollbar.
 
 ## Custom properties
 
-Set these on `.spiral-grid`:
+Set these on `.nautilus`:
 
 | Property | Default | Purpose |
 |---|---|---|
-| `--spiral-grid-gap` | `0px` | Visible gutter between cells. Same width at every depth. |
-| `--spiral-grid-transition` | `none` | Cell transition, e.g. `background 0.4s ease` |
+| `--nautilus-gap` | `0px` | Visible gutter between cells. Same width at every depth. |
+| `--nautilus-transition` | `none` | Cell transition, e.g. `background 0.4s ease` |
 
 ```html
-<div class="spiral-grid" style="--spiral-grid-gap: 8px">…</div>
+<div class="nautilus" style="--nautilus-gap: 8px">…</div>
 ```
 
-`--spiral-grid-tracks` and `--spiral-grid-eye` are internal — don't override
+`--nautilus-tracks` and `--nautilus-eye` are internal — don't override
 them.
 
 **Sizing content per cell:** every cell is a container, so `cqi` inside
-`.spiral-grid__content` means *that cell's* width — `font-size: 10cqi` scales
+`.nautilus__content` means *that cell's* width — `font-size: 10cqi` scales
 type with the cell at every depth.
 
 **Gap and depth:** because cells shrink exponentially, a large gap makes the
 deepest cells vanish. Keep the gap small relative to the container, or scale
-it with the container (e.g. `--spiral-grid-gap: 0.5cqi`).
+it with the container (e.g. `--nautilus-gap: 0.5cqi`).
 
 ## Browser support
 
@@ -166,7 +166,7 @@ is the project review and handoff.
 ```sh
 npm install
 npm test        # geometry check: tracks sum to 1, every cell area is square
-npm run build   # src/spiral-grid.css → dist/ (+ minified)
+npm run build   # src/nautilus.css → dist/ (+ minified)
 npm run size    # gzip size check (limit 2 KB)
 ```
 

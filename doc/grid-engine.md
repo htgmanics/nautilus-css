@@ -3,8 +3,8 @@
 Date: 2026-09-24. Status: **prototype, decision pending** (see roadmap).
 
 Side-by-side comparison of the current transform engine
-(`src/spiral-grid.css`) against a CSS Grid engine with the same public API
-(`src/spiral-grid.grid.css`). Comparison page was `examples/grid-prototype.html` (both engines via Shadow
+(`src/nautilus.css`) against a CSS Grid engine with the same public API
+(`src/nautilus.grid.css`). Comparison page was `examples/grid-prototype.html` (both engines via Shadow
 DOM, measured cell rectangles, printed deltas); removed with the transform
 engine on 2026-09-28 — see git history (commit 36208ee) to re-run it.
 
@@ -62,7 +62,7 @@ Source size: 179 lines vs 490. Minified+gzipped: **869 B** vs 1623 B.
 | Counter-rotation of content | none needed |
 | Font-size compensation `1rem / pow(φ,i)` | none needed; use `cqi` for per-cell scaling |
 | Gap via `clip-path: inset(gap/2/pow(φ,i))` + content padding `/pow(φ,i)` | `clip-path: inset(gap/2)` + content padding `gap/2` — constants (grid `gap` distorts squares; cell margin/padding feed track minimums and break the eye tracks) |
-| `--spiral-grid-safe-zone` | folded into the constant `gap/2` content padding |
+| `--nautilus-safe-zone` | folded into the constant `gap/2` content padding |
 | `z-index` by index | none needed — no overlap |
 | `--reverse`: mirrored origins + separate transform tables | `direction: rtl` on the grid, `ltr` reset on content |
 | `--portrait`: separate origins + fill rules | `writing-mode: vertical-rl` on the grid, `horizontal-tb` reset on content |
@@ -73,7 +73,7 @@ Source size: 179 lines vs 490. Minified+gzipped: **869 B** vs 1623 B.
 
 ## Trade-offs / open items
 
-- **Overlays**: fill uses `:last-child`, so non-cell children of `.spiral-grid`
+- **Overlays**: fill uses `:last-child`, so non-cell children of `.nautilus`
   must be `position: absolute` (absolutely positioned grid children don't take
   a track). Same class of markup rule as today's `:last-of-type` caveat.
 - **`--hero-rotate` on the fill cell**: rotating content 90° inside a non-square
@@ -90,7 +90,7 @@ Source size: 179 lines vs 490. Minified+gzipped: **869 B** vs 1623 B.
 
 ## Recommendation
 
-Ship the grid engine as `src/spiral-grid.css` for v0.1. Keep the transform
+Ship the grid engine as `src/nautilus.css` for v0.1. Keep the transform
 prototype in git history (and `examples/scroll-zoom.html` as the zoom
 reference until it's ported). Zoom / infinite zoom are unaffected: they were
 always a container transform about the eye, which the grid engine exposes as

@@ -1,5 +1,5 @@
 // nautilus-grid/react — thin React wrapper over the CSS.
-// Maps props to the .spiral-grid BEM classes and custom properties, and
+// Maps props to the .nautilus BEM classes and custom properties, and
 // enforces the cell/content two-div structure. No runtime logic beyond that.
 // Plain createElement so the package needs no build step; import the CSS
 // yourself: `import "nautilus-grid";`
@@ -15,17 +15,17 @@ export const Spiral = forwardRef(function Spiral(
   return createElement(as, {
     ref,
     className: cx(
-      "spiral-grid",
-      reverse && "spiral-grid--reverse",
-      portrait && "spiral-grid--portrait",
-      auto && "spiral-grid--auto",
-      noFill && "spiral-grid--no-fill",
-      heroRotate && "spiral-grid--hero-rotate",
+      "nautilus",
+      reverse && "nautilus--reverse",
+      portrait && "nautilus--portrait",
+      auto && "nautilus--auto",
+      noFill && "nautilus--no-fill",
+      heroRotate && "nautilus--hero-rotate",
       className
     ),
     style: {
-      ...(gap != null && { "--spiral-grid-gap": typeof gap === "number" ? `${gap}px` : gap }),
-      ...(transition != null && { "--spiral-grid-transition": transition }),
+      ...(gap != null && { "--nautilus-gap": typeof gap === "number" ? `${gap}px` : gap }),
+      ...(transition != null && { "--nautilus-transition": transition }),
       ...style,
     },
     ...rest,
@@ -38,14 +38,14 @@ export const Cell = forwardRef(function Cell(
 ) {
   return createElement(
     as,
-    { ref, className: cx("spiral-grid__cell", className), style, ...rest },
+    { ref, className: cx("nautilus__cell", className), style, ...rest },
     createElement(
       "div",
       {
         className: cx(
-          "spiral-grid__content",
-          scroll && "spiral-grid__content--scroll",
-          scrollX && "spiral-grid__content--scroll-x",
+          "nautilus__content",
+          scroll && "nautilus__content--scroll",
+          scrollX && "nautilus__content--scroll-x",
           contentClassName
         ),
         style: contentStyle,

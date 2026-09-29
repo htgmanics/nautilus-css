@@ -15,14 +15,14 @@ const html = renderToStaticMarkup(
     h(Cell, { as: "section" }, "C"))
 );
 
-check(html.startsWith('<div class="spiral-grid spiral-grid--reverse demo" style="--spiral-grid-gap:8px;--spiral-grid-transition:background .3s" id="s"'), "container classes/style");
-check(html.includes('<div class="spiral-grid__cell c1"><div class="spiral-grid__content spiral-grid__content--scroll k">A</div></div>'), "scroll cell");
-check(html.includes('<div class="spiral-grid__cell"><div class="spiral-grid__content spiral-grid__content--scroll-x">B</div></div>'), "scroll-x cell");
-check(html.includes('<section class="spiral-grid__cell"><div class="spiral-grid__content">C</div></section>'), "cell `as`");
+check(html.startsWith('<div class="nautilus nautilus--reverse demo" style="--nautilus-gap:8px;--nautilus-transition:background .3s" id="s"'), "container classes/style");
+check(html.includes('<div class="nautilus__cell c1"><div class="nautilus__content nautilus__content--scroll k">A</div></div>'), "scroll cell");
+check(html.includes('<div class="nautilus__cell"><div class="nautilus__content nautilus__content--scroll-x">B</div></div>'), "scroll-x cell");
+check(html.includes('<section class="nautilus__cell"><div class="nautilus__content">C</div></section>'), "cell `as`");
 
 const plain = renderToStaticMarkup(h(Spiral, { portrait: true, auto: true, noFill: true, heroRotate: true, gap: "1cqi" }, h(Cell, null, "x")));
-check(plain.startsWith('<div class="spiral-grid spiral-grid--portrait spiral-grid--auto spiral-grid--no-fill spiral-grid--hero-rotate" style="--spiral-grid-gap:1cqi"'), "all modifiers + string gap");
-check(renderToStaticMarkup(h(Spiral, null)).startsWith('<div class="spiral-grid"'), "no style attribute when no knobs"); // React omits empty style
+check(plain.startsWith('<div class="nautilus nautilus--portrait nautilus--auto nautilus--no-fill nautilus--hero-rotate" style="--nautilus-gap:1cqi"'), "all modifiers + string gap");
+check(renderToStaticMarkup(h(Spiral, null)).startsWith('<div class="nautilus"'), "no style attribute when no knobs"); // React omits empty style
 
 if (fails) { console.error(`\n${fails} check(s) failed\n${html}`); process.exit(1); }
 console.log("✓ react wrapper: props → classes and custom properties as expected");

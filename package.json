@@ -22,13 +22,13 @@
     "url": "git+https://github.com/htgmanics/nautilus-grid.git"
   },
   "bugs": "https://github.com/htgmanics/nautilus-grid/issues",
-  "style": "dist/spiral-grid.css",
-  "main": "dist/spiral-grid.css",
-  "unpkg": "dist/spiral-grid.min.css",
-  "jsdelivr": "dist/spiral-grid.min.css",
+  "style": "dist/nautilus.css",
+  "main": "dist/nautilus.css",
+  "unpkg": "dist/nautilus.min.css",
+  "jsdelivr": "dist/nautilus.min.css",
   "exports": {
-    ".": "./dist/spiral-grid.css",
-    "./min": "./dist/spiral-grid.min.css",
+    ".": "./dist/nautilus.css",
+    "./min": "./dist/nautilus.min.css",
     "./react": {
       "types": "./react/index.d.ts",
       "default": "./react/index.js"
@@ -44,8 +44,8 @@
     "*.css"
   ],
   "scripts": {
-    "build": "mkdir -p dist && cp src/spiral-grid.css dist/ && lightningcss --minify src/spiral-grid.css -o dist/spiral-grid.min.css",
-    "size": "node -e \"const n=require('zlib').gzipSync(require('fs').readFileSync('dist/spiral-grid.min.css')).length;console.log(n+' B gzipped (limit 2048)');process.exit(n>2048?1:0)\"",
+    "build": "mkdir -p dist && cp src/nautilus.css dist/ && lightningcss --minify src/nautilus.css -o dist/nautilus.min.css",
+    "size": "node -e \"const n=require('zlib').gzipSync(require('fs').readFileSync('dist/nautilus.min.css')).length;console.log(n+' B gzipped (limit 2048)');process.exit(n>2048?1:0)\"",
     "test": "node test/geometry.mjs && node test/react.mjs",
     "prepublishOnly": "npm test && npm run build && npm run size"
   },

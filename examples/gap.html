@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <title>Spiral Grid — Gap Prototype</title>
-    <link rel="stylesheet" href="../src/spiral-grid.css" />
+    <link rel="stylesheet" href="../src/nautilus.css" />
     <style>
       body {
         margin: 0;
@@ -57,29 +57,29 @@
 
       /* Demo cell styling — gives each cell a distinct background so
          we can actually see the gap carve out the dark stage color. */
-      .demo .spiral-grid__cell:nth-child(1) .spiral-grid__content { background: #ffadad; }
-      .demo .spiral-grid__cell:nth-child(2) .spiral-grid__content { background: #ffd6a5; }
-      .demo .spiral-grid__cell:nth-child(3) .spiral-grid__content { background: #fdffb6; }
-      .demo .spiral-grid__cell:nth-child(4) .spiral-grid__content { background: #caffbf; }
-      .demo .spiral-grid__cell:nth-child(5) .spiral-grid__content { background: #9bf6ff; }
-      .demo .spiral-grid__cell:nth-child(6) .spiral-grid__content { background: #a0c4ff; }
-      .demo .spiral-grid__cell:nth-child(7) .spiral-grid__content { background: #bdb2ff; }
-      .demo .spiral-grid__cell:nth-child(8) .spiral-grid__content { background: #ffc6ff; }
-      .demo .spiral-grid__cell:nth-child(9) .spiral-grid__content { background: #fffffc; }
-      .demo .spiral-grid__cell:nth-child(10) .spiral-grid__content { background: #e5e5e5; }
+      .demo .nautilus__cell:nth-child(1) .nautilus__content { background: #ffadad; }
+      .demo .nautilus__cell:nth-child(2) .nautilus__content { background: #ffd6a5; }
+      .demo .nautilus__cell:nth-child(3) .nautilus__content { background: #fdffb6; }
+      .demo .nautilus__cell:nth-child(4) .nautilus__content { background: #caffbf; }
+      .demo .nautilus__cell:nth-child(5) .nautilus__content { background: #9bf6ff; }
+      .demo .nautilus__cell:nth-child(6) .nautilus__content { background: #a0c4ff; }
+      .demo .nautilus__cell:nth-child(7) .nautilus__content { background: #bdb2ff; }
+      .demo .nautilus__cell:nth-child(8) .nautilus__content { background: #ffc6ff; }
+      .demo .nautilus__cell:nth-child(9) .nautilus__content { background: #fffffc; }
+      .demo .nautilus__cell:nth-child(10) .nautilus__content { background: #e5e5e5; }
 
-      .demo .spiral-grid__cell:nth-child(1)  { background: #ffadad; }
-      .demo .spiral-grid__cell:nth-child(2)  { background: #ffd6a5; }
-      .demo .spiral-grid__cell:nth-child(3)  { background: #fdffb6; }
-      .demo .spiral-grid__cell:nth-child(4)  { background: #caffbf; }
-      .demo .spiral-grid__cell:nth-child(5)  { background: #9bf6ff; }
-      .demo .spiral-grid__cell:nth-child(6)  { background: #a0c4ff; }
-      .demo .spiral-grid__cell:nth-child(7)  { background: #bdb2ff; }
-      .demo .spiral-grid__cell:nth-child(8)  { background: #ffc6ff; }
-      .demo .spiral-grid__cell:nth-child(9)  { background: #fffffc; }
-      .demo .spiral-grid__cell:nth-child(10) { background: #e5e5e5; }
+      .demo .nautilus__cell:nth-child(1)  { background: #ffadad; }
+      .demo .nautilus__cell:nth-child(2)  { background: #ffd6a5; }
+      .demo .nautilus__cell:nth-child(3)  { background: #fdffb6; }
+      .demo .nautilus__cell:nth-child(4)  { background: #caffbf; }
+      .demo .nautilus__cell:nth-child(5)  { background: #9bf6ff; }
+      .demo .nautilus__cell:nth-child(6)  { background: #a0c4ff; }
+      .demo .nautilus__cell:nth-child(7)  { background: #bdb2ff; }
+      .demo .nautilus__cell:nth-child(8)  { background: #ffc6ff; }
+      .demo .nautilus__cell:nth-child(9)  { background: #fffffc; }
+      .demo .nautilus__cell:nth-child(10) { background: #e5e5e5; }
 
-      .demo .spiral-grid__content {
+      .demo .nautilus__content {
         font-weight: 600;
         color: #222;
       }
@@ -87,29 +87,29 @@
       /* Gradient / image backgrounds — checks that clip-path doesn't
          interact badly with complex backgrounds (the background-clip
          reset issue that broke the border-transparent approach). */
-      .gradient-demo .spiral-grid__cell:nth-child(1) .spiral-grid__content {
+      .gradient-demo .nautilus__cell:nth-child(1) .nautilus__content {
         background: linear-gradient(135deg, #ff6b6b, #feca57);
       }
-      .gradient-demo .spiral-grid__cell:nth-child(2) .spiral-grid__content {
+      .gradient-demo .nautilus__cell:nth-child(2) .nautilus__content {
         background: linear-gradient(135deg, #48dbfb, #0abde3);
       }
-      .gradient-demo .spiral-grid__cell:nth-child(3) .spiral-grid__content {
+      .gradient-demo .nautilus__cell:nth-child(3) .nautilus__content {
         background: linear-gradient(135deg, #1dd1a1, #10ac84);
       }
-      .gradient-demo .spiral-grid__cell:nth-child(4) .spiral-grid__content {
+      .gradient-demo .nautilus__cell:nth-child(4) .nautilus__content {
         background: linear-gradient(135deg, #a55eea, #8854d0);
       }
-      .gradient-demo .spiral-grid__cell:nth-child(5) .spiral-grid__content {
+      .gradient-demo .nautilus__cell:nth-child(5) .nautilus__content {
         background: linear-gradient(135deg, #fd79a8, #e84393);
       }
-      .gradient-demo .spiral-grid__cell:nth-child(6) .spiral-grid__content {
+      .gradient-demo .nautilus__cell:nth-child(6) .nautilus__content {
         background: linear-gradient(135deg, #fdcb6e, #e17055);
       }
-      .gradient-demo .spiral-grid__cell:nth-child(7) .spiral-grid__content {
+      .gradient-demo .nautilus__cell:nth-child(7) .nautilus__content {
         background: linear-gradient(135deg, #74b9ff, #0984e3);
       }
-      .gradient-demo .spiral-grid__cell,
-      .gradient-demo .spiral-grid__cell .spiral-grid__content {
+      .gradient-demo .nautilus__cell,
+      .gradient-demo .nautilus__cell .nautilus__content {
         color: white;
       }
 
@@ -117,7 +117,7 @@
          that sits flush against the cell edge (when no content padding
          is applied) or inside the padded area (when it is). Makes the
          clip-path clipping visually unambiguous. */
-      .edge-demo .spiral-grid__content {
+      .edge-demo .nautilus__content {
         background: transparent;
       }
       .edge-demo .content-box {
@@ -161,10 +161,10 @@
   <body>
     <h1>Spiral Grid — Gap Feature Prototype</h1>
     <p class="note">
-      <code>--spiral-grid-gap</code> is a <code>clip-path: inset(gap / 2)</code>
+      <code>--nautilus-gap</code> is a <code>clip-path: inset(gap / 2)</code>
       on every cell plus the same padding on its content. Cells are real grid
       items (no scaling), so the inset is a constant and the visible gap
-      between neighbours is exactly <code>--spiral-grid-gap</code> at every
+      between neighbours is exactly <code>--nautilus-gap</code> at every
       depth; the layout is never touched, so every cell stays a perfect
       square. The dark stage colour shows through the gap.
     </p>
@@ -184,80 +184,80 @@
     </p>
     <div class="grid-sweep">
       <div>
-        <p class="label">--spiral-grid-gap: 0px</p>
+        <p class="label">--nautilus-gap: 0px</p>
         <div class="stage">
-          <div class="spiral-grid demo" style="--spiral-grid-gap: 0px">
-            <div class="spiral-grid__cell"><div class="spiral-grid__content">A</div></div>
-            <div class="spiral-grid__cell"><div class="spiral-grid__content">B</div></div>
-            <div class="spiral-grid__cell"><div class="spiral-grid__content">C</div></div>
-            <div class="spiral-grid__cell"><div class="spiral-grid__content">D</div></div>
-            <div class="spiral-grid__cell"><div class="spiral-grid__content">E</div></div>
-            <div class="spiral-grid__cell"><div class="spiral-grid__content">F</div></div>
-            <div class="spiral-grid__cell"><div class="spiral-grid__content">G</div></div>
+          <div class="nautilus demo" style="--nautilus-gap: 0px">
+            <div class="nautilus__cell"><div class="nautilus__content">A</div></div>
+            <div class="nautilus__cell"><div class="nautilus__content">B</div></div>
+            <div class="nautilus__cell"><div class="nautilus__content">C</div></div>
+            <div class="nautilus__cell"><div class="nautilus__content">D</div></div>
+            <div class="nautilus__cell"><div class="nautilus__content">E</div></div>
+            <div class="nautilus__cell"><div class="nautilus__content">F</div></div>
+            <div class="nautilus__cell"><div class="nautilus__content">G</div></div>
           </div>
         </div>
       </div>
       <div>
-        <p class="label">--spiral-grid-gap: 4px</p>
+        <p class="label">--nautilus-gap: 4px</p>
         <div class="stage">
-          <div class="spiral-grid demo" style="--spiral-grid-gap: 4px">
-            <div class="spiral-grid__cell"><div class="spiral-grid__content">A</div></div>
-            <div class="spiral-grid__cell"><div class="spiral-grid__content">B</div></div>
-            <div class="spiral-grid__cell"><div class="spiral-grid__content">C</div></div>
-            <div class="spiral-grid__cell"><div class="spiral-grid__content">D</div></div>
-            <div class="spiral-grid__cell"><div class="spiral-grid__content">E</div></div>
-            <div class="spiral-grid__cell"><div class="spiral-grid__content">F</div></div>
-            <div class="spiral-grid__cell"><div class="spiral-grid__content">G</div></div>
+          <div class="nautilus demo" style="--nautilus-gap: 4px">
+            <div class="nautilus__cell"><div class="nautilus__content">A</div></div>
+            <div class="nautilus__cell"><div class="nautilus__content">B</div></div>
+            <div class="nautilus__cell"><div class="nautilus__content">C</div></div>
+            <div class="nautilus__cell"><div class="nautilus__content">D</div></div>
+            <div class="nautilus__cell"><div class="nautilus__content">E</div></div>
+            <div class="nautilus__cell"><div class="nautilus__content">F</div></div>
+            <div class="nautilus__cell"><div class="nautilus__content">G</div></div>
           </div>
         </div>
       </div>
       <div>
-        <p class="label">--spiral-grid-gap: 8px</p>
+        <p class="label">--nautilus-gap: 8px</p>
         <div class="stage">
-          <div class="spiral-grid demo" style="--spiral-grid-gap: 8px">
-            <div class="spiral-grid__cell"><div class="spiral-grid__content">A</div></div>
-            <div class="spiral-grid__cell"><div class="spiral-grid__content">B</div></div>
-            <div class="spiral-grid__cell"><div class="spiral-grid__content">C</div></div>
-            <div class="spiral-grid__cell"><div class="spiral-grid__content">D</div></div>
-            <div class="spiral-grid__cell"><div class="spiral-grid__content">E</div></div>
-            <div class="spiral-grid__cell"><div class="spiral-grid__content">F</div></div>
-            <div class="spiral-grid__cell"><div class="spiral-grid__content">G</div></div>
+          <div class="nautilus demo" style="--nautilus-gap: 8px">
+            <div class="nautilus__cell"><div class="nautilus__content">A</div></div>
+            <div class="nautilus__cell"><div class="nautilus__content">B</div></div>
+            <div class="nautilus__cell"><div class="nautilus__content">C</div></div>
+            <div class="nautilus__cell"><div class="nautilus__content">D</div></div>
+            <div class="nautilus__cell"><div class="nautilus__content">E</div></div>
+            <div class="nautilus__cell"><div class="nautilus__content">F</div></div>
+            <div class="nautilus__cell"><div class="nautilus__content">G</div></div>
           </div>
         </div>
       </div>
       <div>
-        <p class="label">--spiral-grid-gap: 16px</p>
+        <p class="label">--nautilus-gap: 16px</p>
         <div class="stage">
-          <div class="spiral-grid demo" style="--spiral-grid-gap: 16px">
-            <div class="spiral-grid__cell"><div class="spiral-grid__content">A</div></div>
-            <div class="spiral-grid__cell"><div class="spiral-grid__content">B</div></div>
-            <div class="spiral-grid__cell"><div class="spiral-grid__content">C</div></div>
-            <div class="spiral-grid__cell"><div class="spiral-grid__content">D</div></div>
-            <div class="spiral-grid__cell"><div class="spiral-grid__content">E</div></div>
-            <div class="spiral-grid__cell"><div class="spiral-grid__content">F</div></div>
-            <div class="spiral-grid__cell"><div class="spiral-grid__content">G</div></div>
+          <div class="nautilus demo" style="--nautilus-gap: 16px">
+            <div class="nautilus__cell"><div class="nautilus__content">A</div></div>
+            <div class="nautilus__cell"><div class="nautilus__content">B</div></div>
+            <div class="nautilus__cell"><div class="nautilus__content">C</div></div>
+            <div class="nautilus__cell"><div class="nautilus__content">D</div></div>
+            <div class="nautilus__cell"><div class="nautilus__content">E</div></div>
+            <div class="nautilus__cell"><div class="nautilus__content">F</div></div>
+            <div class="nautilus__cell"><div class="nautilus__content">G</div></div>
           </div>
         </div>
       </div>
     </div>
 
-    <h2>2. Gap with <code>spiral-grid--no-fill</code> (wedge at eye)</h2>
+    <h2>2. Gap with <code>nautilus--no-fill</code> (wedge at eye)</h2>
     <p class="note">
       Confirms the gap works when the last cell is still a square (not
       reshaped to a golden rect).
     </p>
     <div class="stage stage--sm">
       <div
-        class="spiral-grid spiral-grid--no-fill demo"
-        style="--spiral-grid-gap: 8px"
+        class="nautilus nautilus--no-fill demo"
+        style="--nautilus-gap: 8px"
       >
-        <div class="spiral-grid__cell"><div class="spiral-grid__content">A</div></div>
-        <div class="spiral-grid__cell"><div class="spiral-grid__content">B</div></div>
-        <div class="spiral-grid__cell"><div class="spiral-grid__content">C</div></div>
-        <div class="spiral-grid__cell"><div class="spiral-grid__content">D</div></div>
-        <div class="spiral-grid__cell"><div class="spiral-grid__content">E</div></div>
-        <div class="spiral-grid__cell"><div class="spiral-grid__content">F</div></div>
-        <div class="spiral-grid__cell"><div class="spiral-grid__content">G</div></div>
+        <div class="nautilus__cell"><div class="nautilus__content">A</div></div>
+        <div class="nautilus__cell"><div class="nautilus__content">B</div></div>
+        <div class="nautilus__cell"><div class="nautilus__content">C</div></div>
+        <div class="nautilus__cell"><div class="nautilus__content">D</div></div>
+        <div class="nautilus__cell"><div class="nautilus__content">E</div></div>
+        <div class="nautilus__cell"><div class="nautilus__content">F</div></div>
+        <div class="nautilus__cell"><div class="nautilus__content">G</div></div>
       </div>
     </div>
 
@@ -270,60 +270,60 @@
       visible squish.
     </p>
     <div class="stage stage--sm">
-      <div class="spiral-grid demo" style="--spiral-grid-gap: 12px">
-        <div class="spiral-grid__cell"><div class="spiral-grid__content">A</div></div>
-        <div class="spiral-grid__cell"><div class="spiral-grid__content">B</div></div>
-        <div class="spiral-grid__cell"><div class="spiral-grid__content">C</div></div>
-        <div class="spiral-grid__cell"><div class="spiral-grid__content">D</div></div>
-        <div class="spiral-grid__cell"><div class="spiral-grid__content">E</div></div>
-        <div class="spiral-grid__cell"><div class="spiral-grid__content">F</div></div>
-        <div class="spiral-grid__cell"><div class="spiral-grid__content">G</div></div>
+      <div class="nautilus demo" style="--nautilus-gap: 12px">
+        <div class="nautilus__cell"><div class="nautilus__content">A</div></div>
+        <div class="nautilus__cell"><div class="nautilus__content">B</div></div>
+        <div class="nautilus__cell"><div class="nautilus__content">C</div></div>
+        <div class="nautilus__cell"><div class="nautilus__content">D</div></div>
+        <div class="nautilus__cell"><div class="nautilus__content">E</div></div>
+        <div class="nautilus__cell"><div class="nautilus__content">F</div></div>
+        <div class="nautilus__cell"><div class="nautilus__content">G</div></div>
       </div>
     </div>
 
     <h2>4. Reverse</h2>
     <div class="stage stage--sm">
       <div
-        class="spiral-grid spiral-grid--reverse demo"
-        style="--spiral-grid-gap: 8px"
+        class="nautilus nautilus--reverse demo"
+        style="--nautilus-gap: 8px"
       >
-        <div class="spiral-grid__cell"><div class="spiral-grid__content">A</div></div>
-        <div class="spiral-grid__cell"><div class="spiral-grid__content">B</div></div>
-        <div class="spiral-grid__cell"><div class="spiral-grid__content">C</div></div>
-        <div class="spiral-grid__cell"><div class="spiral-grid__content">D</div></div>
-        <div class="spiral-grid__cell"><div class="spiral-grid__content">E</div></div>
-        <div class="spiral-grid__cell"><div class="spiral-grid__content">F</div></div>
-        <div class="spiral-grid__cell"><div class="spiral-grid__content">G</div></div>
+        <div class="nautilus__cell"><div class="nautilus__content">A</div></div>
+        <div class="nautilus__cell"><div class="nautilus__content">B</div></div>
+        <div class="nautilus__cell"><div class="nautilus__content">C</div></div>
+        <div class="nautilus__cell"><div class="nautilus__content">D</div></div>
+        <div class="nautilus__cell"><div class="nautilus__content">E</div></div>
+        <div class="nautilus__cell"><div class="nautilus__content">F</div></div>
+        <div class="nautilus__cell"><div class="nautilus__content">G</div></div>
       </div>
     </div>
 
     <h2>5. Portrait</h2>
     <div class="stage stage--md">
       <div
-        class="spiral-grid spiral-grid--portrait demo"
-        style="--spiral-grid-gap: 8px"
+        class="nautilus nautilus--portrait demo"
+        style="--nautilus-gap: 8px"
       >
-        <div class="spiral-grid__cell"><div class="spiral-grid__content">A</div></div>
-        <div class="spiral-grid__cell"><div class="spiral-grid__content">B</div></div>
-        <div class="spiral-grid__cell"><div class="spiral-grid__content">C</div></div>
-        <div class="spiral-grid__cell"><div class="spiral-grid__content">D</div></div>
-        <div class="spiral-grid__cell"><div class="spiral-grid__content">E</div></div>
-        <div class="spiral-grid__cell"><div class="spiral-grid__content">F</div></div>
-        <div class="spiral-grid__cell"><div class="spiral-grid__content">G</div></div>
+        <div class="nautilus__cell"><div class="nautilus__content">A</div></div>
+        <div class="nautilus__cell"><div class="nautilus__content">B</div></div>
+        <div class="nautilus__cell"><div class="nautilus__content">C</div></div>
+        <div class="nautilus__cell"><div class="nautilus__content">D</div></div>
+        <div class="nautilus__cell"><div class="nautilus__content">E</div></div>
+        <div class="nautilus__cell"><div class="nautilus__content">F</div></div>
+        <div class="nautilus__cell"><div class="nautilus__content">G</div></div>
       </div>
     </div>
 
     <h2>6. Portrait + Reverse</h2>
     <div class="stage stage--md">
       <div
-        class="spiral-grid spiral-grid--portrait spiral-grid--reverse demo"
-        style="--spiral-grid-gap: 8px"
+        class="nautilus nautilus--portrait nautilus--reverse demo"
+        style="--nautilus-gap: 8px"
       >
-        <div class="spiral-grid__cell"><div class="spiral-grid__content">A</div></div>
-        <div class="spiral-grid__cell"><div class="spiral-grid__content">B</div></div>
-        <div class="spiral-grid__cell"><div class="spiral-grid__content">C</div></div>
-        <div class="spiral-grid__cell"><div class="spiral-grid__content">D</div></div>
-        <div class="spiral-grid__cell"><div class="spiral-grid__content">E</div></div>
+        <div class="nautilus__cell"><div class="nautilus__content">A</div></div>
+        <div class="nautilus__cell"><div class="nautilus__content">B</div></div>
+        <div class="nautilus__cell"><div class="nautilus__content">C</div></div>
+        <div class="nautilus__cell"><div class="nautilus__content">D</div></div>
+        <div class="nautilus__cell"><div class="nautilus__content">E</div></div>
       </div>
     </div>
 
@@ -336,18 +336,18 @@
     </p>
     <div class="stage stage--sm">
       <div
-        class="spiral-grid spiral-grid--no-fill demo"
-        style="--spiral-grid-gap: 6px"
+        class="nautilus nautilus--no-fill demo"
+        style="--nautilus-gap: 6px"
       >
-        <div class="spiral-grid__cell"><div class="spiral-grid__content">1</div></div>
-        <div class="spiral-grid__cell"><div class="spiral-grid__content">2</div></div>
-        <div class="spiral-grid__cell"><div class="spiral-grid__content">3</div></div>
-        <div class="spiral-grid__cell"><div class="spiral-grid__content">4</div></div>
-        <div class="spiral-grid__cell"><div class="spiral-grid__content">5</div></div>
-        <div class="spiral-grid__cell"><div class="spiral-grid__content">6</div></div>
-        <div class="spiral-grid__cell"><div class="spiral-grid__content">7</div></div>
-        <div class="spiral-grid__cell"><div class="spiral-grid__content">8</div></div>
-        <div class="spiral-grid__cell"><div class="spiral-grid__content">9</div></div>
+        <div class="nautilus__cell"><div class="nautilus__content">1</div></div>
+        <div class="nautilus__cell"><div class="nautilus__content">2</div></div>
+        <div class="nautilus__cell"><div class="nautilus__content">3</div></div>
+        <div class="nautilus__cell"><div class="nautilus__content">4</div></div>
+        <div class="nautilus__cell"><div class="nautilus__content">5</div></div>
+        <div class="nautilus__cell"><div class="nautilus__content">6</div></div>
+        <div class="nautilus__cell"><div class="nautilus__content">7</div></div>
+        <div class="nautilus__cell"><div class="nautilus__content">8</div></div>
+        <div class="nautilus__cell"><div class="nautilus__content">9</div></div>
       </div>
     </div>
 
@@ -358,36 +358,36 @@
     </p>
     <div class="stage stage--sm">
       <div
-        class="spiral-grid demo gradient-demo"
-        style="--spiral-grid-gap: 10px"
+        class="nautilus demo gradient-demo"
+        style="--nautilus-gap: 10px"
       >
-        <div class="spiral-grid__cell"><div class="spiral-grid__content">A</div></div>
-        <div class="spiral-grid__cell"><div class="spiral-grid__content">B</div></div>
-        <div class="spiral-grid__cell"><div class="spiral-grid__content">C</div></div>
-        <div class="spiral-grid__cell"><div class="spiral-grid__content">D</div></div>
-        <div class="spiral-grid__cell"><div class="spiral-grid__content">E</div></div>
-        <div class="spiral-grid__cell"><div class="spiral-grid__content">F</div></div>
-        <div class="spiral-grid__cell"><div class="spiral-grid__content">G</div></div>
+        <div class="nautilus__cell"><div class="nautilus__content">A</div></div>
+        <div class="nautilus__cell"><div class="nautilus__content">B</div></div>
+        <div class="nautilus__cell"><div class="nautilus__content">C</div></div>
+        <div class="nautilus__cell"><div class="nautilus__content">D</div></div>
+        <div class="nautilus__cell"><div class="nautilus__content">E</div></div>
+        <div class="nautilus__cell"><div class="nautilus__content">F</div></div>
+        <div class="nautilus__cell"><div class="nautilus__content">G</div></div>
       </div>
     </div>
 
     <h2>9. Content at the cell edge — nothing to clip</h2>
     <p class="note">
-      <code>.spiral-grid__content</code> carries a constant
+      <code>.nautilus__content</code> carries a constant
       <code>gap / 2</code> padding, so its content box is exactly the visible
       cell: a border, a bleeding background, an absolutely positioned badge
       all stop at the gap. Nothing depth-dependent to compensate. Each card below has a visible
-      border; <code>--spiral-grid-gap: 16px</code>.
+      border; <code>--nautilus-gap: 16px</code>.
     </p>
     <div class="stage stage--sm">
-      <div class="spiral-grid demo edge-demo" style="--spiral-grid-gap: 16px">
-            <div class="spiral-grid__cell"><div class="spiral-grid__content"><div class="content-box"><div class="content-box__title">Card A</div><div class="content-box__body">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</div><div class="content-box__meta">01 · lorem</div></div></div></div>
-            <div class="spiral-grid__cell"><div class="spiral-grid__content"><div class="content-box"><div class="content-box__title">Card B</div><div class="content-box__body">Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</div><div class="content-box__meta">02 · ipsum</div></div></div></div>
-            <div class="spiral-grid__cell"><div class="spiral-grid__content"><div class="content-box"><div class="content-box__title">Card C</div><div class="content-box__body">Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.</div><div class="content-box__meta">03 · dolor</div></div></div></div>
-            <div class="spiral-grid__cell"><div class="spiral-grid__content"><div class="content-box"><div class="content-box__title">Card D</div><div class="content-box__body">Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit.</div><div class="content-box__meta">04 · sit</div></div></div></div>
-            <div class="spiral-grid__cell"><div class="spiral-grid__content"><div class="content-box"><div class="content-box__title">Card E</div><div class="content-box__body">Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium.</div><div class="content-box__meta">05</div></div></div></div>
-            <div class="spiral-grid__cell"><div class="spiral-grid__content"><div class="content-box"><div class="content-box__title">F</div><div class="content-box__body">Nemo enim ipsam voluptatem.</div></div></div></div>
-            <div class="spiral-grid__cell"><div class="spiral-grid__content"><div class="content-box"><div class="content-box__title">G</div><div class="content-box__body">At vero eos.</div></div></div></div>
+      <div class="nautilus demo edge-demo" style="--nautilus-gap: 16px">
+            <div class="nautilus__cell"><div class="nautilus__content"><div class="content-box"><div class="content-box__title">Card A</div><div class="content-box__body">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</div><div class="content-box__meta">01 · lorem</div></div></div></div>
+            <div class="nautilus__cell"><div class="nautilus__content"><div class="content-box"><div class="content-box__title">Card B</div><div class="content-box__body">Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</div><div class="content-box__meta">02 · ipsum</div></div></div></div>
+            <div class="nautilus__cell"><div class="nautilus__content"><div class="content-box"><div class="content-box__title">Card C</div><div class="content-box__body">Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.</div><div class="content-box__meta">03 · dolor</div></div></div></div>
+            <div class="nautilus__cell"><div class="nautilus__content"><div class="content-box"><div class="content-box__title">Card D</div><div class="content-box__body">Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit.</div><div class="content-box__meta">04 · sit</div></div></div></div>
+            <div class="nautilus__cell"><div class="nautilus__content"><div class="content-box"><div class="content-box__title">Card E</div><div class="content-box__body">Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium.</div><div class="content-box__meta">05</div></div></div></div>
+            <div class="nautilus__cell"><div class="nautilus__content"><div class="content-box"><div class="content-box__title">F</div><div class="content-box__body">Nemo enim ipsam voluptatem.</div></div></div></div>
+            <div class="nautilus__cell"><div class="nautilus__content"><div class="content-box"><div class="content-box__title">G</div><div class="content-box__body">At vero eos.</div></div></div></div>
           </div>
         </div>
     </div>
@@ -397,45 +397,45 @@
       When the gap is expressed as a container-relative unit
       (<code>cqi</code>, <code>cqw</code>, <code>%</code>…), it scales
       with the spiral's own width automatically. Every spiral below
-      uses the exact same <code>--spiral-grid-gap: 1.2cqi</code>; the
+      uses the exact same <code>--nautilus-gap: 1.2cqi</code>; the
       absolute gap is ~9.6px on the 800px stage and ~3.6px on the 300px
       stage, but the visual proportion is identical. This is the
       recommended pattern for responsive layouts.
     </p>
     <p class="label">800px container · 1.2cqi ≈ 9.6px</p>
     <div class="stage" style="max-width: 800px">
-      <div class="spiral-grid demo" style="--spiral-grid-gap: 1.2cqi">
-        <div class="spiral-grid__cell"><div class="spiral-grid__content">A</div></div>
-        <div class="spiral-grid__cell"><div class="spiral-grid__content">B</div></div>
-        <div class="spiral-grid__cell"><div class="spiral-grid__content">C</div></div>
-        <div class="spiral-grid__cell"><div class="spiral-grid__content">D</div></div>
-        <div class="spiral-grid__cell"><div class="spiral-grid__content">E</div></div>
-        <div class="spiral-grid__cell"><div class="spiral-grid__content">F</div></div>
-        <div class="spiral-grid__cell"><div class="spiral-grid__content">G</div></div>
+      <div class="nautilus demo" style="--nautilus-gap: 1.2cqi">
+        <div class="nautilus__cell"><div class="nautilus__content">A</div></div>
+        <div class="nautilus__cell"><div class="nautilus__content">B</div></div>
+        <div class="nautilus__cell"><div class="nautilus__content">C</div></div>
+        <div class="nautilus__cell"><div class="nautilus__content">D</div></div>
+        <div class="nautilus__cell"><div class="nautilus__content">E</div></div>
+        <div class="nautilus__cell"><div class="nautilus__content">F</div></div>
+        <div class="nautilus__cell"><div class="nautilus__content">G</div></div>
       </div>
     </div>
     <p class="label">500px container · 1.2cqi ≈ 6px</p>
     <div class="stage" style="max-width: 500px">
-      <div class="spiral-grid demo" style="--spiral-grid-gap: 1.2cqi">
-        <div class="spiral-grid__cell"><div class="spiral-grid__content">A</div></div>
-        <div class="spiral-grid__cell"><div class="spiral-grid__content">B</div></div>
-        <div class="spiral-grid__cell"><div class="spiral-grid__content">C</div></div>
-        <div class="spiral-grid__cell"><div class="spiral-grid__content">D</div></div>
-        <div class="spiral-grid__cell"><div class="spiral-grid__content">E</div></div>
-        <div class="spiral-grid__cell"><div class="spiral-grid__content">F</div></div>
-        <div class="spiral-grid__cell"><div class="spiral-grid__content">G</div></div>
+      <div class="nautilus demo" style="--nautilus-gap: 1.2cqi">
+        <div class="nautilus__cell"><div class="nautilus__content">A</div></div>
+        <div class="nautilus__cell"><div class="nautilus__content">B</div></div>
+        <div class="nautilus__cell"><div class="nautilus__content">C</div></div>
+        <div class="nautilus__cell"><div class="nautilus__content">D</div></div>
+        <div class="nautilus__cell"><div class="nautilus__content">E</div></div>
+        <div class="nautilus__cell"><div class="nautilus__content">F</div></div>
+        <div class="nautilus__cell"><div class="nautilus__content">G</div></div>
       </div>
     </div>
     <p class="label">300px container · 1.2cqi ≈ 3.6px</p>
     <div class="stage" style="max-width: 300px">
-      <div class="spiral-grid demo" style="--spiral-grid-gap: 1.2cqi">
-        <div class="spiral-grid__cell"><div class="spiral-grid__content">A</div></div>
-        <div class="spiral-grid__cell"><div class="spiral-grid__content">B</div></div>
-        <div class="spiral-grid__cell"><div class="spiral-grid__content">C</div></div>
-        <div class="spiral-grid__cell"><div class="spiral-grid__content">D</div></div>
-        <div class="spiral-grid__cell"><div class="spiral-grid__content">E</div></div>
-        <div class="spiral-grid__cell"><div class="spiral-grid__content">F</div></div>
-        <div class="spiral-grid__cell"><div class="spiral-grid__content">G</div></div>
+      <div class="nautilus demo" style="--nautilus-gap: 1.2cqi">
+        <div class="nautilus__cell"><div class="nautilus__content">A</div></div>
+        <div class="nautilus__cell"><div class="nautilus__content">B</div></div>
+        <div class="nautilus__cell"><div class="nautilus__content">C</div></div>
+        <div class="nautilus__cell"><div class="nautilus__content">D</div></div>
+        <div class="nautilus__cell"><div class="nautilus__content">E</div></div>
+        <div class="nautilus__cell"><div class="nautilus__content">F</div></div>
+        <div class="nautilus__cell"><div class="nautilus__content">G</div></div>
       </div>
     </div>
 
@@ -449,14 +449,14 @@
       class="stage"
       style="max-width: 600px; resize: horizontal; overflow: auto; min-width: 200px"
     >
-      <div class="spiral-grid demo" style="--spiral-grid-gap: 1.2cqi">
-        <div class="spiral-grid__cell"><div class="spiral-grid__content">A</div></div>
-        <div class="spiral-grid__cell"><div class="spiral-grid__content">B</div></div>
-        <div class="spiral-grid__cell"><div class="spiral-grid__content">C</div></div>
-        <div class="spiral-grid__cell"><div class="spiral-grid__content">D</div></div>
-        <div class="spiral-grid__cell"><div class="spiral-grid__content">E</div></div>
-        <div class="spiral-grid__cell"><div class="spiral-grid__content">F</div></div>
-        <div class="spiral-grid__cell"><div class="spiral-grid__content">G</div></div>
+      <div class="nautilus demo" style="--nautilus-gap: 1.2cqi">
+        <div class="nautilus__cell"><div class="nautilus__content">A</div></div>
+        <div class="nautilus__cell"><div class="nautilus__content">B</div></div>
+        <div class="nautilus__cell"><div class="nautilus__content">C</div></div>
+        <div class="nautilus__cell"><div class="nautilus__content">D</div></div>
+        <div class="nautilus__cell"><div class="nautilus__content">E</div></div>
+        <div class="nautilus__cell"><div class="nautilus__content">F</div></div>
+        <div class="nautilus__cell"><div class="nautilus__content">G</div></div>
       </div>
     </div>
 
@@ -481,14 +481,14 @@
       </label>
     </div>
     <div class="stage stage--sm">
-      <div class="spiral-grid demo" id="live-spiral" style="--spiral-grid-gap: 8px">
-        <div class="spiral-grid__cell"><div class="spiral-grid__content">A</div></div>
-        <div class="spiral-grid__cell"><div class="spiral-grid__content">B</div></div>
-        <div class="spiral-grid__cell"><div class="spiral-grid__content">C</div></div>
-        <div class="spiral-grid__cell"><div class="spiral-grid__content">D</div></div>
-        <div class="spiral-grid__cell"><div class="spiral-grid__content">E</div></div>
-        <div class="spiral-grid__cell"><div class="spiral-grid__content">F</div></div>
-        <div class="spiral-grid__cell"><div class="spiral-grid__content">G</div></div>
+      <div class="nautilus demo" id="live-spiral" style="--nautilus-gap: 8px">
+        <div class="nautilus__cell"><div class="nautilus__content">A</div></div>
+        <div class="nautilus__cell"><div class="nautilus__content">B</div></div>
+        <div class="nautilus__cell"><div class="nautilus__content">C</div></div>
+        <div class="nautilus__cell"><div class="nautilus__content">D</div></div>
+        <div class="nautilus__cell"><div class="nautilus__content">E</div></div>
+        <div class="nautilus__cell"><div class="nautilus__content">F</div></div>
+        <div class="nautilus__cell"><div class="nautilus__content">G</div></div>
       </div>
     </div>
 
@@ -498,7 +498,7 @@
       const spiral = document.getElementById("live-spiral");
       slider.addEventListener("input", () => {
         const v = slider.value + "px";
-        spiral.style.setProperty("--spiral-grid-gap", v);
+        spiral.style.setProperty("--nautilus-gap", v);
         valueLabel.textContent = v;
       });
     </script>

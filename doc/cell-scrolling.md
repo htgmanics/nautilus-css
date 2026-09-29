@@ -2,15 +2,15 @@
 
 > **Historical (transform engine).** Most of the difficulty here came from scrollbars inside scaled cells. In the shipped CSS Grid engine a cell is a normal box and the scroll modifiers are plain `overflow: auto`. Kept for the record.
 
-Design notes for the `spiral-grid__content--scroll` modifier family,
+Design notes for the `nautilus__content--scroll` modifier family,
 which allows long content inside a cell to scroll independently without
 breaking the spiral's visual integrity.
 
 ## Status
 
-**Shipped in v1** as cell-level modifiers — `spiral-grid__content--scroll`
+**Shipped in v1** as cell-level modifiers — `nautilus__content--scroll`
 (y-axis, default), `--scroll-x`, `--scroll-y`. Implementation lives in the
-"Feature: per-cell scrolling" block of `src/spiral-grid.css`;
+"Feature: per-cell scrolling" block of `src/nautilus.css`;
 working demo in `examples/scroll.html`.
 
 Resolved against the original open questions:
@@ -39,18 +39,18 @@ around or bleeding past the gap's clip-path.
 ## Why It's Tractable Now
 
 The gap feature's auto safe-zone
-(`--spiral-grid-safe-zone`, defaulting to `gap / 2` and
+(`--nautilus-safe-zone`, defaulting to `gap / 2` and
 scale-compensated by `/ pow(phi, i)`) already solves the hardest part
 of per-cell scroll: **keeping scrollbars, scroll edges, and content
 boundaries clear of the cell's `clip-path`**.
 
-- The scroll container is `.spiral-grid__content`, which already has
+- The scroll container is `.nautilus__content`, which already has
   `box-sizing: border-box` and a scale-compensated inner padding.
 - The cell's `clip-path: inset()` trims the outer `gap / 2` of every
   cell at paint time. The safe zone makes the scroll viewport sit
   entirely inside the visible region.
 - A native scrollbar rendered at the right edge of
-  `.spiral-grid__content` lives one safe-zone width in from the clip,
+  `.nautilus__content` lives one safe-zone width in from the clip,
   so it is never itself clipped and never overlaps the gap gutter.
 
 ## Proposed API
@@ -60,7 +60,7 @@ preserves the current "static card" behavior as the default.
 
 ```css
 /* spiral-level: every cell scrolls */
-.spiral-grid--scrollable .spiral-grid__content {
+.nautilus--scrollable .nautilus__content {
     overflow-y: auto;
     overflow-x: hidden;
     overscroll-behavior: contain;
@@ -69,7 +69,7 @@ preserves the current "static card" behavior as the default.
 }
 
 /* cell-level: individual cell scrolls */
-.spiral-grid__content--scroll {
+.nautilus__content--scroll {
     overflow-y: auto;
     overflow-x: hidden;
     overscroll-behavior: contain;
@@ -78,7 +78,7 @@ preserves the current "static card" behavior as the default.
 }
 
 /* axis variants */
-.spiral-grid__content--scroll-x {
+.nautilus__content--scroll-x {
     overflow-x: auto;
     overflow-y: hidden;
 }
@@ -107,7 +107,7 @@ feature ships.
 
 Cells at odd indices (`--i: 1, 3, 5, 7…`) have their parent rotated
 by 90° or 270°. The content counter-rotates back to upright, but the
-scroll container (`.spiral-grid__content`) is itself inside that
+scroll container (`.nautilus__content`) is itself inside that
 rotation chain. Two questions:
 
 - **Hit-testing** — when the user positions their pointer over the
@@ -144,7 +144,7 @@ takes up meaningful width. At a container width of 800px:
 
 Recommendation: only apply scroll to the first N cells via
 `:nth-child(-n+N)` or require users to opt in per-cell via
-`.spiral-grid__content--scroll`. Default N could be 4 or 5.
+`.nautilus__content--scroll`. Default N could be 4 or 5.
 
 ### 3. Keyboard focus and Tab order
 
@@ -183,7 +183,7 @@ is active.
 
 ```css
 @media (prefers-reduced-motion: reduce) {
-    .spiral-grid.spiral-grid .spiral-grid__content {
+    .nautilus.nautilus .nautilus__content {
         overflow: visible;
         max-height: none;
     }
@@ -204,8 +204,8 @@ Proposed default: scroll applies only to cells where it is likely to
 be useful.
 
 ```css
-.spiral-grid--scrollable .spiral-grid__cell:nth-child(-n+5)
-  .spiral-grid__content {
+.nautilus--scrollable .nautilus__cell:nth-child(-n+5)
+  .nautilus__content {
     /* scroll rules */
 }
 ```
@@ -214,25 +214,25 @@ Users can override:
 
 ```css
 /* expand to all cells */
-.my-spiral.spiral-grid--scrollable .spiral-grid__cell
-  .spiral-grid__content {
+.my-spiral.nautilus--scrollable .nautilus__cell
+  .nautilus__content {
     overflow: auto;
 }
 ```
 
-Alternative: expose `--spiral-grid-scroll-max-depth: 5` as a tunable
+Alternative: expose `--nautilus-scroll-max-depth: 5` as a tunable
 custom property.
 
 ## Open Questions
 
 1. Should the feature be a spiral-level modifier
-   (`spiral-grid--scrollable`), a cell-level modifier
-   (`spiral-grid__content--scroll`), or both?
+   (`nautilus--scrollable`), a cell-level modifier
+   (`nautilus__content--scroll`), or both?
 2. Do we ship a custom scrollbar style, or rely on `scrollbar-width:
    thin` + browser defaults? Custom adds ~0.3 KB but looks
    consistent across OSes.
 3. Should focus visibility be handled by the library (via a
-   `:focus-visible` ring on `.spiral-grid__content`), or left to users?
+   `:focus-visible` ring on `.nautilus__content`), or left to users?
 4. How does scroll interact with a future hover-to-expand or
    click-to-zoom feature? Likely conflicts — scrolling inside a cell
    while also "zooming" the spiral on hover would be confusing. Pick
@@ -251,6 +251,6 @@ Prototype in `examples/scroll.html` first, mirroring
   scroll usefulness?
 
 Once the prototype confirms the rotation/touch behavior is solid,
-formalize into the library as `.spiral-grid--scrollable` (+ per-cell
+formalize into the library as `.nautilus--scrollable` (+ per-cell
 `--scroll` modifier for granular control) with a documented
-`--spiral-grid-scroll-max-depth` for the depth cap.
+`--nautilus-scroll-max-depth` for the depth cap.

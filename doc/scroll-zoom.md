@@ -3,7 +3,7 @@
 Forward-looking research for a scrollytelling-style interaction where
 scroll position drives a zoom-and-rotate animation of the spiral,
 visually "falling into" the convergence point. Companion feature to
-the eventual infinite-zoom navigator (`spiral-grid-navigator`).
+the eventual infinite-zoom navigator (`nautilus-navigator`).
 
 ## Goal
 
@@ -59,8 +59,8 @@ transform tied to scroll progress, no JavaScript required.
 
 .scene__spiral {
     transform-origin:
-        calc((1 - var(--spiral-grid-shrinkage)) * 100%)
-        calc((1 - var(--spiral-grid-shrinkage)) * 100%);
+        calc((1 - var(--nautilus-shrinkage)) * 100%)
+        calc((1 - var(--nautilus-shrinkage)) * 100%);
     animation: spiral-zoom linear both;
     animation-timeline: --spiral-scene;
     animation-range: cover 0% cover 100%;
@@ -70,7 +70,7 @@ transform tied to scroll progress, no JavaScript required.
     from { transform: scale(1) rotate(0deg); }
     to   {
         /* advance N steps */
-        transform: scale(calc(1 / pow(var(--spiral-grid-phi), 4)))
+        transform: scale(calc(1 / pow(var(--nautilus-phi), 4)))
                    rotate(-360deg);
     }
 }
@@ -82,7 +82,7 @@ Key points:
   "zoom into the eye" rather than a corner zoom. Landscape forward
   spirals: `(1 - shrinkage, 1 - shrinkage)` in container coords.
   Reverse / portrait mirror accordingly (see the existing cell rules
-  in `spiral-grid.css` for the four variants).
+  in `nautilus.css` for the four variants).
 - **Multiples of 360°** (or 90°) at both ends of the keyframe keep
   the final orientation aligned with the starting orientation, so the
   resting state after zoom looks "normal" rather than tilted.
@@ -146,13 +146,13 @@ Two philosophies:
 - **Embrace it.** Scrollytelling implies readers aren't reading
   during motion. Text starts and ends upright at each rest state;
   the rotation in between is the effect.
-- **Fight it.** Add a second animation on `.spiral-grid__content`
+- **Fight it.** Add a second animation on `.nautilus__content`
   that counter-counter-rotates (i.e. `rotate(calc(+360deg * progress))`
   with the same timeline). Keeps text always upright. Doubles the
   keyframe budget and slightly raises compositing cost.
 
 Recommend starting with option 1 for v1 and offering option 2 as a
-`.spiral-grid--scroll-zoom--upright-text` modifier if demand appears.
+`.nautilus--scroll-zoom--upright-text` modifier if demand appears.
 
 ### 2. Content availability for perceived infinity
 
@@ -236,7 +236,7 @@ as a vector graphic, a zoom should scale everything, gap included.
 **No special compensation is needed** for the zoom to look right.
 The only practical guidance is: keep the pre-zoom gap small
 (≤ 4px) so the end-of-zoom gap doesn't dominate visually. Tested
-in `examples/scroll-zoom.html` with `--spiral-grid-gap: 3px`.
+in `examples/scroll-zoom.html` with `--nautilus-gap: 3px`.
 
 If someone wants a gap that stays visually constant through the
 zoom (unusual request — would look weird, like gaps widening
@@ -246,7 +246,7 @@ Possible but almost certainly not desired.
 
 ### 8. Interaction with per-cell scroll
 
-`.spiral-grid__content` with `overflow: auto` inside a zoomed-and-
+`.nautilus__content` with `overflow: auto` inside a zoomed-and-
 rotated parent is interaction-hostile. Scroll-driven zoom and
 per-cell content scroll should be considered mutually exclusive.
 Documentation: pick one interaction model per spiral.
@@ -257,13 +257,13 @@ Documentation: pick one interaction model per spiral.
    configurable, or is zoom-in the only useful default?
 2. How many zoom steps are too many? Needs user-testing to answer.
 3. Is there value in exposing the scroll position as a CSS variable
-   (`--spiral-grid-scroll-progress`) so users can drive other
+   (`--nautilus-scroll-progress`) so users can drive other
    elements from the same timeline (e.g. fading captions as the
    hero cell changes)?
 4. Should we ship the keyframe as a library utility
-   (`@keyframes spiral-grid-zoom-1step`, `...-2step`, `...-3step`,
+   (`@keyframes nautilus-zoom-1step`, `...-2step`, `...-3step`,
    `...-4step`) or expect users to write their own?
-5. How does this compose with the library's `.spiral-grid--auto`
+5. How does this compose with the library's `.nautilus--auto`
    modifier (container-query driven landscape / portrait switching)?
    Orientation switch mid-zoom would be jarring.
 
@@ -272,14 +272,14 @@ Documentation: pick one interaction model per spiral.
 Start with `examples/scroll-zoom.html` implementing variant 1
 (pinned zoom) to feel out the motion. If it's good:
 
-1. Productize as `.spiral-grid--scroll-zoom` modifier with a
-   `--spiral-grid-zoom-steps: 3` custom property.
+1. Productize as `.nautilus--scroll-zoom` modifier with a
+   `--nautilus-zoom-steps: 3` custom property.
 2. Ship the reduced-motion / `@supports` fallback in the modifier
    itself so users get it for free.
 3. Leave variants 2–4 as recipes in `docs/recipes.md` rather than
    library primitives (too opinionated for core).
 
-The companion feature is `spiral-grid-navigator` (v2) — explicit
+The companion feature is `nautilus-navigator` (v2) — explicit
 zoom via clicks/arrows instead of scroll. Shares the same math; the
 transform keyframes here are reusable there as `animation-play-state`
 driven transitions.

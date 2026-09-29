@@ -6,7 +6,7 @@ Forward-only, lap steps. Built on the CSS Grid engine.
 Concept explained from scratch in `doc/tunnel.md`.
 
 Replaces the React/react-spring mechanism described in
-`doc/golden-ratio-spiral-grid.md` ("The Infinite Zoom Effect") with ~120
+`doc/golden-ratio-nautilus.md` ("The Infinite Zoom Effect") with ~120
 lines of vanilla JS on top of the grid engine, and adds measurements.
 
 ## The mechanism

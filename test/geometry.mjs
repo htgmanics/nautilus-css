@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Geometry check for src/spiral-grid.css (the CSS Grid engine).
+ * Geometry check for src/nautilus.css (the CSS Grid engine).
  *
  * The engine is six track sizes + ten grid-area placements. This verifies,
  * with no browser:
@@ -16,14 +16,14 @@ import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { dirname, resolve } from "node:path";
 
-const CSS = readFileSync(resolve(dirname(fileURLToPath(import.meta.url)), "..", "src", "spiral-grid.css"), "utf8");
+const CSS = readFileSync(resolve(dirname(fileURLToPath(import.meta.url)), "..", "src", "nautilus.css"), "utf8");
 const PHI = (Math.sqrt(5) - 1) / 2;
 const TOL = 1e-6;
 let fails = 0;
 const check = (ok, msg) => { if (!ok) { fails++; console.error("✗", msg); } };
 
 // 1. tracks
-const tracks = CSS.match(/--spiral-grid-tracks:\s*([^;]+);/)[1].trim().split(/\s+/).map(parseFloat);
+const tracks = CSS.match(/--nautilus-tracks:\s*([^;]+);/)[1].trim().split(/\s+/).map(parseFloat);
 const powers = [1, 5, 9, 10, 7, 3];
 check(tracks.length === 6, `expected 6 tracks, got ${tracks.length}`);
 tracks.forEach((t, i) => check(Math.abs(t - Math.pow(PHI, powers[i])) < TOL, `track ${i + 1}: ${t} ≠ φ^${powers[i]}`));
@@ -35,7 +35,7 @@ const x = (line) => lines[line - 1];
 const y = (line) => lines[line - 1] * PHI;
 
 // 2. squares
-const areaRe = /\.spiral-grid__cell:nth-child\((\d+)\)\s*\{\s*grid-area:\s*(\d+)\s*\/\s*(\d+)\s*\/\s*(\d+)\s*\/\s*(\d+)/g;
+const areaRe = /\.nautilus__cell:nth-child\((\d+)\)\s*\{\s*grid-area:\s*(\d+)\s*\/\s*(\d+)\s*\/\s*(\d+)\s*\/\s*(\d+)/g;
 let m, n = 0;
 while ((m = areaRe.exec(CSS))) {
   const [, i, r0, c0, r1, c1] = m.map(Number);
@@ -47,7 +47,7 @@ while ((m = areaRe.exec(CSS))) {
 check(n === 10, `expected 10 cell placements, found ${n}`);
 
 // 3. fill cells
-const fillRe = /nth-child\((\d+)\):nth-last-child\(1 of \.spiral-grid__cell\)\s*\{\s*grid-area:\s*(\d+)\s*\/\s*(\d+)\s*\/\s*(\d+)\s*\/\s*(\d+)/g;
+const fillRe = /nth-child\((\d+)\):nth-last-child\(1 of \.nautilus__cell\)\s*\{\s*grid-area:\s*(\d+)\s*\/\s*(\d+)\s*\/\s*(\d+)\s*\/\s*(\d+)/g;
 n = 0;
 while ((m = fillRe.exec(CSS))) {
   const [, N, r0, c0, r1, c1] = m.map(Number);
@@ -61,7 +61,7 @@ while ((m = fillRe.exec(CSS))) {
 check(n === 10, `expected 10 fill placements, found ${n}`);
 
 // 4. eye
-const eye = parseFloat(CSS.match(/--spiral-grid-eye:\s*([\d.]+)%/)[1]) / 100;
+const eye = parseFloat(CSS.match(/--nautilus-eye:\s*([\d.]+)%/)[1]) / 100;
 check(Math.abs(eye - PHI / (1 - Math.pow(PHI, 4))) < TOL, `eye ${eye} ≠ φ/(1−φ⁴)`);
 
 if (fails) { console.error(`\n${fails} check(s) failed`); process.exit(1); }

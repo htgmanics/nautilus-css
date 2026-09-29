@@ -4,14 +4,14 @@ A proposal for turning the Fibonacci Spiral Grid into a shareable, framework-agn
 
 **Scope of v1:** Static spiral layout, with the visual gap / content safe-zone feature. No infinite zoom (that's v2). Scroll-driven zoom ships as an opt-in modifier; its design notes live in `doc/scroll-zoom.md`.
 
-This doc tracks the **target API**. Since 2026-09-28 `src/spiral-grid.css` is the CSS Grid engine (`doc/shared-lines.md`); the custom-property list below is the authoritative one — `--spiral-grid-safe-zone` and `--spiral-grid-font-size-max` are gone, `--no-counter-rotate` became `--hero-rotate`. The implementation sketch further down is the old transform engine and is historical.
+This doc tracks the **target API**. Since 2026-09-28 `src/nautilus.css` is the CSS Grid engine (`doc/shared-lines.md`); the custom-property list below is the authoritative one — `--nautilus-safe-zone` and `--nautilus-font-size-max` are gone, `--no-counter-rotate` became `--hero-rotate`. The implementation sketch further down is the old transform engine and is historical.
 
 ---
 
 ## Package Identity
 
 - **Name:** `nautilus-grid` (decided — see roadmap §1; "fibonacci" is a keyword, not the name)
-- **CSS prefix:** `.spiral-grid` (deliberately long-ish to avoid collisions with user `.spiral` utility classes)
+- **CSS prefix:** `.nautilus` (brand-consistent with the package; collision-proof; was `.spiral-grid` until 2026-09-29)
 - **Tagline:** "A golden-ratio spiral layout in pure CSS"
 - **Size target:** < 2KB gzipped for the core CSS
 - **Dependencies:** None
@@ -27,10 +27,10 @@ nautilus-grid/
 ├── README.md
 ├── LICENSE
 ├── dist/
-│   ├── spiral-grid.css              # ready to <link> (copy of src)
-│   └── spiral-grid.min.css          # minified
+│   ├── nautilus.css              # ready to <link> (copy of src)
+│   └── nautilus.min.css          # minified
 ├── src/
-│   └── spiral-grid.css              # single plain-CSS source (no SCSS — see roadmap §1)
+│   └── nautilus.css              # single plain-CSS source (no SCSS — see roadmap §1)
 ├── examples/
 │   ├── basic.html                   # plain HTML, no build
 │   ├── gap.html                     # gap + safe-zone feature
@@ -52,14 +52,14 @@ nautilus-grid/
 ### HTML structure
 
 ```html
-<div class="spiral-grid">
-    <div class="spiral-grid__cell"><div class="spiral-grid__content">A</div></div>
-    <div class="spiral-grid__cell"><div class="spiral-grid__content">B</div></div>
-    <div class="spiral-grid__cell"><div class="spiral-grid__content">C</div></div>
-    <div class="spiral-grid__cell"><div class="spiral-grid__content">D</div></div>
-    <div class="spiral-grid__cell"><div class="spiral-grid__content">E</div></div>
-    <div class="spiral-grid__cell"><div class="spiral-grid__content">F</div></div>
-    <div class="spiral-grid__cell"><div class="spiral-grid__content">G</div></div>
+<div class="nautilus">
+    <div class="nautilus__cell"><div class="nautilus__content">A</div></div>
+    <div class="nautilus__cell"><div class="nautilus__content">B</div></div>
+    <div class="nautilus__cell"><div class="nautilus__content">C</div></div>
+    <div class="nautilus__cell"><div class="nautilus__content">D</div></div>
+    <div class="nautilus__cell"><div class="nautilus__content">E</div></div>
+    <div class="nautilus__cell"><div class="nautilus__content">F</div></div>
+    <div class="nautilus__cell"><div class="nautilus__content">G</div></div>
 </div>
 ```
 
@@ -68,51 +68,51 @@ nautilus-grid/
 - `__content` handles counter-rotation, font-size compensation, and the scale-compensated content safe-zone when a gap is set
 - Users style `__content` without fighting the transform
 
-The last cell is **automatically reshaped** into the remaining golden rectangle so the spiral has no empty wedge at its eye. Opt out with `.spiral-grid--no-fill` to leave the wedge visible.
+The last cell is **automatically reshaped** into the remaining golden rectangle so the spiral has no empty wedge at its eye. Opt out with `.nautilus--no-fill` to leave the wedge visible.
 
 ### Classes
 
 | Class | Purpose |
 |-------|---------|
-| `.spiral-grid` | Container (golden rectangle) |
-| `.spiral-grid__cell` | A cell in the spiral — auto-positioned via `:nth-child` |
-| `.spiral-grid__content` | Content wrapper (counter-rotated, font-compensated, auto-padded when a gap is set) |
+| `.nautilus` | Container (golden rectangle) |
+| `.nautilus__cell` | A cell in the spiral — auto-positioned via `:nth-child` |
+| `.nautilus__content` | Content wrapper (counter-rotated, font-compensated, auto-padded when a gap is set) |
 
 ### Modifiers
 
 | Modifier | Effect |
 |----------|--------|
-| `.spiral-grid--reverse` | Mirrors the spiral horizontally (cells coil inward from the left) |
-| `.spiral-grid--portrait` | Flips to tall aspect ratio (height > width) |
-| `.spiral-grid--auto` | Auto-switches to portrait when the container is taller than wide (via `@container`) |
-| `.spiral-grid--no-fill` | Keeps the last cell as a plain square, leaving the golden-rectangle wedge visible at the eye (opt out of the default fill) |
-| `.spiral-grid--no-counter-rotate` | Content rotates with the cell (no counter-rotation). Useful when a wrapper transform (e.g. the scroll-driven zoom) provides the rotation instead, or for "sequential hero" effects. |
-| `.spiral-grid__content--scroll` (also `--scroll-y`) | Makes that cell a vertical scroll container. Scrollbar sits inside the gap's safe-zone. Apply per-cell; design notes in `doc/cell-scrolling.md`. Recommended for cells 1–5 only (deeper cells can't fit usable scrollbars). |
-| `.spiral-grid__content--scroll-x` | Horizontal-only variant. Useful for image strips or timelines inside a cell. |
+| `.nautilus--reverse` | Mirrors the spiral horizontally (cells coil inward from the left) |
+| `.nautilus--portrait` | Flips to tall aspect ratio (height > width) |
+| `.nautilus--auto` | Auto-switches to portrait when the container is taller than wide (via `@container`) |
+| `.nautilus--no-fill` | Keeps the last cell as a plain square, leaving the golden-rectangle wedge visible at the eye (opt out of the default fill) |
+| `.nautilus--no-counter-rotate` | Content rotates with the cell (no counter-rotation). Useful when a wrapper transform (e.g. the scroll-driven zoom) provides the rotation instead, or for "sequential hero" effects. |
+| `.nautilus__content--scroll` (also `--scroll-y`) | Makes that cell a vertical scroll container. Scrollbar sits inside the gap's safe-zone. Apply per-cell; design notes in `doc/cell-scrolling.md`. Recommended for cells 1–5 only (deeper cells can't fit usable scrollbars). |
+| `.nautilus__content--scroll-x` | Horizontal-only variant. Useful for image strips or timelines inside a cell. |
 
 ### CSS Custom Properties
 
 ```css
-.spiral-grid {
+.nautilus {
     /* Internal — do NOT override. Changing phi invalidates the
        precomputed fallback table and the geometry tests. */
-    --spiral-grid-phi: 0.618033989;
-    --spiral-grid-shrinkage: 0.276393202250021;
+    --nautilus-phi: 0.618033989;
+    --nautilus-shrinkage: 0.276393202250021;
 
     /* Animation: opt-in. Users who want smooth transitions set this
        to `transform 0.4s ease` (or similar) on the container. */
-    --spiral-grid-transition: none;
+    --nautilus-transition: none;
 
     /* Font-size cap (prevents deep cells from getting enormous text) */
-    --spiral-grid-font-size-max: 8rem;
+    --nautilus-font-size-max: 8rem;
 
     /* Visual gap between cells (scale-compensated via clip-path) */
-    --spiral-grid-gap: 0px;
+    --nautilus-gap: 0px;
 
     /* Automatic content safe-zone (also scale-compensated).
        Defaults to gap/2 so inner content stays inside the clipped area.
        Override to 0 to let content go flush to the clip edge. */
-    --spiral-grid-safe-zone: calc(var(--spiral-grid-gap) / 2);
+    --nautilus-safe-zone: calc(var(--nautilus-gap) / 2);
 }
 ```
 
@@ -120,8 +120,8 @@ The last cell is **automatically reshaped** into the remaining golden rectangle 
 (`width`, `height`, `overflow`) — the library doesn't wrap them. Default
 is `width: 100%; overflow: hidden`.
 
-**Cell backgrounds.** Set `background` directly on `.spiral-grid__cell`
-(applies to all cells) or on `.spiral-grid__cell:last-of-type` (applies
+**Cell backgrounds.** Set `background` directly on `.nautilus__cell`
+(applies to all cells) or on `.nautilus__cell:last-of-type` (applies
 only to the fill cell). The library preserves these through the fill
 cell's reshape.
 
@@ -136,78 +136,78 @@ cell's reshape.
    Spiral Grid v1 — Core
    ============================================ */
 
-.spiral-grid {
+.nautilus {
     /* Internal math constants — do NOT override. */
-    --spiral-grid-phi: 0.618033989;
-    --spiral-grid-shrinkage: 0.276393202250021;
+    --nautilus-phi: 0.618033989;
+    --nautilus-shrinkage: 0.276393202250021;
 
     /* Public knobs */
-    --spiral-grid-transition: none;
-    --spiral-grid-font-size-max: 8rem;
-    --spiral-grid-gap: 0px;
-    --spiral-grid-safe-zone: calc(var(--spiral-grid-gap) / 2);
+    --nautilus-transition: none;
+    --nautilus-font-size-max: 8rem;
+    --nautilus-gap: 0px;
+    --nautilus-safe-zone: calc(var(--nautilus-gap) / 2);
 
     position: relative;
     width: 100%;
-    aspect-ratio: calc(1 + var(--spiral-grid-phi)) / 1;  /* golden rectangle */
+    aspect-ratio: calc(1 + var(--nautilus-phi)) / 1;  /* golden rectangle */
     overflow: hidden;
     container-type: inline-size;
 }
 
-.spiral-grid__cell {
+.nautilus__cell {
     position: absolute;
     top: 0;
     left: 0;
-    width: calc(var(--spiral-grid-phi) * 100%);
+    width: calc(var(--nautilus-phi) * 100%);
     aspect-ratio: 1;
     /* Transform-origin at the spiral's convergence point,
        in cell-local coordinates (x divided by phi because
        cell width = phi × container width). */
     transform-origin:
-        calc((1 - var(--spiral-grid-shrinkage)) / var(--spiral-grid-phi) * 100%)
-        calc((1 - var(--spiral-grid-shrinkage)) * 100%);
-    transition: var(--spiral-grid-transition, none);
+        calc((1 - var(--nautilus-shrinkage)) / var(--nautilus-phi) * 100%)
+        calc((1 - var(--nautilus-shrinkage)) * 100%);
+    transition: var(--nautilus-transition, none);
     z-index: var(--i, 0);
     --i: 0;
 }
 
 /* Index each cell via :nth-child — just sets --i for the transform below. */
-.spiral-grid__cell:nth-child(1)  { --i: 0; }
-.spiral-grid__cell:nth-child(2)  { --i: 1; }
-.spiral-grid__cell:nth-child(3)  { --i: 2; }
-.spiral-grid__cell:nth-child(4)  { --i: 3; }
-.spiral-grid__cell:nth-child(5)  { --i: 4; }
-.spiral-grid__cell:nth-child(6)  { --i: 5; }
-.spiral-grid__cell:nth-child(7)  { --i: 6; }
-.spiral-grid__cell:nth-child(8)  { --i: 7; }
-.spiral-grid__cell:nth-child(9)  { --i: 8; }
-.spiral-grid__cell:nth-child(10) { --i: 9; }
+.nautilus__cell:nth-child(1)  { --i: 0; }
+.nautilus__cell:nth-child(2)  { --i: 1; }
+.nautilus__cell:nth-child(3)  { --i: 2; }
+.nautilus__cell:nth-child(4)  { --i: 3; }
+.nautilus__cell:nth-child(5)  { --i: 4; }
+.nautilus__cell:nth-child(6)  { --i: 5; }
+.nautilus__cell:nth-child(7)  { --i: 6; }
+.nautilus__cell:nth-child(8)  { --i: 7; }
+.nautilus__cell:nth-child(9)  { --i: 8; }
+.nautilus__cell:nth-child(10) { --i: 9; }
 
 /* Hide beyond the supported cell count rather than render wrong math. */
-.spiral-grid__cell:nth-child(n+11) { display: none; }
+.nautilus__cell:nth-child(n+11) { display: none; }
 
 /* Modern browsers: use pow() for a single rule that covers all indices. */
 @supports (width: calc(pow(2, 3) * 1px)) {
-    .spiral-grid__cell {
+    .nautilus__cell {
         transform:
-            scale(pow(var(--spiral-grid-phi), var(--i)))
+            scale(pow(var(--nautilus-phi), var(--i)))
             rotate(calc(90deg * var(--i)));
         /* Scale-compensated visual gap via clip-path (layout untouched). */
         clip-path: inset(
-            calc(var(--spiral-grid-gap) / 2 / pow(var(--spiral-grid-phi), var(--i)))
+            calc(var(--nautilus-gap) / 2 / pow(var(--nautilus-phi), var(--i)))
         );
     }
-    .spiral-grid__content {
+    .nautilus__content {
         transform: rotate(calc(-90deg * var(--i)));
         font-size: clamp(
             1rem,
-            calc(1rem / pow(var(--spiral-grid-phi), var(--i))),
-            var(--spiral-grid-font-size-max)
+            calc(1rem / pow(var(--nautilus-phi), var(--i))),
+            var(--nautilus-font-size-max)
         );
         /* Scale-compensated safe-zone so inner content (borders, text,
            card edges) stays inside the clip. */
         padding: calc(
-            var(--spiral-grid-safe-zone) / pow(var(--spiral-grid-phi), var(--i))
+            var(--nautilus-safe-zone) / pow(var(--nautilus-phi), var(--i))
         );
         box-sizing: border-box;
     }
@@ -220,27 +220,27 @@ cell's reshape.
 /* ============================================
    Modifier: no-counter-rotate
    ============================================ */
-.spiral-grid--no-counter-rotate .spiral-grid__content.spiral-grid__content {
+.nautilus--no-counter-rotate .nautilus__content.nautilus__content {
     transform: none;
 }
 
 /* ============================================
    Modifier: reverse
    ============================================ */
-.spiral-grid--reverse .spiral-grid__cell {
+.nautilus--reverse .nautilus__cell {
     left: auto;
     right: 0;
     transform-origin:
-        calc(100% - (1 - var(--spiral-grid-shrinkage)) / var(--spiral-grid-phi) * 100%)
-        calc((1 - var(--spiral-grid-shrinkage)) * 100%);
+        calc(100% - (1 - var(--nautilus-shrinkage)) / var(--nautilus-phi) * 100%)
+        calc((1 - var(--nautilus-shrinkage)) * 100%);
 }
 @supports (width: calc(pow(2, 3) * 1px)) {
-    .spiral-grid--reverse .spiral-grid__cell {
+    .nautilus--reverse .nautilus__cell {
         transform:
-            scale(pow(var(--spiral-grid-phi), var(--i)))
+            scale(pow(var(--nautilus-phi), var(--i)))
             rotate(calc(-90deg * var(--i)));
     }
-    .spiral-grid--reverse .spiral-grid__content {
+    .nautilus--reverse .nautilus__content {
         transform: rotate(calc(90deg * var(--i)));
     }
 }
@@ -248,32 +248,32 @@ cell's reshape.
 /* ============================================
    Modifier: portrait
    ============================================ */
-.spiral-grid--portrait {
-    aspect-ratio: 1 / calc(1 + var(--spiral-grid-phi));
+.nautilus--portrait {
+    aspect-ratio: 1 / calc(1 + var(--nautilus-phi));
 }
-.spiral-grid--portrait .spiral-grid__cell {
+.nautilus--portrait .nautilus__cell {
     width: 100%;
     transform-origin:
-        calc(var(--spiral-grid-shrinkage) * 100%)
-        calc((1 - var(--spiral-grid-shrinkage)) * (1 + var(--spiral-grid-phi)) * 100%);
+        calc(var(--nautilus-shrinkage) * 100%)
+        calc((1 - var(--nautilus-shrinkage)) * (1 + var(--nautilus-phi)) * 100%);
 }
 
 /* Auto-switch to portrait via container query */
 @container (aspect-ratio < 1) {
-    .spiral-grid--auto {
-        aspect-ratio: 1 / calc(1 + var(--spiral-grid-phi));
+    .nautilus--auto {
+        aspect-ratio: 1 / calc(1 + var(--nautilus-phi));
     }
-    .spiral-grid--auto .spiral-grid__cell {
+    .nautilus--auto .nautilus__cell {
         width: 100%;
         transform-origin:
-            calc(var(--spiral-grid-shrinkage) * 100%)
-            calc((1 - var(--spiral-grid-shrinkage)) * (1 + var(--spiral-grid-phi)) * 100%);
+            calc(var(--nautilus-shrinkage) * 100%)
+            calc((1 - var(--nautilus-shrinkage)) * (1 + var(--nautilus-phi)) * 100%);
     }
 }
 
 /* ============================================
    Default fill: last cell reshapes to the golden-rectangle wedge
-   so the eye has no empty space. Opt out with .spiral-grid--no-fill.
+   so the eye has no empty space. Opt out with .nautilus--no-fill.
    (Reshape geometry + content centering rules omitted here.)
    ============================================ */
 
@@ -281,14 +281,14 @@ cell's reshape.
    Accessibility: reduced motion fallback
    ============================================ */
 @media (prefers-reduced-motion: reduce) {
-    .spiral-grid.spiral-grid {
+    .nautilus.nautilus {
         display: grid;
         grid-template-columns: 1fr;
         gap: 0.5rem;
         aspect-ratio: auto;
         overflow: visible;
     }
-    .spiral-grid.spiral-grid .spiral-grid__cell {
+    .nautilus.nautilus .nautilus__cell {
         position: static;
         transform: none;
         width: 100%;
@@ -296,7 +296,7 @@ cell's reshape.
         z-index: auto;
         clip-path: none;
     }
-    .spiral-grid.spiral-grid .spiral-grid__content {
+    .nautilus.nautilus .nautilus__content {
         transform: none;
         font-size: 1rem;
         padding: 0;
@@ -313,13 +313,13 @@ cell's reshape.
   "name": "nautilus-grid",
   "version": "0.1.0",
   "description": "A golden-ratio spiral layout in pure CSS",
-  "main": "dist/spiral-grid.css",
-  "style": "dist/spiral-grid.css",
+  "main": "dist/nautilus.css",
+  "style": "dist/nautilus.css",
   "files": ["dist/"],
   "keywords": ["css", "layout", "golden-ratio", "fibonacci", "spiral", "grid"],
   "license": "MIT",
   "scripts": {
-    "build": "cp src/spiral-grid.css dist/ && cssnano src/spiral-grid.css dist/spiral-grid.min.css"
+    "build": "cp src/nautilus.css dist/ && cssnano src/nautilus.css dist/nautilus.min.css"
   }
 }
 ```
@@ -331,19 +331,19 @@ cell's reshape.
 ### Plain HTML (zero build)
 
 ```html
-<link rel="stylesheet" href="https://unpkg.com/nautilus-grid/dist/spiral-grid.min.css">
+<link rel="stylesheet" href="https://unpkg.com/nautilus-grid/dist/nautilus.min.css">
 
-<div class="spiral-grid">
-    <div class="spiral-grid__cell"><div class="spiral-grid__content"><h1>Hello</h1></div></div>
-    <div class="spiral-grid__cell"><div class="spiral-grid__content">World</div></div>
-    <div class="spiral-grid__cell"><div class="spiral-grid__content">...</div></div>
+<div class="nautilus">
+    <div class="nautilus__cell"><div class="nautilus__content"><h1>Hello</h1></div></div>
+    <div class="nautilus__cell"><div class="nautilus__content">World</div></div>
+    <div class="nautilus__cell"><div class="nautilus__content">...</div></div>
 </div>
 ```
 
 With a visible gap and automatic content safe-zone:
 
 ```html
-<div class="spiral-grid" style="--spiral-grid-gap: 8px">
+<div class="nautilus" style="--nautilus-gap: 8px">
     <!-- cells — inner content stays inside the safe zone automatically -->
 </div>
 ```
@@ -351,14 +351,14 @@ With a visible gap and automatic content safe-zone:
 ### React
 
 ```jsx
-import 'nautilus-grid/dist/spiral-grid.css';
+import 'nautilus-grid/dist/nautilus.css';
 
 function Portfolio({ projects }) {
     return (
-        <div className="spiral-grid" style={{ '--spiral-grid-gap': '6px' }}>
+        <div className="nautilus" style={{ '--nautilus-gap': '6px' }}>
             {projects.map(p => (
-                <div key={p.id} className="spiral-grid__cell">
-                    <div className="spiral-grid__content">
+                <div key={p.id} className="nautilus__cell">
+                    <div className="nautilus__content">
                         <h3>{p.title}</h3>
                     </div>
                 </div>
@@ -371,14 +371,14 @@ function Portfolio({ projects }) {
 ### Customization
 
 All customization happens through the public custom properties — there is no
-SCSS layer, and `--spiral-grid-phi` is internal (changing it invalidates the
+SCSS layer, and `--nautilus-phi` is internal (changing it invalidates the
 precomputed fallback table and geometry tests).
 
 ```css
-.my-portfolio.spiral-grid {
+.my-portfolio.nautilus {
     width: 80vw;
-    --spiral-grid-gap: 4px;
-    --spiral-grid-transition: transform 0.6s ease;
+    --nautilus-gap: 4px;
+    --nautilus-transition: transform 0.6s ease;
 }
 ```
 
@@ -432,7 +432,7 @@ precomputed fallback table and geometry tests).
 
 ## What's Explicitly NOT in v1
 
-- **Infinite zoom navigation** — belongs in a separate companion package (`spiral-grid-navigator`)
+- **Infinite zoom navigation** — belongs in a separate companion package (`nautilus-navigator`)
 - **JavaScript framework bindings** — users can use the CSS directly; wrappers can come later if demand exists
 - **Interactive demo playground** — add in v1.1 if there's interest
 - **Theming presets** — ship utility-class variants for common color schemes after shipping the core
@@ -442,7 +442,7 @@ precomputed fallback table and geometry tests).
 ## Risks & Open Questions
 
 1. **`pow()` browser support** — currently Chrome 111+, Safari 16.4+, Firefox 118+. Good enough for 2026, but the precomputed nth-child fallback handles older browsers.
-2. **Counter-rotation and text wrapping** — text inside rotated cells wraps at the rotated width, which can surprise users. Need clear docs + maybe a `spiral-grid__content--text` variant with controlled width.
+2. **Counter-rotation and text wrapping** — text inside rotated cells wraps at the rotated width, which can surprise users. Need clear docs + maybe a `nautilus__content--text` variant with controlled width.
 3. **Container query support** — widely supported now (2023+), but if we want older browser support, we'd need viewport-based breakpoints as fallback.
 4. **Gap depth limit** — the scale-compensated gap eventually exceeds a deep cell's pre-scale size and makes the cell invisible. This is geometry, not a bug; the postmortem documents the `container_width > gap × 1.618^N` threshold and the `cqi` / `@media` patterns for living with it. We deliberately do **not** clamp.
 5. **Content overflow** — smaller cells can't fit much content. Need guidance on what kind of content works where.
