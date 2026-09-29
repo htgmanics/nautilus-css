@@ -140,6 +140,13 @@ publish, in this order:
       Candidates: rebuild the owner's portfolio (https://htgmanics.com/) on
       the grid; a minimal product-listing page. Replace or demote the current
       test-rig pages (`index/gap/scroll`) to a `examples/tests/` folder.
+      *2026-09-29:* portfolio lives in its own private repo
+      `htgmanics/htgmanics.com` (Next.js 16 App Router) — it's a real site,
+      not an example page, and it tests the wrapper in Server Components,
+      the most common adopter path. Consumes the package unpublished
+      (`file:` link locally, `github:` dep once `prepare` is pushed) so API
+      changes it forces land before 0.1.0. Other demos (product listing)
+      use TanStack Start to show Nautilus outside Next.
 - [ ] **Zoom exploration** — how far the infinite zoom (`tunnel.md`) and the
       scroll-driven zoom can go as showcase pieces; zoom-out; content types.
 - [x] **Adoption**: React wrapper shipped 2026-09-29 as `nautilus-grid/react`
