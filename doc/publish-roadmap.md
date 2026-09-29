@@ -139,11 +139,11 @@ publish, in this order:
       test-rig pages (`index/gap/scroll`) to a `examples/tests/` folder.
 - [ ] **Zoom exploration** — how far the infinite zoom (`tunnel.md`) and the
       scroll-driven zoom can go as showcase pieces; zoom-out; content types.
-- [ ] **Adoption**: React component (thin: `<Spiral>` / `<Cell>` that emit
-      the classes + import the CSS — ~30 lines, no logic). Tailwind: decide
-      what "adoption" means — a plugin exposing `spiral-grid` utilities, or
-      just a recipe showing it composes with Tailwind (likely the latter for
-      0.1). Svelte/Vue: later.
+- [ ] **Adoption**: React wrapper — `<Spiral reverse gap="8px">` / `<Cell scroll>`
+      mapping props → the BEM classes and custom properties, enforcing the
+      cell/content two-div structure. Typed props, no runtime logic, ~30
+      lines + `.d.ts`. Plain `className` usage keeps working without it.
+      Tailwind: dropped (2026-09-29). Svelte/Vue: same shape, later.
 
 Then resume the runbook below.
 
