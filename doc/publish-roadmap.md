@@ -1,6 +1,7 @@
 # Publish Roadmap
 
 Checklist for turning the prototype into a publishable CSS library.
+For what has happened so far, read `doc/review-2026-09.md`.
 This doc is the **single source of truth** for publish readiness — the Launch
 Checklist in `doc/spiral-grid-library-sketch.md` defers to this list.
 

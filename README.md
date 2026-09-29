@@ -158,7 +158,8 @@ The whole spiral is one 6×6 CSS Grid: ten cells share only seven distinct
 lines in each direction, and the six track sizes are powers of φ.
 [`doc/shared-lines.md`](doc/shared-lines.md) explains it from scratch;
 [`doc/tunnel.md`](doc/tunnel.md) explains the infinite zoom. Design notes and
-decision records live in [`doc/`](doc/).
+decision records live in [`doc/`](doc/); [`doc/review-2026-09.md`](doc/review-2026-09.md)
+is the project review and handoff.
 
 ## Development
 
