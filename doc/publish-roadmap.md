@@ -127,6 +127,26 @@ depend on earlier URLs:
 - [x] **GitHub Pages** enabled 2026-09-29 from `main`, root. Demo at
       `https://htgmanics.github.io/nautilus-grid/examples/`; link in README.
 - [x] Repo renamed `nautilus-css` → `nautilus-grid`; PR #3 merged (`62fc647`).
+### 3¾. Pre-publish polish — PAUSED HERE (2026-09-29)
+
+Owner halted `npm publish`: the package is built, Pages is live, but the
+example pages are engineering test rigs, not a pitch. Before the first
+publish, in this order:
+
+- [ ] **Showcase examples** (highest leverage — the demo *is* the marketing).
+      Candidates: rebuild the owner's portfolio (https://htgmanics.com/) on
+      the grid; a minimal product-listing page. Replace or demote the current
+      test-rig pages (`index/gap/scroll`) to a `examples/tests/` folder.
+- [ ] **Zoom exploration** — how far the infinite zoom (`tunnel.md`) and the
+      scroll-driven zoom can go as showcase pieces; zoom-out; content types.
+- [ ] **Adoption**: React component (thin: `<Spiral>` / `<Cell>` that emit
+      the classes + import the CSS — ~30 lines, no logic). Tailwind: decide
+      what "adoption" means — a plugin exposing `spiral-grid` utilities, or
+      just a recipe showing it composes with Tailwind (likely the latter for
+      0.1). Svelte/Vue: later.
+
+Then resume the runbook below.
+
 - [ ] **Re-check npm name** `nautilus-grid` still free
       (`npm view nautilus-grid` → 404) — last checked 2026-09-29
 - [ ] **`npm whoami`** — logged in as the intended account
