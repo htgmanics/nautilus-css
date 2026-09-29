@@ -47,7 +47,8 @@
     "build": "mkdir -p dist && cp src/nautilus.css dist/ && lightningcss --minify src/nautilus.css -o dist/nautilus.min.css",
     "size": "node -e \"const n=require('zlib').gzipSync(require('fs').readFileSync('dist/nautilus.min.css')).length;console.log(n+' B gzipped (limit 2048)');process.exit(n>2048?1:0)\"",
     "test": "node test/geometry.mjs && node test/react.mjs",
-    "prepublishOnly": "npm test && npm run build && npm run size"
+    "prepublishOnly": "npm test && npm run build && npm run size",
+    "check:examples": "node test/examples.mjs"
   },
   "devDependencies": {
     "lightningcss-cli": "^1.33.0",
