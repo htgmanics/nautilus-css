@@ -1,5 +1,7 @@
 # Gap Feature — Post-Mortem
 
+> **Historical (transform engine).** This describes how the gap was solved when cells were scaled copies. In the shipped CSS Grid engine the gap is a `margin: gap / 2` on each cell — see `doc/shared-lines.md` §7. Kept for the record.
+
 Research notes from the first attempt at implementing `--spiral-grid-gap`.
 
 ## Goal
@@ -57,8 +59,8 @@ Defer to a dedicated feature branch. The gap needs a fundamentally different app
 
 # Resolved: `clip-path: inset()`
 
-Implemented in `prototype/spiral-grid.css` behind the `--spiral-grid-gap`
-custom property. See `prototype/gap.html` for the full test matrix.
+Implemented in `src/spiral-grid.css` behind the `--spiral-grid-gap`
+custom property. See `examples/gap.html` for the full test matrix.
 
 ## Why it works
 
@@ -207,5 +209,5 @@ custom property:
 
 Same `pow()` + precomputed fallback story as the gap itself. Reduced-motion
 mode resets the padding to `0` along with the clip-path. See section 9
-of `prototype/gap.html` for side-by-side "safe" vs "opt-out" demos.
+of `examples/gap.html` for side-by-side "safe" vs "opt-out" demos.
 

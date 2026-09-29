@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <title>Spiral Grid — Scroll-Driven Zoom Prototype</title>
-    <link rel="stylesheet" href="spiral-grid.css" />
+    <link rel="stylesheet" href="../src/spiral-grid.css" />
     <style>
       :root {
         color-scheme: light dark;
@@ -282,7 +282,7 @@
           scroll · <strong>zoom into the eye</strong> · 4 × 90°
         </p>
         <div
-          class="spiral-grid spiral-grid--no-counter-rotate demo scene__spiral"
+          class="spiral-grid spiral-grid--hero-rotate demo scene__spiral"
           style="--spiral-grid-gap: 3px"
         >
           <div class="spiral-grid__cell">
@@ -354,8 +354,8 @@
           second, and so on.
         </li>
         <li>
-          The <code>--spiral-grid-gap</code> clip-path survives the
-          zoom and scales proportionally with it. Pre-zoom gaps of
+          The <code>--spiral-grid-gap</code> (a per-cell margin) survives
+          the zoom and scales proportionally with it. Pre-zoom gaps of
           3px end at ~20px at full zoom — expected behavior for a
           vector-scale-style zoom.
         </li>

@@ -101,7 +101,7 @@ Key points:
 `position: sticky` on the spiral container, tall parent, single
 continuous keyframe across the whole range. Reader scrolls →
 spiral zooms in place → pin releases and normal scroll resumes.
-Classic scrollytelling. The prototype in `prototype/scroll-zoom.html`
+Classic scrollytelling. The prototype in `examples/scroll-zoom.html`
 implements this.
 
 ### 2. Hero-to-grid handoff
@@ -236,7 +236,7 @@ as a vector graphic, a zoom should scale everything, gap included.
 **No special compensation is needed** for the zoom to look right.
 The only practical guidance is: keep the pre-zoom gap small
 (≤ 4px) so the end-of-zoom gap doesn't dominate visually. Tested
-in `prototype/scroll-zoom.html` with `--spiral-grid-gap: 3px`.
+in `examples/scroll-zoom.html` with `--spiral-grid-gap: 3px`.
 
 If someone wants a gap that stays visually constant through the
 zoom (unusual request — would look weird, like gaps widening
@@ -269,7 +269,7 @@ Documentation: pick one interaction model per spiral.
 
 ## Recommendation
 
-Start with `prototype/scroll-zoom.html` implementing variant 1
+Start with `examples/scroll-zoom.html` implementing variant 1
 (pinned zoom) to feel out the motion. If it's good:
 
 1. Productize as `.spiral-grid--scroll-zoom` modifier with a

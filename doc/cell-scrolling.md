@@ -1,5 +1,7 @@
 # Per-Cell Scrolling — Design Notes
 
+> **Historical (transform engine).** Most of the difficulty here came from scrollbars inside scaled cells. In the shipped CSS Grid engine a cell is a normal box and the scroll modifiers are plain `overflow: auto`. Kept for the record.
+
 Design notes for the `spiral-grid__content--scroll` modifier family,
 which allows long content inside a cell to scroll independently without
 breaking the spiral's visual integrity.
@@ -8,8 +10,8 @@ breaking the spiral's visual integrity.
 
 **Shipped in v1** as cell-level modifiers — `spiral-grid__content--scroll`
 (y-axis, default), `--scroll-x`, `--scroll-y`. Implementation lives in the
-"Feature: per-cell scrolling" block of `prototype/spiral-grid.css`;
-working demo in `prototype/scroll.html`.
+"Feature: per-cell scrolling" block of `src/spiral-grid.css`;
+working demo in `examples/scroll.html`.
 
 Resolved against the original open questions:
 
@@ -238,8 +240,8 @@ custom property.
 
 ## Recommendation
 
-Prototype in `prototype/scroll.html` first, mirroring
-`prototype/gap.html`'s approach:
+Prototype in `examples/scroll.html` first, mirroring
+`examples/gap.html`'s approach:
 
 - Side-by-side: non-scrollable (default) vs scrollable
 - Rotation stress test: does cell 2 (90°) scroll naturally with
