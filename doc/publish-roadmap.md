@@ -139,7 +139,8 @@ publish, in this order:
       test-rig pages (`index/gap/scroll`) to a `examples/tests/` folder.
 - [ ] **Zoom exploration** — how far the infinite zoom (`tunnel.md`) and the
       scroll-driven zoom can go as showcase pieces; zoom-out; content types.
-- [ ] **Adoption**: React wrapper — `<Spiral reverse gap="8px">` / `<Cell scroll>`
+- [x] **Adoption**: React wrapper shipped 2026-09-29 as `nautilus-grid/react`
+      (`react/index.js` + `.d.ts`, `test/react.mjs`). Original scope: — `<Spiral reverse gap="8px">` / `<Cell scroll>`
       mapping props → the BEM classes and custom properties, enforcing the
       cell/content two-div structure. Typed props, no runtime logic, ~30
       lines + `.d.ts`. Plain `className` usage keeps working without it.

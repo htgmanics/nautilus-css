@@ -58,6 +58,26 @@ Or via CDN, no build step:
   found with `:last-of-type`, so use another tag (e.g. `<span>`) for any
   overlay element inside the container.
 
+## React
+
+```jsx
+import "nautilus-grid";                          // the CSS
+import { Spiral, Cell } from "nautilus-grid/react";
+
+<Spiral reverse gap={8}>
+  <Cell>Hero</Cell>
+  <Cell scroll>Long text…</Cell>
+  <Cell>…</Cell>
+</Spiral>
+```
+
+Props map 1:1 to the classes and custom properties below — `reverse`,
+`portrait`, `auto`, `noFill`, `heroRotate`, `gap`, `transition` on `Spiral`;
+`scroll`, `scrollX`, `contentClassName`, `contentStyle` on `Cell`. Both take
+`as` to change the element, forward refs, and pass other props through.
+`Cell` renders the cell/content pair for you. Typed; React ≥ 17; no runtime
+beyond a few string joins. Plain `className` usage works without it.
+
 ## Modifiers
 
 On `.spiral-grid`:
