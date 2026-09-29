@@ -119,7 +119,8 @@ regardless of the visual spiral.
 
 ## Examples
 
-Clone the repo and open any of these in a browser:
+Live: **https://htgmanics.github.io/nautilus-grid/examples/** — or clone the
+repo and open any of these in a browser:
 
 - [`examples/index.html`](examples/index.html) — gallery: fill, reverse,
   portrait, multi-spiral, responsive resize

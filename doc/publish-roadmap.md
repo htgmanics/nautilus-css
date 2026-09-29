@@ -123,11 +123,10 @@ depend on earlier URLs:
       Pages so the demo URL is right the first time.
 - [x] **Update `package.json`** `homepage` / `repository` / `bugs` URLs to
       `nautilus-grid` (done 2026-09-29)
-- [ ] Update local remote: `git remote set-url origin https://github.com/htgmanics/nautilus-grid.git`
-- [ ] **GitHub Pages**: deploy from `main`, repo root — root, not
-      `examples/`, because examples link `../src/spiral-grid.css`. Demo at
-      `https://htgmanics.github.io/nautilus-grid/examples/`. Add that
-      link to README.
+- [x] Local remote points at `nautilus-grid`
+- [x] **GitHub Pages** enabled 2026-09-29 from `main`, root. Demo at
+      `https://htgmanics.github.io/nautilus-grid/examples/`; link in README.
+- [x] Repo renamed `nautilus-css` → `nautilus-grid`; PR #3 merged (`62fc647`).
 - [ ] **Re-check npm name** `nautilus-grid` still free
       (`npm view nautilus-grid` → 404) — last checked 2026-09-29
 - [ ] **`npm whoami`** — logged in as the intended account
