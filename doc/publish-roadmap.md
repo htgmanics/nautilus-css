@@ -155,6 +155,9 @@ publish, in this order:
       cell/content two-div structure. Typed props, no runtime logic, ~30
       lines + `.d.ts`. Plain `className` usage keeps working without it.
       Tailwind: dropped (2026-09-29). Svelte/Vue: same shape, later.
+      *2026-09-30:* wrapper verified in Next 16 Server Components (forwardRef
+      + createElement, no hooks) — htgmanics.com home, 4 spirals, 25 cells,
+      all invariants hold. `github:` install works via `prepare`.
 
 Then resume the runbook below.
 
