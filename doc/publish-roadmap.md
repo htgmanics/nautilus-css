@@ -149,6 +149,16 @@ publish, in this order:
       use TanStack Start to show Nautilus outside Next.
 - [ ] **Zoom exploration** — how far the infinite zoom (`tunnel.md`) and the
       scroll-driven zoom can go as showcase pieces; zoom-out; content types.
+      *2026-09-30, from htgmanics.com About:* a one-step tunnel (outer
+      spiral `noFill`, inner full-size spiral at φ⁴ in the wedge, click →
+      both scale 1/φ⁴ about the eye, per-layer WAAPI) lands at 0.00 px both
+      ways — `htgmanics.com/src/components/ZoomLayers.tsx`, ~90 lines. First
+      concrete shape for a `<Tunnel>` / `useTunnel()`.
+- [ ] **Docs pitfall (found 2026-09-30):** `cqi` in styles on the
+      `.nautilus__cell` itself resolves against the *spiral* (an element
+      can't query its own container); only descendants of `__cell` get the
+      cell's width. Bit a `background-size: 23.5cqi` on a cell. README +
+      `shared-lines.md` should say so.
 - [x] **Adoption**: React wrapper shipped 2026-09-29 as `nautilus-grid/react`
       (`react/index.js` + `.d.ts`, `test/react.mjs`). Original scope: — `<Spiral reverse gap="8px">` / `<Cell scroll>`
       mapping props → the BEM classes and custom properties, enforcing the
