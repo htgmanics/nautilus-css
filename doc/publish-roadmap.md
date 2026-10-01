@@ -154,6 +154,11 @@ publish, in this order:
       both scale 1/φ⁴ about the eye, per-layer WAAPI) lands at 0.00 px both
       ways — `htgmanics.com/src/components/ZoomLayers.tsx`, ~90 lines. First
       concrete shape for a `<Tunnel>` / `useTunnel()`.
+- [ ] **React wrapper: drop `forwardRef` (found 2026-10-01).** React 19
+      passes `ref` as a normal prop and Vercel's composition rules flag
+      `forwardRef` as legacy. The peer range is `react >=17`, so either
+      bump the peer to 19 or keep `forwardRef` until 17/18 support is dropped.
+      Decide before 0.1.0: changing it after is a types change for users.
 - [ ] **Docs pitfall (found 2026-09-30):** `cqi` in styles on the
       `.nautilus__cell` itself resolves against the *spiral* (an element
       can't query its own container); only descendants of `__cell` get the
